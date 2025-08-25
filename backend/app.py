@@ -179,4 +179,5 @@ def get_availability():
 if __name__ == '__main__':
     with app.app_context():
         DatabaseManager.create_tables()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Development server - in production, use Gunicorn via wsgi.py
+    app.run(host='0.0.0.0', port=5000, debug=os.getenv('FLASK_DEBUG', 'False').lower() == 'true')

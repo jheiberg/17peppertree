@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: peppertree_nginx_staging
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.staging.conf:/etc/nginx/nginx.conf:ro
+      - ./logs/nginx-staging:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - peppertree_staging_network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    image: ${DOCKER_HUB_USERNAME}/peppertree-frontend:latest
+    container_name: peppertree_frontend_staging
+    expose:
+      - "80"
+    networks:
+      - peppertree_staging_network
+    restart: unless-stopped
+
+  # Flask Backend API
+  backend:
+    image: ${DOCKER_HUB_USERNAME}/peppertree-backend:latest
+    container_name: peppertree_backend_staging
+    expose:
+      - "5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/peppertree_staging
+      - SECRET_KEY=${SECRET_KEY}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      - OWNER_EMAIL=${OWNER_EMAIL}
+      - FLASK_ENV=staging
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - peppertree_staging_network
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: peppertree_db_staging
+    environment:
+      POSTGRES_DB: peppertree_staging
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_staging:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - peppertree_staging_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data_staging:
+    driver: local
+
+networks:
+  peppertree_staging_network:
+    driver: bridge
