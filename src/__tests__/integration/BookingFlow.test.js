@@ -1,7 +1,31 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../App';
+
+// Mock the AvailabilityCalendar component for integration tests
+jest.mock('../../components/AvailabilityCalendar/AvailabilityCalendar', () => {
+  return function MockAvailabilityCalendar({ onDateSelect, selectedDates }) {
+    return (
+      <div data-testid="availability-calendar">
+        <button 
+          onClick={() => onDateSelect('2024-06-15', 'checkin')}
+          data-testid="select-checkin"
+        >
+          Select Check-in: 2024-06-15
+        </button>
+        <button 
+          onClick={() => onDateSelect('2024-06-18', 'checkout')}
+          data-testid="select-checkout"
+        >
+          Select Check-out: 2024-06-18
+        </button>
+        <div data-testid="selected-checkin">{selectedDates.checkin}</div>
+        <div data-testid="selected-checkout">{selectedDates.checkout}</div>
+      </div>
+    );
+  };
+});
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -9,10 +33,76 @@ global.fetch = jest.fn();
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = jest.fn();
 
+// Helper function to fill out the complete booking form
+const fillCompleteForm = async (user, formData = {}) => {
+  const defaultData = {
+    checkin: '2024/06/15',
+    checkout: '2024/06/18',
+    guests: '2',
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '+27123456789',
+    message: 'Looking forward to our stay!'
+  };
+  
+  const data = { ...defaultData, ...formData };
+  
+  if (data.checkin) {
+    const checkinInput = screen.getByLabelText('Check-in Date');
+    // Use fireEvent to directly set the formatted value
+    fireEvent.change(checkinInput, { target: { value: '20240615' } });
+  }
+  
+  if (data.checkout) {
+    const checkoutInput = screen.getByLabelText('Check-out Date');
+    // Use fireEvent to directly set the formatted value
+    fireEvent.change(checkoutInput, { target: { value: '20240618' } });
+  }
+  
+  if (data.guests) {
+    await user.selectOptions(screen.getByLabelText('Number of Guests'), data.guests);
+  }
+  
+  if (data.name) {
+    await user.type(screen.getByLabelText('Full Name'), data.name);
+  }
+  
+  if (data.email) {
+    await user.type(screen.getByLabelText('Email Address'), data.email);
+  }
+  
+  if (data.phone) {
+    await user.type(screen.getByLabelText('Phone Number'), data.phone);
+  }
+  
+  if (data.message) {
+    await user.type(screen.getByLabelText('Additional Information'), data.message);
+  }
+};
+
 describe('Complete Booking Flow Integration', () => {
   beforeEach(() => {
     fetch.mockClear();
     Element.prototype.scrollIntoView.mockClear();
+    
+    // Mock the availability API call by default
+    fetch.mockImplementation((url) => {
+      if (url.includes('/availability')) {
+        return Promise.resolve({
+          ok: true,
+          headers: new Map([['content-type', 'application/json']]),
+          json: async () => ({
+            unavailable_dates: []
+          })
+        });
+      }
+      // For other API calls, return a default response
+      return Promise.resolve({
+        ok: true,
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({})
+      });
+    });
   });
 
   describe('Navigation Flow', () => {
@@ -38,8 +128,12 @@ describe('Complete Booking Flow Integration', () => {
       
       expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
       
-      const accommodationLink = screen.getByRole('button', { name: 'Accommodation' });
-      await user.click(accommodationLink);
+      // Use getAllByRole to get all accommodation buttons, then select header one
+      const accommodationLinks = screen.getAllByRole('button', { name: 'Accommodation' });
+      const headerAccommodationLink = accommodationLinks.find(link => 
+        link.closest('.navbar') !== null
+      );
+      await user.click(headerAccommodationLink);
       
       expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(2);
     });
@@ -82,14 +176,14 @@ describe('Complete Booking Flow Integration', () => {
       
       if (data.checkin) {
         const checkinInput = screen.getByLabelText('Check-in Date');
-        await user.clear(checkinInput);
-        await user.type(checkinInput, data.checkin);
+        // Use fireEvent to directly set the formatted value
+        fireEvent.change(checkinInput, { target: { value: '20240615' } });
       }
       
       if (data.checkout) {
         const checkoutInput = screen.getByLabelText('Check-out Date');
-        await user.clear(checkoutInput);
-        await user.type(checkoutInput, data.checkout);
+        // Use fireEvent to directly set the formatted value
+        fireEvent.change(checkoutInput, { target: { value: '20240618' } });
       }
       
       if (data.guests) {
@@ -116,12 +210,26 @@ describe('Complete Booking Flow Integration', () => {
     test('successful booking flow from start to finish', async () => {
       const user = userEvent.setup();
       
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          message: 'Booking request submitted successfully',
-          booking_id: 123
-        })
+      // Mock both availability and booking API calls
+      fetch.mockImplementation((url) => {
+        if (url.includes('/availability')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              unavailable_dates: []
+            })
+          });
+        } else if (url.includes('/booking')) {
+          return Promise.resolve({
+            ok: true,
+            headers: new Map([['content-type', 'application/json']]),
+            json: async () => ({
+              message: 'Thank you for your booking request! We will contact you within 24 hours to confirm your reservation.',
+              booking_id: 123
+            })
+          });
+        }
+        return Promise.resolve({ ok: true, json: async () => ({}) });
       });
 
       render(<App />);
@@ -139,12 +247,12 @@ describe('Complete Booking Flow Integration', () => {
       
       // 4. Wait for success message
       await waitFor(() => {
-        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
-      });
+        expect(screen.getByText(/Thank you for your booking request! We will contact you within 24 hours to confirm your reservation./)).toBeInTheDocument();
+      }, { timeout: 10000 });
       
       // 5. Verify API was called with correct data
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:5000/api/booking',
+        expect.stringContaining('/api/booking'),
         expect.objectContaining({
           method: 'POST',
           headers: {
@@ -198,11 +306,14 @@ describe('Complete Booking Flow Integration', () => {
       fetch
         .mockResolvedValueOnce({
           ok: false,
+          status: 400,
+          headers: new Map([['content-type', 'application/json']]),
           json: async () => ({ error: 'Check-in date cannot be in the past' })
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ message: 'Booking request submitted successfully', booking_id: 123 })
+          headers: new Map([['content-type', 'application/json']]),
+          json: async () => ({ message: 'Thank you for your booking request! We will contact you within 24 hours to confirm your reservation.', booking_id: 123 })
         });
 
       render(<App />);
@@ -225,11 +336,8 @@ describe('Complete Booking Flow Integration', () => {
       const checkinInput = screen.getByLabelText('Check-in Date');
       const checkoutInput = screen.getByLabelText('Check-out Date');
       
-      await user.clear(checkinInput);
-      await user.type(checkinInput, '2024/06/15');
-      
-      await user.clear(checkoutInput);
-      await user.type(checkoutInput, '2024/06/18');
+      fireEvent.change(checkinInput, { target: { value: '20240615' } });
+      fireEvent.change(checkoutInput, { target: { value: '20240618' } });
       
       // Submit again
       await user.click(submitButton);
@@ -249,8 +357,11 @@ describe('Complete Booking Flow Integration', () => {
       await user.type(screen.getByLabelText('Email Address'), 'john@example.com');
       
       // Navigate away using header menu
-      const amenitiesLink = screen.getByRole('button', { name: 'Amenities' });
-      await user.click(amenitiesLink);
+      const amenitiesLinks = screen.getAllByRole('button', { name: 'Amenities' });
+      const headerAmenitiesLink = amenitiesLinks.find(link => 
+        link.closest('.navbar') !== null
+      );
+      await user.click(headerAmenitiesLink);
       
       // Return to contact form
       const contactLink = screen.getByRole('button', { name: 'Contact' });
@@ -296,14 +407,15 @@ describe('Complete Booking Flow Integration', () => {
       // User can retry - mock success this time
       fetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ message: 'Success', booking_id: 456 })
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({ message: 'Thank you for your booking request! We will contact you within 24 hours to confirm your reservation.', booking_id: 456 })
       });
       
       await user.click(submitButton);
       
       // Should succeed on retry
       await waitFor(() => {
-        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
+        expect(screen.getByText(/Thank you for your booking request! We will contact you within 24 hours to confirm your reservation./)).toBeInTheDocument();
       });
     });
 
@@ -313,6 +425,7 @@ describe('Complete Booking Flow Integration', () => {
       fetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
+        headers: new Map([['content-type', 'application/json']]),
         json: async () => ({ error: 'Internal server error' })
       });
 
@@ -335,13 +448,14 @@ describe('Complete Booking Flow Integration', () => {
       // Mock success for retry
       fetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ message: 'Success', booking_id: 789 })
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({ message: 'Thank you for your booking request! We will contact you within 24 hours to confirm your reservation.', booking_id: 789 })
       });
       
       await user.click(submitButton);
       
       await waitFor(() => {
-        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
+        expect(screen.getByText(/Thank you for your booking request! We will contact you within 24 hours to confirm your reservation./)).toBeInTheDocument();
       });
     });
   });

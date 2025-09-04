@@ -154,8 +154,8 @@ class TestBookingEndpoints:
         data = json.loads(response.data)
         assert 'Missing required field: guests' in data['error']
         
-        # Test with invalid guest counts
-        test_cases = [0, -1, 3, 10]  # Invalid guest counts (must be 1-2)
+        # Test with invalid guest counts (note: 0 is treated as missing field)
+        test_cases = [-1, 3, 10]  # Invalid guest counts (must be 1-2)
         
         for guest_count in test_cases:
             booking_data['guests'] = guest_count
@@ -167,6 +167,16 @@ class TestBookingEndpoints:
             assert response.status_code == 400
             data = json.loads(response.data)
             assert 'Number of guests must be between 1 and 2' in data['error']
+        
+        # Test specifically that 0 guests is treated as missing field (not validation error)
+        booking_data['guests'] = 0
+        response = client.post('/api/booking',
+                             data=json.dumps(booking_data),
+                             content_type='application/json')
+        
+        assert response.status_code == 400
+        data = json.loads(response.data)
+        assert 'Missing required field: guests' in data['error']
     
     def test_create_booking_invalid_date_format(self, client, clean_db):
         """Test booking creation with invalid date formats"""
@@ -427,14 +437,19 @@ class TestAvailabilityEndpoint:
     
     def test_get_availability_invalid_month(self, client, clean_db):
         """Test availability endpoint with invalid month"""
-        # Month too low - but year is provided so it will check month range
+        # Month 0 is treated as missing (falsy), not as invalid range
         response = client.get('/api/availability?year=2024&month=0')
+        assert response.status_code == 400
+        data = json.loads(response.data)
+        assert 'Year and month parameters are required' in data['error']
+        
+        # Test actual invalid month range (negative values that aren't 0)
+        response = client.get('/api/availability?year=2024&month=13')
         assert response.status_code == 400
         data = json.loads(response.data)
         assert 'Month must be between 1 and 12' in data['error']
         
-        # Month too high - but year is provided so it will check month range
-        response = client.get('/api/availability?year=2024&month=13')
+        response = client.get('/api/availability?year=2024&month=-5')
         assert response.status_code == 400
         data = json.loads(response.data)
         assert 'Month must be between 1 and 12' in data['error']

@@ -10,7 +10,7 @@ def test_app():
     # Create a temporary file for the test database
     db_fd, db_path = tempfile.mkstemp()
     
-    # Configure test settings
+    # Configure test settings BEFORE any database operations
     app.config.update({
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': f'sqlite:///{db_path}',
@@ -21,9 +21,11 @@ def test_app():
         'MAIL_DEFAULT_SENDER': 'test@example.com',
     })
     
-    # Create application context
+    # Re-initialize the database with the new configuration
     with app.app_context():
-        DatabaseManager.create_tables()
+        # Recreate the database with the new SQLite URI
+        db.drop_all()  # This may fail but that's OK
+        db.create_all()
         yield app
         
     # Clean up
