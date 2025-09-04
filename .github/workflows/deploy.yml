@@ -1,4 +1,4 @@
-name: Deploy 17 @ Peppertree
+name: Deploy 17 Peppertree
 
 on:
   push:
