@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './AvailabilityCalendar.css';
 
 const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());

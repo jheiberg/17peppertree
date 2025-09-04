@@ -17,7 +17,21 @@ EmailNotification.configure_email(app)
 
 # Initialize extensions
 DatabaseManager.initialize_database(app)
-CORS(app)
+
+# Configure CORS with explicit settings for mobile/tablet access
+cors_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000", 
+    "http://192.168.1.102:3000",
+    "http://0.0.0.0:3000"
+]
+
+CORS(app, 
+     origins=cors_origins,
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     supports_credentials=True)
+
 mail = Mail(app)
 email_service = EmailNotification(mail)
 

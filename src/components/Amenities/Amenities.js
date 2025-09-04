@@ -1,4 +1,5 @@
 import React from 'react';
+import './Amenities.css';
 
 const Amenities = () => {
   const amenities = [
@@ -9,8 +10,8 @@ const Amenities = () => {
     },
     {
       icon: "fas fa-car",
-      title: "Secure Parking",
-      description: "Free secure parking included with your stay"
+      title: "Free Parking",
+      description: "Free parking included with your stay"
     },
     {
       icon: "fas fa-coffee",
@@ -21,11 +22,6 @@ const Amenities = () => {
       icon: "fas fa-shield-alt",
       title: "24/7 Security",
       description: "24-hour neighborhood security for peace of mind"
-    },
-    {
-      icon: "fas fa-bolt",
-      title: "Load Shedding Ready",
-      description: "Backup power provisions during outages"
     },
     {
       icon: "fas fa-tshirt",

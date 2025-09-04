@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import AvailabilityCalendar from './AvailabilityCalendar';
+import AvailabilityCalendar from '../AvailabilityCalendar/AvailabilityCalendar';
+import './Contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,23 +13,73 @@ const Contact = () => {
     message: ''
   });
 
+  // Format date input to yyyy/mm/dd and validate
+  const formatDateInput = (value) => {
+    // Remove any non-numeric characters except forward slashes
+    let cleaned = value.replace(/[^\d/]/g, '');
+    
+    // Add forward slashes automatically
+    if (cleaned.length >= 5) {
+      cleaned = cleaned.slice(0, 4) + '/' + cleaned.slice(4);
+    }
+    if (cleaned.length >= 8) {
+      cleaned = cleaned.slice(0, 7) + '/' + cleaned.slice(7);
+    }
+    
+    // Limit to 10 characters (yyyy/mm/dd)
+    return cleaned.slice(0, 10);
+  };
+
+  // Validate yyyy/mm/dd format
+  const isValidDateFormat = (dateStr) => {
+    const regex = /^\d{4}\/\d{2}\/\d{2}$/;
+    if (!regex.test(dateStr)) return false;
+    
+    const [year, month, day] = dateStr.split('/').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && 
+           date.getMonth() === month - 1 && 
+           date.getDate() === day;
+  };
+
+  // Convert yyyy/mm/dd to Date object
+  const dateStringToDate = (dateStr) => {
+    if (!isValidDateFormat(dateStr)) return null;
+    const [year, month, day] = dateStr.split('/').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // Handle date input changes and validate
+    // Handle date input changes with yyyy/mm/dd formatting
     if (name === 'checkin') {
+      const formattedValue = formatDateInput(value);
+      const checkinDate = dateStringToDate(formattedValue);
+      const checkoutDate = formData.checkout ? dateStringToDate(formData.checkout) : null;
+      
       setFormData({
         ...formData,
-        checkin: value,
+        checkin: formattedValue,
         // Clear checkout if new checkin is after current checkout
-        checkout: formData.checkout && value >= formData.checkout ? '' : formData.checkout
+        checkout: (checkoutDate && checkinDate && checkinDate >= checkoutDate) ? '' : formData.checkout
       });
     } else if (name === 'checkout') {
-      // Only allow checkout if checkin is set and checkout is after checkin
-      if (formData.checkin && value > formData.checkin) {
+      const formattedValue = formatDateInput(value);
+      const checkinDate = formData.checkin ? dateStringToDate(formData.checkin) : null;
+      const checkoutDate = dateStringToDate(formattedValue);
+      
+      // Only update if checkin exists and checkout is after checkin
+      if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
         setFormData({
           ...formData,
-          checkout: value
+          checkout: formattedValue
+        });
+      } else if (!checkoutDate && formattedValue.length <= 10) {
+        // Allow typing while formatting
+        setFormData({
+          ...formData,
+          checkout: formattedValue
         });
       }
     } else {
@@ -80,14 +131,21 @@ const Contact = () => {
     setSubmitMessage('');
     setMessageType('');
 
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    console.log('Submitting to API URL:', apiUrl);
+    console.log('Form data:', formData);
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/booking`, {
+      const response = await fetch(`${apiUrl}/booking`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', [...response.headers.entries()]);
 
       const data = await response.json();
 
@@ -104,12 +162,23 @@ const Contact = () => {
           message: ''
         });
       } else {
+        console.error('API Error Response:', data);
         setSubmitMessage(data.error || 'There was an error submitting your request. Please try again.');
         setMessageType('error');
       }
     } catch (error) {
-      console.error('Error submitting booking:', error);
-      setSubmitMessage('There was an error submitting your request. Please check your connection and try again.');
+      console.error('Network/Fetch Error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setSubmitMessage(`Cannot connect to server at ${apiUrl}. Please check if the backend is running and accessible from this device.`);
+      } else {
+        setSubmitMessage('There was an error submitting your request. Please check your connection and try again.');
+      }
       setMessageType('error');
     } finally {
       setIsSubmitting(false);
@@ -155,11 +224,6 @@ const Contact = () => {
           <div className="booking-form">
             <h3>Reserve Your Stay</h3>
             <p className="form-subtitle">Create unforgettable memories at 17 @ Peppertree</p>
-            {submitMessage && (
-              <div className={`form-message ${messageType}`}>
-                {submitMessage}
-              </div>
-            )}
             <form onSubmit={handleSubmit}>
               <div className="form-section">
                 <h4 className="section-title">Stay Details</h4>
@@ -202,24 +266,26 @@ const Contact = () => {
                   <div className="form-group">
                     <label htmlFor="checkin">Check-in Date</label>
                     <input 
-                      type="date" 
+                      type="text" 
                       id="checkin" 
                       name="checkin" 
                       value={formData.checkin}
                       onChange={handleChange}
-                      min={formatDateForInput()}
+                      placeholder="YYYY/MM/DD"
+                      maxLength="10"
                       required 
                     />
                   </div>
                   <div className="form-group">
                     <label htmlFor="checkout">Check-out Date</label>
                     <input 
-                      type="date" 
+                      type="text" 
                       id="checkout" 
                       name="checkout" 
                       value={formData.checkout}
                       onChange={handleChange}
-                      min={formData.checkin || formatDateForInput()}
+                      placeholder="YYYY/MM/DD"
+                      maxLength="10"
                       required 
                     />
                   </div>
@@ -296,6 +362,11 @@ const Contact = () => {
                 </div>
               </div>
 
+              {submitMessage && (
+                <div className={`form-message ${messageType}`}>
+                  {submitMessage}
+                </div>
+              )}
               <button type="submit" className="submit-button" disabled={isSubmitting}>
                 <i className={isSubmitting ? "fas fa-spinner fa-spin" : "fas fa-paper-plane"}></i>
                 {isSubmitting ? 'Sending Request...' : 'Send Booking Request'}
