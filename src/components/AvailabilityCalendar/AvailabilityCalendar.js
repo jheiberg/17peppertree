@@ -205,6 +205,7 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
             className="nav-button"
             onClick={() => navigateMonth(-1)}
             disabled={loading}
+            data-testid="prev-month"
           >
             <i className="fas fa-chevron-left"></i>
           </button>
@@ -216,6 +217,7 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
             className="nav-button"
             onClick={() => navigateMonth(1)}
             disabled={loading}
+            data-testid="next-month"
           >
             <i className="fas fa-chevron-right"></i>
           </button>

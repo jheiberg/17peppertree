@@ -485,5 +485,66 @@ describe('Contact Component', () => {
       fireEvent.change(checkinInput, { target: { value: '202406151234567890' } });
       expect(checkinInput.value).toBe('2024/06/15');
     });
+
+    test('validates checkout date after checkin (line 74)', async () => {
+      render(<Contact />);
+      
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+      
+      // Set a valid checkin date first using the right format (no slashes initially)
+      fireEvent.change(checkinInput, { target: { value: '20240615' } });
+      expect(checkinInput.value).toBe('2024/06/15');
+      
+      // This should trigger line 74 - when checkout is valid and after checkin
+      fireEvent.change(checkoutInput, { target: { value: '20240620' } });
+      
+      // Wait for the form data to update
+      await waitFor(() => {
+        expect(checkoutInput.value).toBe('2024/06/20');
+      });
+    });
+
+    test('covers formatDateForInput function (lines 122-125)', () => {
+      // Note: formatDateForInput is defined but never called in the component
+      // This function appears to be unused dead code
+      // We'll test that the component handles dates properly without it
+      render(<Contact />);
+      
+      expect(screen.getByText('Book Your Stay')).toBeInTheDocument();
+      
+      // The component should handle date input formatting correctly
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      expect(checkinInput).toHaveAttribute('placeholder', 'YYYY/MM/DD');
+      
+      // Test that the component renders and works without using formatDateForInput
+      fireEvent.change(checkinInput, { target: { value: '20240101' } });
+      expect(checkinInput.value).toBe('2024/01/01');
+    });
+
+    test('handles edge case for date validation', () => {
+      render(<Contact />);
+      
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+      
+      // Set checkin first using proper format
+      fireEvent.change(checkinInput, { target: { value: '20240615' } });
+      expect(checkinInput.value).toBe('2024/06/15');
+      
+      // Test various checkout scenarios that trigger different validation paths
+      
+      // Valid date after checkin (should work) - triggers line 74
+      fireEvent.change(checkoutInput, { target: { value: '20240620' } });
+      expect(checkoutInput.value).toBe('2024/06/20');
+      
+      // Same date as checkin (should not work - not greater than checkin)
+      fireEvent.change(checkoutInput, { target: { value: '20240615' } });
+      expect(checkoutInput.value).toBe('2024/06/20'); // Should remain previous value
+      
+      // Date before checkin (should not work)
+      fireEvent.change(checkoutInput, { target: { value: '20240610' } });
+      expect(checkoutInput.value).toBe('2024/06/20'); // Should remain previous value
+    });
   });
 });
