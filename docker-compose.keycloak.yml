@@ -1,0 +1,144 @@
+services:
+  # Keycloak Identity Provider
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: peppertree_keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak_db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak_password
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_HTTP_PORT: 8080
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin_password
+    command:
+      - start-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      keycloak_db:
+        condition: service_healthy
+    networks:
+      - peppertree_network
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Separate PostgreSQL for Keycloak
+  keycloak_db:
+    image: postgres:15-alpine
+    container_name: peppertree_keycloak_db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak_password
+    volumes:
+      - keycloak_postgres_data:/var/lib/postgresql/data
+    networks:
+      - peppertree_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL Database for Application
+  db:
+    image: postgres:15-alpine
+    container_name: peppertree_db
+    environment:
+      POSTGRES_DB: peppertree
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - peppertree_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend API with OAuth2 support
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: peppertree_backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/peppertree
+      - SECRET_KEY=your-super-secure-secret-key-change-this-in-production
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      - OWNER_EMAIL=${OWNER_EMAIL}
+      - FLASK_ENV=development
+      # Keycloak OAuth2 settings
+      - KEYCLOAK_SERVER_URL=http://localhost:8080
+      - KEYCLOAK_CLIENT_ID=peppertree-admin
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_REALM=peppertree
+      - KEYCLOAK_REDIRECT_URI=http://localhost:3000/admin/callback
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "localhost:172.19.0.1"
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend with Admin Dashboard
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peppertree_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - keycloak
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - REACT_APP_KEYCLOAK_URL=http://localhost:8080
+      - REACT_APP_KEYCLOAK_REALM=peppertree
+      - REACT_APP_KEYCLOAK_CLIENT_ID=peppertree-admin
+
+volumes:
+  postgres_data:
+    driver: local
+  keycloak_postgres_data:
+    driver: local
+
+networks:
+  peppertree_network:
+    driver: bridge

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import AvailabilityCalendar from '../AvailabilityCalendar/AvailabilityCalendar';
-import './Contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -186,52 +185,70 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="contact">
-      <div className="container">
+    <section id="contact" className="section-padding bg-gradient-to-br from-primary to-dark-brown text-white">
+      <div className="container-custom">
         <div className="section-header">
-          <h2>Book Your Stay</h2>
-          <p>Contact us to reserve your perfect getaway</p>
+          <h2 className="section-title text-white">Book Your Stay</h2>
+          <p className="section-subtitle text-white">Contact us to reserve your perfect getaway</p>
         </div>
-        <div className="contact-content">
-          <div className="contact-info">
-            <div className="contact-card">
-              <div className="contact-icon">
-                <i className="fas fa-phone"></i>
+        <div className="grid lg:grid-cols-5 grid-cols-1 gap-16">
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <div className="flex items-center gap-6 bg-white/10 backdrop-blur-custom p-8 rounded-2xl">
+              <div className="w-15 h-15 bg-gold rounded-full flex items-center justify-center">
+                <i className="fas fa-phone text-xl text-white"></i>
               </div>
               <div>
-                <h3>Phone</h3>
-                <p>063 630 7345</p>
+                <h3 className="text-white text-lg font-display mb-2">Phone</h3>
+                <p className="text-cream mb-2">063 630 7345</p>
+                <a
+                  href="https://wa.me/27636307345?text=Hi!%20I%27d%20like%20to%20inquire%20about%20booking%20at%2017%20%40%20Peppertree"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors duration-200 text-sm font-medium"
+                >
+                  <i className="fab fa-whatsapp text-lg"></i>
+                  WhatsApp us
+                </a>
               </div>
             </div>
-            <div className="pricing-info">
-              <h3>Rates</h3>
-              <div className="price-display">
-                <span className="price-large">R850</span>
-                <span className="price-small">per night for 2 guests</span>
+            <div className="bg-white/10 backdrop-blur-custom p-8 rounded-2xl text-center">
+              <h3 className="text-white text-lg font-display mb-4">Rates</h3>
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-5xl font-bold text-gold">R850</span>
+                <span className="text-cream">per night for 2 guests</span>
               </div>
             </div>
-            <div className="rating-display">
-              <div className="stars-large">
+            <div className="bg-white/10 backdrop-blur-custom p-8 rounded-2xl text-center">
+              <div className="text-gold text-2xl mb-4">
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star"></i>
                 <i className="fas fa-star"></i>
               </div>
-              <p>Rated 4.9/5 by 68 guests</p>
+              <p className="text-cream">Rated 4.9/5 by 68 guests</p>
             </div>
           </div>
-          <div className="booking-form">
-            <h3>Reserve Your Stay</h3>
-            <p className="form-subtitle">Create unforgettable memories at 17 @ Peppertree</p>
+          <div className="lg:col-span-3 bg-form-gradient p-12 rounded-3xl shadow-brown border-2 border-secondary/40 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-accent to-gold"></div>
+            <h3 className="text-primary mb-10 text-center text-3xl relative font-display">
+              Reserve Your Stay
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-15 h-0.5 bg-gradient-to-r from-accent to-gold rounded-full"></div>
+            </h3>
+            <p className="text-center text-text-color italic mb-10 text-lg opacity-80">
+              Create unforgettable memories at 17 @ Peppertree
+            </p>
             <form onSubmit={handleSubmit}>
-              <div className="form-section">
-                <h4 className="section-title">Stay Details</h4>
-                
-                <div className="calendar-toggle">
-                  <button 
-                    type="button" 
-                    className="calendar-toggle-btn"
+              <div className="mb-10 p-6 bg-white/60 rounded-2xl border-l-4 border-accent">
+                <h4 className="text-primary text-xl mb-6 font-semibold flex items-center gap-2 font-display">
+                  <div className="w-2 h-2 bg-gold rounded-full"></div>
+                  Stay Details
+                </h4>
+
+                <div className="mb-6 text-center">
+                  <button
+                    type="button"
+                    className="btn-secondary inline-flex items-center gap-2"
                     onClick={() => setShowCalendar(!showCalendar)}
                   >
                     <i className={`fas fa-calendar-alt`}></i>
@@ -251,8 +268,8 @@ const Contact = () => {
                 )}
 
                 {formData.checkin && formData.checkout && (
-                  <div className="date-selection-summary">
-                    <i className="fas fa-calendar-check"></i>
+                  <div className="my-6 p-6 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl flex items-center gap-3 text-green-700 font-medium">
+                    <i className="fas fa-calendar-check text-green-500 text-xl"></i>
                     <span>
                       <strong>Selected dates:</strong> {' '}
                       {new Date(formData.checkin).toLocaleDateString()} to {' '}
@@ -262,42 +279,45 @@ const Contact = () => {
                   </div>
                 )}
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="checkin">Check-in Date</label>
-                    <input 
-                      type="text" 
-                      id="checkin" 
-                      name="checkin" 
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4">
+                  <div className="mb-8">
+                    <label htmlFor="checkin" className="form-label">Check-in Date</label>
+                    <input
+                      type="text"
+                      id="checkin"
+                      name="checkin"
                       value={formData.checkin}
                       onChange={handleChange}
                       placeholder="YYYY/MM/DD"
                       maxLength="10"
-                      required 
+                      required
+                      className="form-input"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="checkout">Check-out Date</label>
-                    <input 
-                      type="text" 
-                      id="checkout" 
-                      name="checkout" 
+                  <div className="mb-8">
+                    <label htmlFor="checkout" className="form-label">Check-out Date</label>
+                    <input
+                      type="text"
+                      id="checkout"
+                      name="checkout"
                       value={formData.checkout}
                       onChange={handleChange}
                       placeholder="YYYY/MM/DD"
                       maxLength="10"
-                      required 
+                      required
+                      className="form-input"
                     />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="guests">Number of Guests</label>
-                  <select 
-                    id="guests" 
-                    name="guests" 
+                <div className="mb-8">
+                  <label htmlFor="guests" className="form-label">Number of Guests</label>
+                  <select
+                    id="guests"
+                    name="guests"
                     value={formData.guests}
                     onChange={handleChange}
                     required
+                    className="form-input"
                   >
                     <option value="1">1 Guest</option>
                     <option value="2">2 Guests (Maximum)</option>
@@ -305,70 +325,91 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="form-section">
-                <h4 className="section-title">Guest Information</h4>
-                <div className="form-group">
-                  <label htmlFor="name">Full Name</label>
-                  <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
+              <div className="mb-10 p-6 bg-white/60 rounded-2xl border-l-4 border-accent">
+                <h4 className="text-primary text-xl mb-6 font-semibold flex items-center gap-2 font-display">
+                  <div className="w-2 h-2 bg-gold rounded-full"></div>
+                  Guest Information
+                </h4>
+                <div className="mb-8">
+                  <label htmlFor="name" className="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Enter your full name"
-                    required 
+                    required
+                    className="form-input"
                   />
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4">
+                  <div className="mb-8">
+                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="your.email@example.com"
-                      required 
+                      required
+                      className="form-input"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="phone">Phone Number</label>
-                    <input 
-                      type="tel" 
-                      id="phone" 
-                      name="phone" 
+                  <div className="mb-8">
+                    <label htmlFor="phone" className="form-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="Your contact number"
-                      required 
+                      required
+                      className="form-input"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="form-section">
-                <h4 className="section-title">Special Requests</h4>
-                <div className="form-group">
-                  <label htmlFor="message">Additional Information</label>
-                  <textarea 
-                    id="message" 
-                    name="message" 
-                    rows="4" 
+              <div className="mb-10 p-6 bg-white/60 rounded-2xl border-l-4 border-accent">
+                <h4 className="text-primary text-xl mb-6 font-semibold flex items-center gap-2 font-display">
+                  <div className="w-2 h-2 bg-gold rounded-full"></div>
+                  Special Requests
+                </h4>
+                <div className="mb-8">
+                  <label htmlFor="message" className="form-label">Additional Information</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="4"
                     value={formData.message}
                     onChange={handleChange}
                     placeholder="Let us know about any special requirements, dietary needs, or questions you might have..."
+                    className="form-input resize-y"
                   ></textarea>
                 </div>
               </div>
 
               {submitMessage && (
-                <div className={`form-message ${messageType}`}>
+                <div className={`p-4 rounded-xl mb-8 font-medium text-center ${
+                  messageType === 'success'
+                    ? 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300 text-green-800'
+                    : 'bg-gradient-to-br from-red-100 to-red-200 border-2 border-red-300 text-red-800'
+                }`}>
                   {submitMessage}
                 </div>
               )}
-              <button type="submit" className="submit-button" disabled={isSubmitting}>
-                <i className={isSubmitting ? "fas fa-spinner fa-spin" : "fas fa-paper-plane"}></i>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full bg-gradient-to-r from-primary via-accent to-gold text-white border-none py-6 px-8 text-lg rounded-3xl cursor-pointer transition-all duration-300 font-semibold uppercase tracking-wider relative overflow-hidden mt-4 font-display ${
+                  isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-brown'
+                }`}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -translate-x-full transition-transform duration-600 hover:translate-x-full"></div>
+                <i className={isSubmitting ? "fas fa-spinner fa-spin mr-3" : "fas fa-paper-plane mr-3"}></i>
                 {isSubmitting ? 'Sending Request...' : 'Send Booking Request'}
               </button>
             </form>

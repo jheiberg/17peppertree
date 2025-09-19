@@ -1,5 +1,4 @@
 import React from 'react';
-import './Amenities.css';
 
 const Amenities = () => {
   const amenities = [
@@ -31,20 +30,23 @@ const Amenities = () => {
   ];
 
   return (
-    <section id="amenities" className="amenities">
-      <div className="container">
+    <section id="amenities" className="section-padding bg-gradient-to-br from-cream to-warm-white">
+      <div className="container-custom">
         <div className="section-header">
-          <h2>Premium Amenities</h2>
-          <p>Everything you need for a comfortable stay</p>
+          <h2 className="section-title">Premium Amenities</h2>
+          <p className="section-subtitle">Everything you need for a comfortable stay</p>
         </div>
-        <div className="amenities-grid">
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-8">
           {amenities.map((amenity, index) => (
-            <div key={index} className="amenity-card">
-              <div className="amenity-icon">
-                <i className={amenity.icon}></i>
+            <div
+              key={index}
+              className="bg-white p-10 rounded-3xl text-center shadow-soft transition-all duration-300 hover:-translate-y-3 hover:shadow-brown border border-primary/10"
+            >
+              <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-6">
+                <i className={`${amenity.icon} text-2xl text-white`}></i>
               </div>
-              <h3>{amenity.title}</h3>
-              <p>{amenity.description}</p>
+              <h3 className="text-primary mb-4 text-xl font-display">{amenity.title}</h3>
+              <p className="text-text-color leading-relaxed">{amenity.description}</p>
             </div>
           ))}
         </div>

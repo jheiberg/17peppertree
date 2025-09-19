@@ -18,13 +18,24 @@ A full-stack web application for the 17 @ Peppertree guest accommodation in Vred
 - **Email notifications** for guests and property owners
 - **Input validation** and error handling
 - **CORS support** for frontend integration
+- **OAuth2 authentication** with Keycloak integration
+- **Admin API endpoints** for booking and payment management
 
 ### Infrastructure (Docker)
 - **Multi-container setup** with Docker Compose
 - **Nginx reverse proxy** with rate limiting and security headers
 - **Health checks** for all services
 - **Volume persistence** for database data
+- **Keycloak identity provider** for secure admin access
 - **Production-ready configuration**
+
+### Admin Portal
+- **Secure OAuth2 authentication** via Keycloak
+- **Booking management** with approval workflow
+- **Payment tracking** and status updates
+- **Dashboard with statistics** and recent activity
+- **Email notifications** to guests on status changes
+- **Role-based access control** for property management
 
 ## 🚀 Quick Start
 
@@ -51,6 +62,8 @@ docker-compose up -d --build
 ### 3. Access the Application
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5000/api
+- **Admin Portal**: http://localhost:3000/admin (requires setup)
+- **Keycloak Admin**: http://localhost:8080/admin
 - **Nginx (Production)**: http://localhost:80
 - **Database**: localhost:5432
 
@@ -67,22 +80,64 @@ OWNER_EMAIL=owner@peppertree.com
 
 For Gmail, use an App Password (not your regular password).
 
+## 🔐 Admin Portal Setup
+
+The admin portal provides secure management of bookings and payments. **See [ADMIN_SETUP.md](ADMIN_SETUP.md) for detailed instructions.**
+
+### Quick Setup
+```bash
+# 1. Start services with Keycloak
+docker compose -f docker-compose.keycloak.yml up -d
+
+# 2. Configure Keycloak
+chmod +x setup-keycloak.sh
+./setup-keycloak.sh
+
+# 3. Apply database migrations
+docker exec -it peppertree_db psql -U postgres -d peppertree -f /migrations/add_admin_fields.sql
+
+# 4. Install frontend dependencies
+npm install
+```
+
+### Access Admin Portal
+- **URL**: http://localhost:3000/admin
+- **Default User**: admin (password provided by setup script)
+- **Features**: Booking approval, payment tracking, dashboard statistics
+
 ## 🗄️ Database
 
 The PostgreSQL database is automatically initialized with:
-- **booking_requests** table for storing reservations
+- **booking_requests** table for storing reservations with admin fields
 - **property_settings** table for configuration
+- **Payment tracking** fields (status, amount, reference, method)
+- **Admin management** fields (notes, status history, soft delete)
 - **Indexes** for optimal performance
 - **Constraints** for data integrity
 
 ## 🔧 API Endpoints
 
-### Booking Management
+### Public Booking API
 - `GET /api/health` - Health check
 - `POST /api/booking` - Create booking request
 - `GET /api/bookings` - List all bookings
 - `GET /api/booking/{id}` - Get specific booking
 - `PUT /api/booking/{id}/status` - Update booking status
+
+### Admin API (Protected)
+- `GET /api/admin/bookings` - List all bookings with filtering
+- `GET /api/admin/booking/{id}` - Get detailed booking information
+- `PUT /api/admin/booking/{id}/status` - Update booking status with notifications
+- `PUT /api/admin/booking/{id}/payment` - Update payment information
+- `DELETE /api/admin/booking/{id}` - Soft delete booking
+- `GET /api/admin/dashboard/stats` - Get dashboard statistics
+
+### Authentication API
+- `GET /api/auth/login` - Initiate OAuth2 flow
+- `POST /api/auth/callback` - Handle OAuth2 callback
+- `POST /api/auth/refresh` - Refresh access token
+- `POST /api/auth/logout` - Logout user
+- `GET /api/auth/user` - Get current user info
 
 ### Example Booking Request
 ```json
@@ -157,9 +212,14 @@ The application is fully responsive with:
 
 ## 🔄 Deployment Options
 
-### Development
+### Standard Development
 ```bash
 docker-compose up --build
+```
+
+### With Admin Portal
+```bash
+docker compose -f docker-compose.keycloak.yml up --build
 ```
 
 ### Production

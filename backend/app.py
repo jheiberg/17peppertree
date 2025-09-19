@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 from email_notifications import EmailNotification
 from database import DatabaseManager, BookingRequest, db
+from auth import init_auth_routes
+from admin_routes import admin_bp
 
 load_dotenv()
 
@@ -17,6 +19,20 @@ EmailNotification.configure_email(app)
 
 # Initialize extensions
 DatabaseManager.initialize_database(app)
+
+# Create database tables and triggers on app startup
+def create_tables_and_triggers():
+    """Create database tables and triggers on startup"""
+    with app.app_context():
+        DatabaseManager.create_tables()
+        try:
+            from migrations import create_updated_at_trigger
+            create_updated_at_trigger()
+        except Exception as e:
+            app.logger.warning(f"Could not create trigger: {e}")
+
+# Initialize database on startup (replaces before_first_request)
+create_tables_and_triggers()
 
 # Configure CORS with explicit settings for mobile/tablet access
 cors_origins = [
@@ -35,6 +51,11 @@ CORS(app,
 mail = Mail(app)
 email_service = EmailNotification(mail)
 
+# Initialize authentication routes
+init_auth_routes(app)
+
+# Register admin blueprint
+app.register_blueprint(admin_bp)
 
 # API Routes
 @app.route('/api/health', methods=['GET'])
@@ -193,5 +214,8 @@ def get_availability():
 if __name__ == '__main__':
     with app.app_context():
         DatabaseManager.create_tables()
+        # Run database migrations
+        from migrations import run_migrations
+        run_migrations()
     # Development server - in production, use Gunicorn via wsgi.py
     app.run(host='0.0.0.0', port=5000, debug=os.getenv('FLASK_DEBUG', 'False').lower() == 'true')

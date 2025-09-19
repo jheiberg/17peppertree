@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Silent SSO Check</title>
+</head>
+<body>
+    <script>
+        var keycloakConfig = {
+            url: 'http://localhost:8080',
+            realm: 'peppertree',
+            clientId: 'peppertree-admin'
+        };
+
+        // Include Keycloak JS adapter
+        var script = document.createElement('script');
+        script.src = keycloakConfig.url + '/js/keycloak.js';
+        script.onload = function() {
+            var keycloak = new Keycloak(keycloakConfig);
+            keycloak.init({
+                onLoad: 'check-sso',
+                silentCheckSsoRedirectUri: window.location.href,
+                checkLoginIframe: false
+            }).then(function(authenticated) {
+                parent.postMessage({authenticated: authenticated}, window.location.origin);
+            }).catch(function() {
+                parent.postMessage({authenticated: false}, window.location.origin);
+            });
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

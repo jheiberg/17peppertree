@@ -39,8 +39,43 @@ class BookingRequest(db.Model):
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     special_requests = db.Column(db.Text)
-    status = db.Column(db.String(20), default='pending')  # pending, confirmed, rejected
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected, cancelled, completed, deleted
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    
+    # Payment fields
+    payment_status = db.Column(db.String(20), default='pending')  # pending, paid, partial, refunded, cancelled
+    payment_amount = db.Column(db.Numeric(10, 2))
+    payment_date = db.Column(db.DateTime)
+    payment_reference = db.Column(db.String(100))
+    payment_method = db.Column(db.String(50))
+    
+    # Admin fields
+    admin_notes = db.Column(db.Text)
+    status_history = db.Column(db.JSON)
+    deleted_at = db.Column(db.DateTime)
+    deleted_by = db.Column(db.String(120))
+    
+    # Aliases for compatibility
+    @property
+    def check_in(self):
+        return self.checkin_date
+    
+    @property
+    def check_out(self):
+        return self.checkout_date
+    
+    @property
+    def guest_email(self):
+        return self.email
+    
+    @property
+    def guest_phone(self):
+        return self.phone
+    
+    @property
+    def message(self):
+        return self.special_requests
     
     def to_dict(self):
         """Convert booking request to dictionary for JSON serialization"""
@@ -54,5 +89,11 @@ class BookingRequest(db.Model):
             'phone': self.phone,
             'special_requests': self.special_requests,
             'status': self.status,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'payment_status': self.payment_status,
+            'payment_amount': float(self.payment_amount) if self.payment_amount else None,
+            'payment_date': self.payment_date.isoformat() if self.payment_date else None,
+            'payment_reference': self.payment_reference,
+            'admin_notes': self.admin_notes
         }

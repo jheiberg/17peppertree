@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom font imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Custom utility classes */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-body text-text-color overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-button-gradient text-white border-none px-10 py-4 text-xl rounded-full cursor-pointer transition-all duration-300 uppercase font-semibold tracking-wider hover:-translate-y-1 hover:shadow-gold;
+  }
+
+  .btn-secondary {
+    @apply bg-gradient-to-r from-accent to-gold text-white border-none px-8 py-3 text-base rounded-xl cursor-pointer transition-all duration-300 font-medium hover:-translate-y-0.5 hover:shadow-brown;
+  }
+
+  .container-custom {
+    @apply max-w-6xl mx-auto px-5;
+  }
+
+  .section-padding {
+    @apply py-24;
+  }
+
+  .section-header {
+    @apply text-center mb-16;
+  }
+
+  .section-title {
+    @apply text-4xl text-primary mb-4 font-display font-semibold;
+  }
+
+  .section-subtitle {
+    @apply text-xl text-text-color max-w-2xl mx-auto;
+  }
+
+  .form-input {
+    @apply w-full px-6 py-5 border-2 border-primary/30 rounded-2xl text-base transition-all duration-300 font-body bg-white/90 text-text-color shadow-inner focus:outline-none focus:border-accent focus:bg-white focus:shadow-brown focus:-translate-y-px;
+  }
+
+  .form-label {
+    @apply block mb-3 text-dark-brown font-semibold text-base tracking-wider;
+  }
+
+  .card {
+    @apply bg-white p-8 rounded-2xl shadow-soft transition-all duration-300 hover:-translate-y-2 hover:shadow-brown;
+  }
+
+  .nav-link {
+    @apply text-warm-white no-underline bg-transparent border-none text-base cursor-pointer transition-colors duration-300 px-4 py-2 rounded-3xl hover:text-secondary hover:bg-white/10;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .backdrop-blur-custom {
+    backdrop-filter: blur(10px);
+  }
+
+  .filter-sepia {
+    filter: sepia(0.15) saturate(1.1) brightness(1.05) contrast(1.02);
+  }
+
+  .filter-sepia-hover {
+    filter: sepia(0.2) saturate(1.15) brightness(1.08) contrast(1.05);
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

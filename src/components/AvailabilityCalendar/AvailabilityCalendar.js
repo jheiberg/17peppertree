@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './AvailabilityCalendar.css';
 
 const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -120,7 +119,7 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
 
     // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+      days.push(<div key={`empty-${i}`} className="aspect-square flex flex-col items-center justify-center cursor-default bg-transparent"></div>);
     }
 
     // Days of the month
@@ -130,45 +129,45 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
       const disabled = isDateDisabled(date);
       const status = getDateStatus(dateStr);
 
-      let dayClass = 'calendar-day';
+      let dayClass = 'aspect-square flex flex-col items-center justify-center cursor-pointer transition-all duration-200 font-medium relative rounded-lg border-2 border-transparent min-h-11';
       let title = 'Available - Click to select';
       let content = day;
 
       if (disabled) {
-        dayClass += ' disabled';
+        dayClass += ' bg-gray-100 text-gray-400 cursor-not-allowed';
         title = 'Past date or unavailable';
       } else {
         switch (status) {
           case 'checkin':
-            dayClass += ' selected checkin';
+            dayClass += ' bg-blue-100 text-blue-800 border-blue-500 font-bold shadow-md';
             title = 'Check-in date';
             content = (
-              <div>
-                <span className="day-number">{day}</span>
-                <span className="day-label">IN</span>
+              <div className="flex flex-col items-center">
+                <span className="text-base font-bold">{day}</span>
+                <span className="text-xs font-semibold tracking-wider">IN</span>
               </div>
             );
             break;
           case 'checkout':
-            dayClass += ' selected checkout';
+            dayClass += ' bg-orange-100 text-orange-800 border-orange-500 font-bold shadow-md';
             title = 'Check-out date';
             content = (
-              <div>
-                <span className="day-number">{day}</span>
-                <span className="day-label">OUT</span>
+              <div className="flex flex-col items-center">
+                <span className="text-base font-bold">{day}</span>
+                <span className="text-xs font-semibold tracking-wider">OUT</span>
               </div>
             );
             break;
           case 'in-range':
-            dayClass += ' in-range';
+            dayClass += ' bg-gradient-to-br from-blue-50 to-orange-50 text-dark-brown border-accent';
             title = 'Selected stay period';
             break;
           case 'unavailable':
-            dayClass += ' unavailable';
+            dayClass += ' bg-red-100 text-red-800 border-red-400 cursor-not-allowed';
             title = 'Already booked - Not available';
             break;
           default:
-            dayClass += ' available';
+            dayClass += ' bg-green-50 text-green-800 border-green-500 hover:bg-green-100 hover:scale-105 hover:shadow-md';
             title = 'Available - Click to select';
         }
       }
@@ -196,25 +195,25 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="availability-calendar">
-      <div className="calendar-header">
-        <h4>Select Your Dates</h4>
-        <div className="calendar-navigation">
+    <div className="bg-white/95 rounded-2xl p-8 my-8 shadow-brown border border-primary/20">
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-6 pb-4 border-b-2 border-secondary">
+        <h4 className="text-dark-brown m-0 text-2xl font-display font-semibold">Select Your Dates</h4>
+        <div className="flex items-center gap-4 mt-4 lg:mt-0">
           <button
             type="button"
-            className="nav-button"
+            className="bg-secondary border-none w-10 h-10 rounded-full cursor-pointer transition-all duration-300 flex items-center justify-center text-dark-brown hover:bg-accent hover:text-white hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => navigateMonth(-1)}
             disabled={loading}
             data-testid="prev-month"
           >
             <i className="fas fa-chevron-left"></i>
           </button>
-          <span className="current-month">
+          <span className="font-semibold text-dark-brown text-xl min-w-45 text-center font-display">
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </span>
           <button
             type="button"
-            className="nav-button"
+            className="bg-secondary border-none w-10 h-10 rounded-full cursor-pointer transition-all duration-300 flex items-center justify-center text-dark-brown hover:bg-accent hover:text-white hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => navigateMonth(1)}
             disabled={loading}
             data-testid="next-month"
@@ -224,41 +223,41 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
         </div>
       </div>
 
-      <div className="calendar-legend">
-        <div className="legend-item">
-          <div className="legend-color available"></div>
+      <div className="flex justify-center gap-8 mb-6 flex-wrap">
+        <div className="flex items-center gap-2 text-sm text-dark-brown">
+          <div className="w-4 h-4 rounded-full bg-green-50 border-2 border-green-500"></div>
           <span>Available</span>
         </div>
-        <div className="legend-item">
-          <div className="legend-color unavailable"></div>
+        <div className="flex items-center gap-2 text-sm text-dark-brown">
+          <div className="w-4 h-4 rounded-full bg-red-100 border-2 border-red-400"></div>
           <span>Booked/Unavailable</span>
         </div>
-        <div className="legend-item">
-          <div className="legend-color checkin"></div>
+        <div className="flex items-center gap-2 text-sm text-dark-brown">
+          <div className="w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
           <span>Check-in</span>
         </div>
-        <div className="legend-item">
-          <div className="legend-color checkout"></div>
+        <div className="flex items-center gap-2 text-sm text-dark-brown">
+          <div className="w-4 h-4 rounded-full bg-orange-100 border-2 border-orange-500"></div>
           <span>Check-out</span>
         </div>
-        <div className="legend-item">
-          <div className="legend-color in-range"></div>
+        <div className="flex items-center gap-2 text-sm text-dark-brown">
+          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-50 to-orange-50 border-2 border-accent"></div>
           <span>Your Stay</span>
         </div>
       </div>
 
-      <div className="calendar-grid">
-        <div className="calendar-weekdays">
+      <div className="max-w-md mx-auto">
+        <div className="grid grid-cols-7 gap-0.5 mb-2">
           {dayNames.map(day => (
-            <div key={day} className="weekday">
+            <div key={day} className="py-3 px-2 text-center font-semibold text-dark-brown bg-secondary rounded-md text-sm">
               {day}
             </div>
           ))}
         </div>
-        <div className="calendar-days">
+        <div className="grid grid-cols-7 gap-0.5 bg-primary/10 border-radius rounded-xl p-0.5">
           {loading ? (
-            <div className="calendar-loading">
-              <i className="fas fa-spinner fa-spin"></i>
+            <div className="col-span-7 flex flex-col items-center justify-center py-12 gap-4 text-dark-brown">
+              <i className="fas fa-spinner fa-spin text-2xl text-accent"></i>
               <span>Loading availability...</span>
             </div>
           ) : (
@@ -267,16 +266,16 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
         </div>
       </div>
 
-      <div className="calendar-instructions">
-        <p>
-          <i className="fas fa-info-circle"></i>
-          <strong>How to select dates:</strong> Click on your desired check-in date first, then click on your check-out date. 
+      <div className="mt-6 p-4 bg-gold/10 rounded-xl text-center">
+        <p className="text-dark-brown m-0 text-sm">
+          <i className="fas fa-info-circle text-accent mr-2"></i>
+          <strong>How to select dates:</strong> Click on your desired check-in date first, then click on your check-out date.
           Selected dates will automatically update the form fields above.
         </p>
         {selectedDates.checkin && !selectedDates.checkout && (
-          <div className="selection-hint">
-            <i className="fas fa-arrow-right"></i>
-            Check-in selected ({new Date(selectedDates.checkin).toLocaleDateString()}). 
+          <div className="mt-4 p-3 bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500 rounded-md font-medium text-blue-800 animate-pulse-soft">
+            <i className="fas fa-arrow-right text-blue-500 mr-2"></i>
+            Check-in selected ({new Date(selectedDates.checkin).toLocaleDateString()}).
             Now click on your check-out date.
           </div>
         )}

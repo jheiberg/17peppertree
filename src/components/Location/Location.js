@@ -1,5 +1,4 @@
 import React from 'react';
-import './Location.css';
 
 const Location = () => {
   const locationHighlights = [
@@ -21,37 +20,42 @@ const Location = () => {
   ];
 
   return (
-    <section id="location" className="location">
-      <div className="container">
-        <div className="location-content">
-          <div className="location-info">
-            <div className="section-header">
-              <h2>Prime Location</h2>
-              <p>Vredekloof, Brackenfell - Perfectly positioned for convenience</p>
+    <section id="location" className="section-padding bg-warm-white">
+      <div className="container-custom">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-16 items-center">
+          <div>
+            <div className="section-header text-left mb-8">
+              <h2 className="section-title text-left">Prime Location</h2>
+              <p className="section-subtitle text-left">Vredekloof, Brackenfell - Perfectly positioned for convenience</p>
             </div>
-            <div className="location-highlights">
+            <div className="flex flex-col gap-8">
               {locationHighlights.map((item, index) => (
-                <div key={index} className="location-item">
-                  <i className={item.icon}></i>
+                <div
+                  key={index}
+                  className="flex items-start gap-6 p-6 bg-white rounded-2xl shadow-soft"
+                >
+                  <i className={`${item.icon} text-2xl text-accent mt-2`}></i>
                   <div>
-                    <h4>{item.title}</h4>
-                    <p>{item.description}</p>
+                    <h4 className="text-primary mb-2 text-lg font-display font-semibold">{item.title}</h4>
+                    <p className="text-text-color">{item.description}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="location-map">
+          <div className="h-96 rounded-2xl overflow-hidden shadow-soft relative">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3307.847!2d18.6758827!3d-33.8672569!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1dcc5b7e1e1e1e1e%3A0x1e1e1e1e1e1e1e1e!2s17%20Peperboom%20Cres%2C%20Vredekloof%2C%20Brackenfell%2C%207560%2C%20South%20Africa!5e0!3m2!1sen!2s!4v1692722400000!5m2!1sen!2s"
               width="100%"
-              height="400"
-              style={{ border: 0, borderRadius: '15px' }}
+              height="100%"
+              style={{ border: 0 }}
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="17 @ Peppertree Location - Vredekloof, Brackenfell"
+              className="brightness-75 contrast-110"
             ></iframe>
+            <div className="absolute inset-0 bg-black/20 pointer-events-none rounded-2xl"></div>
           </div>
         </div>
       </div>
