@@ -144,15 +144,128 @@ describe('Contact Component', () => {
 
     test('handles checkout validation with checkin date', () => {
       render(<Contact />);
-      
+
       // Test that both date inputs have proper validation attributes
       const checkinInput = screen.getByLabelText('Check-in Date');
       const checkoutInput = screen.getByLabelText('Check-out Date');
-      
+
       expect(checkinInput).toBeRequired();
       expect(checkoutInput).toBeRequired();
       expect(checkinInput.maxLength).toBe(10);
       expect(checkoutInput.maxLength).toBe(10);
+    });
+
+    // New tests for manual date input improvements
+    test('smart year completion for manual date entry', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+
+      // Test smart year completion: "24" should become "2024"
+      fireEvent.change(checkinInput, { target: { value: '24' } });
+      expect(checkinInput.value).toBe('2024');
+
+      // Test smart year completion: "25" should become "2025"
+      fireEvent.change(checkinInput, { target: { value: '25' } });
+      expect(checkinInput.value).toBe('2025');
+    });
+
+    test('automatic slash insertion during typing', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+
+      // Test automatic slash insertion after year
+      fireEvent.change(checkinInput, { target: { value: '20241' } });
+      expect(checkinInput.value).toBe('2024/1');
+
+      // Test automatic slash insertion after month
+      fireEvent.change(checkinInput, { target: { value: '20241225' } });
+      expect(checkinInput.value).toBe('2024/12/25');
+    });
+
+    test('validates complete date format', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+
+      // Test valid complete date
+      fireEvent.change(checkinInput, { target: { value: '2024/12/25' } });
+      expect(checkinInput.value).toBe('2024/12/25');
+
+      // Test partial date (should allow during typing)
+      fireEvent.change(checkinInput, { target: { value: '2024/12/2' } });
+      expect(checkinInput.value).toBe('2024/12/2');
+    });
+
+    test('checkout date validation allows typing but warns on invalid dates', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      // Set a check-in date first
+      fireEvent.change(checkinInput, { target: { value: '2024/12/25' } });
+
+      // Set checkout date before check-in (should allow typing but warn)
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      fireEvent.change(checkoutInput, { target: { value: '2024/12/20' } });
+
+      // Should allow the value to be set (no blocking during typing)
+      expect(checkoutInput.value).toBe('2024/12/20');
+
+      // Should show warning in console
+      expect(consoleSpy).toHaveBeenCalledWith('Check-out date must be after check-in date');
+
+      consoleSpy.mockRestore();
+    });
+
+    test('visual feedback classes are applied correctly', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+
+      // Test invalid date formatting gets red border classes
+      fireEvent.change(checkinInput, { target: { value: '24/12' } }); // Invalid format
+      expect(checkinInput).toHaveClass('border-red-400', 'bg-red-50');
+
+      // Test valid date formatting gets green border classes
+      fireEvent.change(checkinInput, { target: { value: '2024/12/25' } }); // Valid format
+      expect(checkinInput).toHaveClass('border-green-400', 'bg-green-50');
+    });
+
+    test('validation error messages display correctly', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+
+      // Enter invalid format
+      fireEvent.change(checkinInput, { target: { value: '24/12' } });
+
+      // Check for validation message
+      expect(screen.getByText('Please enter date as YYYY/MM/DD')).toBeInTheDocument();
+    });
+
+    test('checkout validation message shows when checkout is before checkin', () => {
+      render(<Contact />);
+
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      // Set valid dates but checkout before checkin
+      fireEvent.change(checkinInput, { target: { value: '2024/12/25' } });
+      fireEvent.change(checkoutInput, { target: { value: '2024/12/20' } });
+
+      // Check for validation message
+      expect(screen.getByText('Check-out must be after check-in date')).toBeInTheDocument();
+    });
+
+    test('calendar icons are displayed in date inputs', () => {
+      render(<Contact />);
+
+      // Check that calendar icons are present in the date input containers
+      const calendarIcons = document.querySelectorAll('.fa-calendar');
+      expect(calendarIcons.length).toBeGreaterThanOrEqual(2); // At least 2 for checkin and checkout
     });
   });
 
@@ -421,6 +534,100 @@ describe('Contact Component', () => {
       
       // Restore original environment
       process.env.REACT_APP_API_URL = originalEnv;
+    });
+
+    // New tests for form submission validation improvements
+    test('validates invalid date format before submission', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form with invalid checkin date format
+      await fillForm(user, {
+        ...validFormData,
+        checkin: '24/12/25' // Invalid format
+      });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Should show validation error and not submit
+      await waitFor(() => {
+        expect(screen.getByText(/Please enter a valid check-in date in YYYY\/MM\/DD format/)).toBeInTheDocument();
+      });
+
+      // Should not call fetch
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    test('validates invalid checkout date format before submission', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form with invalid checkout date format
+      await fillForm(user, {
+        ...validFormData,
+        checkout: '25/12/24' // Invalid format
+      });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Should show validation error and not submit
+      await waitFor(() => {
+        expect(screen.getByText(/Please enter a valid check-out date in YYYY\/MM\/DD format/)).toBeInTheDocument();
+      });
+
+      // Should not call fetch
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    test('validates past checkin date before submission', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form with past date
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
+      const pastDateString = pastDate.toISOString().split('T')[0].replace(/-/g, '/');
+
+      await fillForm(user, {
+        ...validFormData,
+        checkin: pastDateString
+      });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Should show validation error and not submit
+      await waitFor(() => {
+        expect(screen.getByText(/Check-in date cannot be in the past/)).toBeInTheDocument();
+      });
+
+      // Should not call fetch
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    test('validates checkout date is after checkin before submission', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form with checkout before checkin
+      await fillForm(user, {
+        ...validFormData,
+        checkin: '2024/12/25',
+        checkout: '2024/12/20' // Before checkin
+      });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Should show validation error and not submit
+      await waitFor(() => {
+        expect(screen.getByText(/Check-out date must be after check-in date/)).toBeInTheDocument();
+      });
+
+      // Should not call fetch
+      expect(fetch).not.toHaveBeenCalled();
     });
   });
 

@@ -16,15 +16,23 @@ const Contact = () => {
   const formatDateInput = (value) => {
     // Remove any non-numeric characters except forward slashes
     let cleaned = value.replace(/[^\d/]/g, '');
-    
-    // Add forward slashes automatically
-    if (cleaned.length >= 5) {
+
+    // Smart year completion - if user types 2-3 digits, assume current decade
+    const currentYear = new Date().getFullYear();
+    if (cleaned.length === 2 && parseInt(cleaned) >= 24) {
+      cleaned = '20' + cleaned;
+    } else if (cleaned.length === 3) {
+      cleaned = currentYear.toString().slice(0, 1) + cleaned;
+    }
+
+    // Add forward slashes automatically as user types
+    if (cleaned.length > 4 && cleaned.indexOf('/') === -1) {
       cleaned = cleaned.slice(0, 4) + '/' + cleaned.slice(4);
     }
-    if (cleaned.length >= 8) {
+    if (cleaned.length > 7 && cleaned.split('/').length === 2) {
       cleaned = cleaned.slice(0, 7) + '/' + cleaned.slice(7);
     }
-    
+
     // Limit to 10 characters (yyyy/mm/dd)
     return cleaned.slice(0, 10);
   };
@@ -67,19 +75,16 @@ const Contact = () => {
       const formattedValue = formatDateInput(value);
       const checkinDate = formData.checkin ? dateStringToDate(formData.checkin) : null;
       const checkoutDate = dateStringToDate(formattedValue);
-      
-      // Only update if checkin exists and checkout is after checkin
-      if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-        setFormData({
-          ...formData,
-          checkout: formattedValue
-        });
-      } else if (!checkoutDate && formattedValue.length <= 10) {
-        // Allow typing while formatting
-        setFormData({
-          ...formData,
-          checkout: formattedValue
-        });
+
+      // Always allow typing and formatting - validate on submit
+      setFormData({
+        ...formData,
+        checkout: formattedValue
+      });
+
+      // Show warning if checkout is before checkin (but don't prevent typing)
+      if (checkinDate && checkoutDate && checkoutDate <= checkinDate) {
+        console.warn('Check-out date must be after check-in date');
       }
     } else {
       setFormData({
@@ -117,15 +122,40 @@ const Contact = () => {
     return new Date(today.getFullYear(), today.getMonth(), today.getDate());
   };
 
-  const formatDateForInput = (date = new Date()) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate dates before submitting
+    if (!isValidDateFormat(formData.checkin)) {
+      setSubmitMessage('Please enter a valid check-in date in YYYY/MM/DD format.');
+      setMessageType('error');
+      return;
+    }
+
+    if (!isValidDateFormat(formData.checkout)) {
+      setSubmitMessage('Please enter a valid check-out date in YYYY/MM/DD format.');
+      setMessageType('error');
+      return;
+    }
+
+    const checkinDate = dateStringToDate(formData.checkin);
+    const checkoutDate = dateStringToDate(formData.checkout);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (checkinDate < today) {
+      setSubmitMessage('Check-in date cannot be in the past.');
+      setMessageType('error');
+      return;
+    }
+
+    if (checkoutDate <= checkinDate) {
+      setSubmitMessage('Check-out date must be after check-in date.');
+      setMessageType('error');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitMessage('');
     setMessageType('');
@@ -267,14 +297,14 @@ const Contact = () => {
                   />
                 )}
 
-                {formData.checkin && formData.checkout && (
+                {formData.checkin && formData.checkout && isValidDateFormat(formData.checkin) && isValidDateFormat(formData.checkout) && (
                   <div className="my-6 p-6 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl flex items-center gap-3 text-green-700 font-medium">
                     <i className="fas fa-calendar-check text-green-500 text-xl"></i>
                     <span>
                       <strong>Selected dates:</strong> {' '}
-                      {new Date(formData.checkin).toLocaleDateString()} to {' '}
-                      {new Date(formData.checkout).toLocaleDateString()} {' '}
-                      ({Math.ceil((new Date(formData.checkout) - new Date(formData.checkin)) / (1000 * 60 * 60 * 24))} nights)
+                      {dateStringToDate(formData.checkin).toLocaleDateString()} to {' '}
+                      {dateStringToDate(formData.checkout).toLocaleDateString()} {' '}
+                      ({Math.ceil((dateStringToDate(formData.checkout) - dateStringToDate(formData.checkin)) / (1000 * 60 * 60 * 24))} nights)
                     </span>
                   </div>
                 )}
@@ -282,31 +312,60 @@ const Contact = () => {
                 <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4">
                   <div className="mb-8">
                     <label htmlFor="checkin" className="form-label">Check-in Date</label>
-                    <input
-                      type="text"
-                      id="checkin"
-                      name="checkin"
-                      value={formData.checkin}
-                      onChange={handleChange}
-                      placeholder="YYYY/MM/DD"
-                      maxLength="10"
-                      required
-                      className="form-input"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="checkin"
+                        name="checkin"
+                        value={formData.checkin}
+                        onChange={handleChange}
+                        placeholder="YYYY/MM/DD"
+                        maxLength="10"
+                        required
+                        className={`form-input pr-10 ${
+                          formData.checkin && !isValidDateFormat(formData.checkin)
+                            ? 'border-red-400 bg-red-50'
+                            : formData.checkin && isValidDateFormat(formData.checkin)
+                            ? 'border-green-400 bg-green-50'
+                            : ''
+                        }`}
+                      />
+                      <i className="fas fa-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    {formData.checkin && !isValidDateFormat(formData.checkin) && (
+                      <p className="text-red-600 text-sm mt-2">Please enter date as YYYY/MM/DD</p>
+                    )}
                   </div>
                   <div className="mb-8">
                     <label htmlFor="checkout" className="form-label">Check-out Date</label>
-                    <input
-                      type="text"
-                      id="checkout"
-                      name="checkout"
-                      value={formData.checkout}
-                      onChange={handleChange}
-                      placeholder="YYYY/MM/DD"
-                      maxLength="10"
-                      required
-                      className="form-input"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="checkout"
+                        name="checkout"
+                        value={formData.checkout}
+                        onChange={handleChange}
+                        placeholder="YYYY/MM/DD"
+                        maxLength="10"
+                        required
+                        className={`form-input pr-10 ${
+                          formData.checkout && !isValidDateFormat(formData.checkout)
+                            ? 'border-red-400 bg-red-50'
+                            : formData.checkout && isValidDateFormat(formData.checkout)
+                            ? 'border-green-400 bg-green-50'
+                            : ''
+                        }`}
+                      />
+                      <i className="fas fa-calendar absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    {formData.checkout && !isValidDateFormat(formData.checkout) && (
+                      <p className="text-red-600 text-sm mt-2">Please enter date as YYYY/MM/DD</p>
+                    )}
+                    {formData.checkout && formData.checkin &&
+                     isValidDateFormat(formData.checkout) && isValidDateFormat(formData.checkin) &&
+                     dateStringToDate(formData.checkout) <= dateStringToDate(formData.checkin) && (
+                      <p className="text-red-600 text-sm mt-2">Check-out must be after check-in date</p>
+                    )}
                   </div>
                 </div>
                 <div className="mb-8">
