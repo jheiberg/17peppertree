@@ -492,6 +492,55 @@ describe('AuthContext', () => {
         JSON.stringify(newTokens)
       );
     });
+
+    test('token refresh handles HTTP error response', async () => {
+      const oldTokens = {
+        access_token: 'expired-token',
+        refresh_token: 'invalid-refresh-token'
+      };
+
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'keycloak_tokens') return JSON.stringify(oldTokens);
+        if (key === 'keycloak_user') return JSON.stringify({});
+        return null;
+      });
+
+      // Mock token validation success initially, then failure, then refresh failure with error text
+      fetch
+        .mockResolvedValueOnce({ ok: true }) // Initial load validation
+        .mockResolvedValueOnce({ ok: false }) // getAccessToken validation fails
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 400,
+          statusText: 'Bad Request',
+          text: () => Promise.resolve('{"error":"invalid_grant","error_description":"Refresh token expired"}')
+        }); // Token refresh fails with detailed error
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+        expect(authContext.isAuthenticated).toBe(true);
+      });
+
+      const token = await act(async () => {
+        return await authContext.getAccessToken();
+      });
+
+      expect(token).toBeNull();
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('keycloak_tokens');
+    });
   });
 
   describe('Admin Role Checking', () => {
@@ -650,6 +699,333 @@ describe('AuthContext', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Authentication error: access_denied');
+    });
+
+    test('handles Web Crypto API not available', async () => {
+      // Mock window.crypto as undefined to trigger fallback
+      const originalCrypto = global.crypto;
+      delete global.crypto;
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      await act(async () => {
+        await authContext.login();
+      });
+
+      // Should still redirect even with crypto fallback
+      expect(window.location.href).toMatch(/\/realms\/peppertree\/protocol\/openid-connect\/auth/);
+
+      // Restore crypto
+      global.crypto = originalCrypto;
+    });
+
+    test('handles crypto.subtle not available', async () => {
+      // Mock crypto without subtle API
+      const originalCrypto = global.crypto;
+      global.crypto = { getRandomValues: mockCrypto.getRandomValues };
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      await act(async () => {
+        await authContext.login();
+      });
+
+      // Should still redirect with fallback crypto
+      expect(window.location.href).toMatch(/\/realms\/peppertree\/protocol\/openid-connect\/auth/);
+
+      // Restore crypto
+      global.crypto = originalCrypto;
+    });
+
+    test('handles code challenge generation failure', async () => {
+      // Mock crypto to fail during SHA256 but succeed for random values
+      mockCrypto.subtle.digest.mockRejectedValueOnce(new Error('SHA256 failed'));
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      await act(async () => {
+        await authContext.login();
+      });
+
+      // Should still redirect with fallback challenge
+      expect(window.location.href).toMatch(/\/realms\/peppertree\/protocol\/openid-connect\/auth/);
+    });
+
+    test('handles missing code verifier during callback', async () => {
+      const testState = 'test-state-123';
+
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'keycloak_state') return JSON.stringify(testState);
+        if (key === 'keycloak_code_verifier') return null; // Missing code verifier
+        return null;
+      });
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      const result = await act(async () => {
+        return await authContext.handleCallback('auth-code-123', testState);
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Missing code verifier');
+    });
+
+    test('handles token exchange failure', async () => {
+      const testState = 'test-state-123';
+      const testCodeVerifier = 'test-code-verifier';
+
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'keycloak_state') return JSON.stringify(testState);
+        if (key === 'keycloak_code_verifier') return JSON.stringify(testCodeVerifier);
+        return null;
+      });
+
+      // Mock failed token exchange
+      fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request'
+      });
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      const result = await act(async () => {
+        return await authContext.handleCallback('invalid-code', testState);
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Token exchange failed');
+    });
+
+    test('handles user info fetch failure', async () => {
+      const mockTokens = {
+        access_token: 'new-access-token',
+        refresh_token: 'new-refresh-token'
+      };
+      const testState = 'test-state-123';
+      const testCodeVerifier = 'test-code-verifier';
+
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'keycloak_state') return JSON.stringify(testState);
+        if (key === 'keycloak_code_verifier') return JSON.stringify(testCodeVerifier);
+        return null;
+      });
+
+      // Mock successful token exchange but failed user info
+      fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve(mockTokens)
+        }) // Token exchange succeeds
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 401,
+          statusText: 'Unauthorized'
+        }); // User info fails
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      const result = await act(async () => {
+        return await authContext.handleCallback('auth-code-123', testState);
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to fetch user info');
+    });
+
+    test('handles getAccessToken with no stored tokens', async () => {
+      mockLocalStorage.getItem.mockReturnValue(null);
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+      });
+
+      const token = await act(async () => {
+        return await authContext.getAccessToken();
+      });
+
+      expect(token).toBeNull();
+    });
+
+    test('handles logout when not authenticated', async () => {
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+        expect(authContext.isAuthenticated).toBe(false);
+      });
+
+      await act(async () => {
+        await authContext.logout();
+      });
+
+      // Should handle gracefully when not authenticated
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('keycloak_tokens');
+    });
+
+    test('handles isAdmin with no access token', async () => {
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+        expect(authContext.isAdmin()).toBe(false);
+      });
+    });
+
+    test('handles malformed JWT token in isAdmin', async () => {
+      const mockTokens = {
+        access_token: 'invalid-jwt-format'
+      };
+
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'keycloak_tokens') return JSON.stringify(mockTokens);
+        return null;
+      });
+
+      fetch.mockResolvedValueOnce({ ok: true });
+
+      let authContext;
+
+      const TestComponentWithActions = () => {
+        authContext = useAuth();
+        return <div data-testid="test">Test</div>;
+      };
+
+      render(
+        <AuthProvider>
+          <TestComponentWithActions />
+        </AuthProvider>
+      );
+
+      await waitFor(() => {
+        expect(authContext).toBeDefined();
+        expect(authContext.isAdmin()).toBe(false);
+      });
     });
   });
 

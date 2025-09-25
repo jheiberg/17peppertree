@@ -73,7 +73,13 @@ const AdminDashboard = () => {
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
               <button
-                onClick={() => setCurrentView('dashboard')}
+                onClick={() => {
+                  setSelectedBooking(null);
+                  setCurrentView('dashboard');
+                  if (currentView !== 'dashboard') {
+                    fetchDashboardStats();
+                  }
+                }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                   currentView === 'dashboard'
                     ? 'bg-primary text-white'
@@ -84,7 +90,11 @@ const AdminDashboard = () => {
                 Dashboard
               </button>
               <button
-                onClick={() => setCurrentView('bookings')}
+                onClick={() => {
+                  setSelectedBooking(null);
+                  setCurrentView('bookings');
+                  setError(null);
+                }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                   currentView === 'bookings'
                     ? 'bg-primary text-white'
@@ -116,7 +126,13 @@ const AdminDashboard = () => {
         <div className="md:hidden border-t border-gray-200">
           <div className="px-4 py-3 space-y-1">
             <button
-              onClick={() => setCurrentView('dashboard')}
+              onClick={() => {
+                setSelectedBooking(null);
+                setCurrentView('dashboard');
+                if (currentView !== 'dashboard') {
+                  fetchDashboardStats();
+                }
+              }}
               className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 currentView === 'dashboard'
                   ? 'bg-primary text-white'
@@ -127,7 +143,11 @@ const AdminDashboard = () => {
               Dashboard
             </button>
             <button
-              onClick={() => setCurrentView('bookings')}
+              onClick={() => {
+                setSelectedBooking(null);
+                setCurrentView('bookings');
+                setError(null);
+              }}
               className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 currentView === 'bookings'
                   ? 'bg-primary text-white'

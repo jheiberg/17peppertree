@@ -611,7 +611,7 @@ describe('Contact Component', () => {
       const user = userEvent.setup();
       render(<Contact />);
 
-      // Fill form with checkout before checkin
+      // Fill form with checkout before checkin - this should trigger lines 153-157
       await fillForm(user, {
         ...validFormData,
         checkin: '2024/12/25',
@@ -628,6 +628,191 @@ describe('Contact Component', () => {
 
       // Should not call fetch
       expect(fetch).not.toHaveBeenCalled();
+    });
+
+    test('validates same date for checkin and checkout', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form with same date for checkin and checkout - this should also trigger lines 153-157
+      await fillForm(user, {
+        ...validFormData,
+        checkin: '2024/12/25',
+        checkout: '2024/12/25' // Same date
+      });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Should show validation error and not submit
+      await waitFor(() => {
+        expect(screen.getByText(/Check-out date must be after check-in date/)).toBeInTheDocument();
+      });
+
+      // Should not call fetch
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    test('logs API URL and form data during submission', async () => {
+      const user = userEvent.setup();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({ message: 'Success', booking_id: 123 })
+      });
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
+      });
+
+      // Verify console logs for API URL and form data
+      expect(consoleSpy).toHaveBeenCalledWith('Submitting to API URL:', expect.any(String));
+      expect(consoleSpy).toHaveBeenCalledWith('Form data:', expect.any(Object));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('logs response details during successful submission', async () => {
+      const user = userEvent.setup();
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+      const mockHeaders = new Map([['content-type', 'application/json']]);
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: mockHeaders,
+        json: async () => ({ message: 'Success', booking_id: 123 })
+      });
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
+      });
+
+      // Verify response logging
+      expect(consoleSpy).toHaveBeenCalledWith('Response status:', 200);
+      expect(consoleSpy).toHaveBeenCalledWith('Response headers:', expect.any(Array));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('logs error details during API error', async () => {
+      const user = userEvent.setup();
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      const errorResponse = { error: 'Validation failed' };
+      fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => errorResponse
+      });
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Validation failed')).toBeInTheDocument();
+      });
+
+      // Verify error logging
+      expect(consoleSpy).toHaveBeenCalledWith('API Error Response:', errorResponse);
+
+      consoleSpy.mockRestore();
+    });
+
+    test('logs detailed network error information', async () => {
+      const user = userEvent.setup();
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      const networkError = new Error('Connection timeout');
+      networkError.name = 'Error';
+      networkError.stack = 'Error stack trace';
+      fetch.mockRejectedValueOnce(networkError);
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/There was an error submitting your request/)).toBeInTheDocument();
+      });
+
+      // Verify detailed error logging
+      expect(consoleSpy).toHaveBeenCalledWith('Network/Fetch Error:', networkError);
+      expect(consoleSpy).toHaveBeenCalledWith('Error details:', {
+        message: networkError.message,
+        stack: networkError.stack,
+        name: networkError.name
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    test('handles specific fetch TypeError with custom message', async () => {
+      const user = userEvent.setup();
+
+      const fetchError = new TypeError('Failed to fetch due to network');
+      fetch.mockRejectedValueOnce(fetchError);
+
+      // Mock environment variable for custom API URL
+      const originalEnv = process.env.REACT_APP_API_URL;
+      process.env.REACT_APP_API_URL = 'https://api.custom.com/api';
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Cannot connect to server at https:\/\/api\.custom\.com\/api/)).toBeInTheDocument();
+      });
+
+      // Restore environment
+      process.env.REACT_APP_API_URL = originalEnv;
+    });
+
+    test('handles non-fetch errors with generic message', async () => {
+      const user = userEvent.setup();
+
+      const genericError = new Error('Some other error');
+      genericError.name = 'CustomError'; // Not TypeError
+      fetch.mockRejectedValueOnce(genericError);
+
+      render(<Contact />);
+
+      await fillForm(user);
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/There was an error submitting your request. Please check your connection/)).toBeInTheDocument();
+      });
     });
   });
 
@@ -752,6 +937,229 @@ describe('Contact Component', () => {
       // Date before checkin (should not work)
       fireEvent.change(checkoutInput, { target: { value: '20240610' } });
       expect(checkoutInput.value).toBe('2024/06/20'); // Should remain previous value
+    });
+  });
+
+  describe('Form Submission Lines 153-213 Coverage', () => {
+    // These tests specifically target the uncovered lines 153-213
+    test('checkout date validation error (lines 153-157)', async () => {
+      const user = userEvent.setup();
+      render(<Contact />);
+
+      // Fill form but make checkout same as checkin to trigger line 153-157
+      const nameInput = screen.getByLabelText('Full Name');
+      const emailInput = screen.getByLabelText('Email Address');
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      await user.type(nameInput, 'Test User');
+      await user.type(emailInput, 'test@example.com');
+
+      // Use future dates in the correct YYYY/MM/DD format that will pass validation
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = `${tomorrow.getFullYear()}/${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}/${tomorrow.getDate().toString().padStart(2, '0')}`;
+
+      // Set checkin to tomorrow and checkout to same date to trigger line 153-157
+      fireEvent.change(checkinInput, { target: { value: tomorrowStr } });
+      fireEvent.change(checkoutInput, { target: { value: tomorrowStr } }); // Same date
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // This should trigger the validation at line 153-157
+      await waitFor(() => {
+        expect(screen.getByText('Check-out date must be after check-in date.')).toBeInTheDocument();
+      });
+    });
+
+    test('successful submission with console logging (lines 159-197)', async () => {
+      // Mock console.log to verify logging
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const user = userEvent.setup();
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({
+          message: 'Booking request submitted successfully',
+          booking_id: 123
+        })
+      });
+
+      render(<Contact />);
+
+      // Fill form properly to trigger successful submission
+      const nameInput = screen.getByLabelText('Full Name');
+      const emailInput = screen.getByLabelText('Email Address');
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      await user.type(nameInput, 'Test User');
+      await user.type(emailInput, 'test@example.com');
+
+      // Use future dates in proper format
+      const checkin = new Date();
+      checkin.setDate(checkin.getDate() + 1);
+      const checkout = new Date();
+      checkout.setDate(checkout.getDate() + 3);
+
+      const checkinStr = `${checkin.getFullYear()}/${(checkin.getMonth() + 1).toString().padStart(2, '0')}/${checkin.getDate().toString().padStart(2, '0')}`;
+      const checkoutStr = `${checkout.getFullYear()}/${(checkout.getMonth() + 1).toString().padStart(2, '0')}/${checkout.getDate().toString().padStart(2, '0')}`;
+
+      fireEvent.change(checkinInput, { target: { value: checkinStr } });
+      fireEvent.change(checkoutInput, { target: { value: checkoutStr } });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      // Wait for the API call and success message
+      await waitFor(() => {
+        expect(screen.getByText(/Thank you for your booking request!/)).toBeInTheDocument();
+      });
+
+      // Verify console logs (lines 164-165, 176-177)
+      expect(consoleSpy).toHaveBeenCalledWith('Submitting to API URL:', expect.any(String));
+      expect(consoleSpy).toHaveBeenCalledWith('Form data:', expect.any(Object));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('API error response handling (lines 193-197)', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const user = userEvent.setup();
+
+      fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        headers: new Map([['content-type', 'application/json']]),
+        json: async () => ({
+          error: 'Invalid booking data provided'
+        })
+      });
+
+      render(<Contact />);
+
+      const nameInput = screen.getByLabelText('Full Name');
+      const emailInput = screen.getByLabelText('Email Address');
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      await user.type(nameInput, 'Test User');
+      await user.type(emailInput, 'test@example.com');
+
+      // Use future dates in proper format
+      const checkin = new Date();
+      checkin.setDate(checkin.getDate() + 1);
+      const checkout = new Date();
+      checkout.setDate(checkout.getDate() + 3);
+
+      const checkinStr = `${checkin.getFullYear()}/${(checkin.getMonth() + 1).toString().padStart(2, '0')}/${checkin.getDate().toString().padStart(2, '0')}`;
+      const checkoutStr = `${checkout.getFullYear()}/${(checkout.getMonth() + 1).toString().padStart(2, '0')}/${checkout.getDate().toString().padStart(2, '0')}`;
+
+      fireEvent.change(checkinInput, { target: { value: checkinStr } });
+      fireEvent.change(checkoutInput, { target: { value: checkoutStr } });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invalid booking data provided')).toBeInTheDocument();
+      });
+
+      // Verify error logging (line 194)
+      expect(consoleSpy).toHaveBeenCalledWith('API Error Response:', expect.any(Object));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('network error handling with detailed logging (lines 198-214)', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const user = userEvent.setup();
+
+      const networkError = new Error('Network connection failed');
+      networkError.name = 'Error';
+      networkError.stack = 'Error stack trace';
+      fetch.mockRejectedValueOnce(networkError);
+
+      render(<Contact />);
+
+      const nameInput = screen.getByLabelText('Full Name');
+      const emailInput = screen.getByLabelText('Email Address');
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      await user.type(nameInput, 'Test User');
+      await user.type(emailInput, 'test@example.com');
+
+      // Use future dates in proper format
+      const checkin = new Date();
+      checkin.setDate(checkin.getDate() + 1);
+      const checkout = new Date();
+      checkout.setDate(checkout.getDate() + 3);
+
+      const checkinStr = `${checkin.getFullYear()}/${(checkin.getMonth() + 1).toString().padStart(2, '0')}/${checkin.getDate().toString().padStart(2, '0')}`;
+      const checkoutStr = `${checkout.getFullYear()}/${(checkout.getMonth() + 1).toString().padStart(2, '0')}/${checkout.getDate().toString().padStart(2, '0')}`;
+
+      fireEvent.change(checkinInput, { target: { value: checkinStr } });
+      fireEvent.change(checkoutInput, { target: { value: checkoutStr } });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/There was an error submitting your request/)).toBeInTheDocument();
+      });
+
+      // Verify detailed error logging (lines 199-204)
+      expect(consoleSpy).toHaveBeenCalledWith('Network/Fetch Error:', networkError);
+      expect(consoleSpy).toHaveBeenCalledWith('Error details:', expect.objectContaining({
+        message: networkError.message,
+        stack: networkError.stack,
+        name: networkError.name
+      }));
+
+      consoleSpy.mockRestore();
+    });
+
+    test('TypeError fetch error specific handling (lines 206-208)', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const user = userEvent.setup();
+
+      const fetchError = new TypeError('Failed to fetch');
+      fetch.mockRejectedValueOnce(fetchError);
+
+      render(<Contact />);
+
+      const nameInput = screen.getByLabelText('Full Name');
+      const emailInput = screen.getByLabelText('Email Address');
+      const checkinInput = screen.getByLabelText('Check-in Date');
+      const checkoutInput = screen.getByLabelText('Check-out Date');
+
+      await user.type(nameInput, 'Test User');
+      await user.type(emailInput, 'test@example.com');
+
+      // Use future dates in proper format
+      const checkin = new Date();
+      checkin.setDate(checkin.getDate() + 1);
+      const checkout = new Date();
+      checkout.setDate(checkout.getDate() + 3);
+
+      const checkinStr = `${checkin.getFullYear()}/${(checkin.getMonth() + 1).toString().padStart(2, '0')}/${checkin.getDate().toString().padStart(2, '0')}`;
+      const checkoutStr = `${checkout.getFullYear()}/${(checkout.getMonth() + 1).toString().padStart(2, '0')}/${checkout.getDate().toString().padStart(2, '0')}`;
+
+      fireEvent.change(checkinInput, { target: { value: checkinStr } });
+      fireEvent.change(checkoutInput, { target: { value: checkoutStr } });
+
+      const submitButton = screen.getByText('Send Booking Request');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Cannot connect to server/)).toBeInTheDocument();
+      });
+
+      consoleSpy.mockRestore();
     });
   });
 });

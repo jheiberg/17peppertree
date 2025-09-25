@@ -88,7 +88,13 @@ class TestBookingRequest:
             'phone': '+27111222333',
             'special_requests': 'Vegetarian breakfast',
             'status': 'confirmed',
-            'created_at': '2024-05-01T10:30:00'
+            'created_at': '2024-05-01T10:30:00',
+            'updated_at': None,
+            'payment_status': 'pending',
+            'payment_amount': None,
+            'payment_date': None,
+            'payment_reference': None,
+            'admin_notes': None
         }
         
         assert booking_dict == expected_dict
@@ -173,7 +179,7 @@ class TestBookingRequest:
         db.session.commit()
         
         # Verify update
-        updated_booking = BookingRequest.query.get(booking.id)
+        updated_booking = db.session.get(BookingRequest, booking.id)
         assert updated_booking.status == 'confirmed'
         
         # Update to rejected
@@ -181,7 +187,7 @@ class TestBookingRequest:
         db.session.commit()
         
         # Verify update
-        updated_booking = BookingRequest.query.get(booking.id)
+        updated_booking = db.session.get(BookingRequest, booking.id)
         assert updated_booking.status == 'rejected'
     
     def test_booking_required_fields(self, clean_db):

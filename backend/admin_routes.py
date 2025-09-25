@@ -37,10 +37,10 @@ def get_all_bookings():
             query = query.filter_by(payment_status=payment_status)
         
         if start_date:
-            query = query.filter(BookingRequest.check_in >= datetime.fromisoformat(start_date))
-        
+            query = query.filter(BookingRequest.checkin_date >= datetime.fromisoformat(start_date).date())
+
         if end_date:
-            query = query.filter(BookingRequest.check_out <= datetime.fromisoformat(end_date))
+            query = query.filter(BookingRequest.checkout_date <= datetime.fromisoformat(end_date).date())
         
         # Order by created date descending
         query = query.order_by(BookingRequest.created_at.desc())
@@ -53,12 +53,12 @@ def get_all_bookings():
             bookings.append({
                 'id': booking.id,
                 'guest_name': booking.guest_name,
-                'guest_email': booking.guest_email,
-                'guest_phone': booking.guest_phone,
-                'check_in': booking.check_in.isoformat(),
-                'check_out': booking.check_out.isoformat(),
+                'email': booking.email,
+                'phone': booking.phone,
+                'checkin_date': booking.checkin_date.isoformat(),
+                'checkout_date': booking.checkout_date.isoformat(),
                 'guests': booking.guests,
-                'message': booking.message,
+                'special_requests': booking.special_requests,
                 'status': booking.status,
                 'payment_status': booking.payment_status,
                 'payment_amount': float(booking.payment_amount) if booking.payment_amount else None,
@@ -95,12 +95,12 @@ def get_booking_details(booking_id):
         return jsonify({
             'id': booking.id,
             'guest_name': booking.guest_name,
-            'guest_email': booking.guest_email,
-            'guest_phone': booking.guest_phone,
-            'check_in': booking.check_in.isoformat(),
-            'check_out': booking.check_out.isoformat(),
+            'email': booking.email,
+            'phone': booking.phone,
+            'checkin_date': booking.checkin_date.isoformat(),
+            'checkout_date': booking.checkout_date.isoformat(),
             'guests': booking.guests,
-            'message': booking.message,
+            'special_requests': booking.special_requests,
             'status': booking.status,
             'payment_status': booking.payment_status,
             'payment_amount': float(booking.payment_amount) if booking.payment_amount else None,
@@ -108,8 +108,7 @@ def get_booking_details(booking_id):
             'payment_reference': booking.payment_reference,
             'admin_notes': booking.admin_notes,
             'created_at': booking.created_at.isoformat(),
-            'updated_at': booking.updated_at.isoformat() if booking.updated_at else None,
-            'status_history': booking.status_history or []
+            'updated_at': booking.updated_at.isoformat() if booking.updated_at else None
         })
     
     except Exception as e:
@@ -304,7 +303,7 @@ def get_dashboard_stats():
             recent.append({
                 'id': booking.id,
                 'guest_name': booking.guest_name,
-                'check_in': booking.check_in.isoformat(),
+                'checkin_date': booking.checkin_date.isoformat(),
                 'status': booking.status,
                 'payment_status': booking.payment_status
             })

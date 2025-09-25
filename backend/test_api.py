@@ -45,7 +45,7 @@ class TestBookingEndpoints:
         assert data['message'] == 'Booking request submitted successfully'
         
         # Verify booking was created in database
-        booking = BookingRequest.query.get(data['booking_id'])
+        booking = db.session.get(BookingRequest, data['booking_id'])
         assert booking is not None
         assert booking.guest_name == 'John Doe'
         assert booking.email == 'john@example.com'
@@ -300,7 +300,7 @@ class TestBookingEndpoints:
         assert data['booking']['status'] == 'confirmed'
         
         # Verify in database
-        updated_booking = BookingRequest.query.get(booking.id)
+        updated_booking = db.session.get(BookingRequest, booking.id)
         assert updated_booking.status == 'confirmed'
         
         # Test updating to rejected
