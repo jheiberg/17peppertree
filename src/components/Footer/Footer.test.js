@@ -52,19 +52,19 @@ describe('Footer Component', () => {
 
     test('has correct footer structure', () => {
       render(<Footer />);
-      
+
       const footer = screen.getByRole('contentinfo');
-      expect(footer).toHaveClass('footer');
-      
+      expect(footer).toHaveClass('bg-dark-brown', 'text-cream', 'py-12');
+
       // Check container structure
-      const container = footer.querySelector('.container');
+      const container = footer.querySelector('.container-custom');
       expect(container).toBeInTheDocument();
-      
-      const footerContent = container.querySelector('.footer-content');
-      expect(footerContent).toBeInTheDocument();
-      
-      const footerBottom = container.querySelector('.footer-bottom');
-      expect(footerBottom).toBeInTheDocument();
+
+      const grid = container.querySelector('.grid');
+      expect(grid).toBeInTheDocument();
+
+      const borderSection = container.querySelector('.border-t');
+      expect(borderSection).toBeInTheDocument();
     });
   });
 
@@ -180,11 +180,12 @@ describe('Footer Component', () => {
 
     test('contact information is properly structured', () => {
       render(<Footer />);
-      
-      // Contact info should be in a list structure
-      const contactSection = screen.getByText('Contact').closest('.footer-section');
-      expect(contactSection).toBeInTheDocument();
-      
+
+      // Contact info should be properly structured with heading
+      const contactHeading = screen.getByText('Contact');
+      expect(contactHeading).toBeInTheDocument();
+      expect(contactHeading.tagName).toBe('H4');
+
       // Check that contact info is present and readable
       expect(screen.getByText(/Phone: 063 630 7345/)).toBeInTheDocument();
       expect(screen.getByText(/17 Peperboom Crescent/)).toBeInTheDocument();
@@ -227,25 +228,27 @@ describe('Footer Component', () => {
   describe('CSS Classes', () => {
     test('applies correct CSS classes', () => {
       const { container } = render(<Footer />);
-      
+
       // Check main footer class
       const footer = container.querySelector('footer');
-      expect(footer).toHaveClass('footer');
-      
+      expect(footer).toHaveClass('bg-dark-brown', 'text-cream', 'py-12');
+
       // Check container class
-      const containerDiv = footer.querySelector('.container');
+      const containerDiv = footer.querySelector('.container-custom');
       expect(containerDiv).toBeInTheDocument();
-      
+
       // Check footer content structure
-      const footerContent = containerDiv.querySelector('.footer-content');
-      expect(footerContent).toBeInTheDocument();
-      
-      const footerSections = footerContent.querySelectorAll('.footer-section');
-      expect(footerSections).toHaveLength(3);
-      
+      const gridContent = containerDiv.querySelector('.grid');
+      expect(gridContent).toBeInTheDocument();
+
+      // Check for 3 main sections (company info, contact, quick links)
+      const sections = gridContent.children;
+      expect(sections).toHaveLength(3);
+
       // Check footer bottom
-      const footerBottom = containerDiv.querySelector('.footer-bottom');
+      const footerBottom = containerDiv.querySelector('.border-t');
       expect(footerBottom).toBeInTheDocument();
+      expect(footerBottom).toHaveClass('pt-4', 'text-center');
     });
   });
 });

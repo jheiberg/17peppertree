@@ -25,7 +25,7 @@ describe('Hero Component', () => {
       render(<Hero />);
       const heroSection = document.querySelector('#home');
       expect(heroSection).toBeInTheDocument();
-      expect(heroSection).toHaveClass('hero');
+      expect(heroSection).toHaveClass('h-screen', 'bg-cover', 'bg-center');
     });
 
     test('renders hero title and subtitle', () => {
@@ -37,10 +37,10 @@ describe('Hero Component', () => {
 
     test('renders rating section with stars and text', () => {
       render(<Hero />);
-      
-      const stars = document.querySelectorAll('.stars .fas.fa-star');
+
+      const stars = document.querySelectorAll('.fas.fa-star');
       expect(stars).toHaveLength(5);
-      
+
       expect(screen.getByText('4.9/5 (68 reviews)')).toBeInTheDocument();
     });
 
@@ -53,28 +53,30 @@ describe('Hero Component', () => {
 
     test('renders Book Now CTA button', () => {
       render(<Hero />);
-      
+
       const ctaButton = screen.getByText('Book Now');
       expect(ctaButton).toBeInTheDocument();
-      expect(ctaButton).toHaveClass('cta-button');
+      expect(ctaButton).toHaveClass('btn-primary');
       expect(ctaButton.tagName).toBe('BUTTON');
     });
 
     test('renders hero overlay', () => {
       render(<Hero />);
-      
-      const overlay = document.querySelector('.hero-overlay');
+
+      const overlay = document.querySelector('.bg-hero-gradient');
       expect(overlay).toBeInTheDocument();
     });
 
     test('renders scroll indicator', () => {
       render(<Hero />);
-      
-      const scrollIndicator = document.querySelector('.scroll-indicator');
-      expect(scrollIndicator).toBeInTheDocument();
-      
-      const chevronIcon = document.querySelector('.scroll-indicator .fas.fa-chevron-down');
+
+      const chevronIcon = document.querySelector('.fas.fa-chevron-down');
       expect(chevronIcon).toBeInTheDocument();
+      expect(chevronIcon).toHaveClass('text-2xl', 'text-warm-white');
+
+      // The animate-bounce-slow class is on the parent container
+      const scrollContainer = document.querySelector('.animate-bounce-slow');
+      expect(scrollContainer).toBeInTheDocument();
     });
   });
 
@@ -154,60 +156,50 @@ describe('Hero Component', () => {
       
       // Subtitle should be a paragraph, not heading
       const subtitle = screen.getByText('Premium Self Catering Guest Room in Vredekloof, Brackenfell');
-      expect(subtitle).toHaveClass('hero-subtitle');
+      expect(subtitle).toHaveClass('text-xl', 'text-cream');
       expect(subtitle.tagName).toBe('P');
     });
   });
 
   describe('CSS Classes and Structure', () => {
-    test('applies correct CSS classes', () => {
+    test('applies correct Tailwind CSS classes', () => {
       render(<Hero />);
-      
-      expect(document.querySelector('.hero')).toBeInTheDocument();
-      expect(document.querySelector('.hero-overlay')).toBeInTheDocument();
-      expect(document.querySelector('.hero-content')).toBeInTheDocument();
-      expect(document.querySelector('.hero-title')).toBeInTheDocument();
-      expect(document.querySelector('.hero-subtitle')).toBeInTheDocument();
-      expect(document.querySelector('.hero-rating')).toBeInTheDocument();
-      expect(document.querySelector('.hero-price')).toBeInTheDocument();
-      expect(document.querySelector('.scroll-indicator')).toBeInTheDocument();
+
+      const heroSection = document.querySelector('#home');
+      expect(heroSection).toHaveClass('h-screen', 'bg-cover', 'bg-center');
+      expect(document.querySelector('.bg-hero-gradient')).toBeInTheDocument();
+      expect(document.querySelector('.fas.fa-chevron-down')).toBeInTheDocument();
     });
 
     test('rating section has correct structure', () => {
       render(<Hero />);
-      
-      const ratingSection = document.querySelector('.hero-rating');
-      expect(ratingSection).toBeInTheDocument();
-      
-      const starsContainer = document.querySelector('.stars');
-      expect(starsContainer).toBeInTheDocument();
-      
-      const ratingText = document.querySelector('.rating-text');
+
+      const starsDiv = document.querySelector('.text-gold');
+      expect(starsDiv).toBeInTheDocument();
+
+      const ratingText = screen.getByText('4.9/5 (68 reviews)');
       expect(ratingText).toBeInTheDocument();
-      expect(ratingText).toHaveTextContent('4.9/5 (68 reviews)');
+      expect(ratingText).toHaveClass('text-cream', 'font-medium');
     });
 
     test('price section has correct structure', () => {
       render(<Hero />);
-      
-      const priceSection = document.querySelector('.hero-price');
-      expect(priceSection).toBeInTheDocument();
-      
-      const price = document.querySelector('.price');
-      expect(price).toBeInTheDocument();
-      expect(price).toHaveTextContent('From R850');
-      
-      const pricePeriod = document.querySelector('.price-period');
+
+      const priceText = screen.getByText('From R850');
+      expect(priceText).toBeInTheDocument();
+      expect(priceText).toHaveClass('text-gold');
+
+      const pricePeriod = screen.getByText('per night');
       expect(pricePeriod).toBeInTheDocument();
-      expect(pricePeriod).toHaveTextContent('per night');
+      expect(pricePeriod).toHaveClass('text-cream');
     });
 
     test('all star icons are rendered correctly', () => {
       render(<Hero />);
-      
-      const stars = document.querySelectorAll('.stars .fas.fa-star');
+
+      const stars = document.querySelectorAll('.fas.fa-star');
       expect(stars).toHaveLength(5);
-      
+
       stars.forEach(star => {
         expect(star).toHaveClass('fas', 'fa-star');
       });
@@ -228,10 +220,10 @@ describe('Hero Component', () => {
 
     test('rating displays exactly 5 stars', () => {
       render(<Hero />);
-      
-      const stars = document.querySelectorAll('.hero-rating .stars .fas.fa-star');
+
+      const stars = document.querySelectorAll('.fas.fa-star');
       expect(stars).toHaveLength(5);
-      
+
       // All should be full stars (not empty or half stars)
       stars.forEach(star => {
         expect(star).toHaveClass('fas', 'fa-star');

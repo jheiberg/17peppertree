@@ -38,26 +38,28 @@ describe('Header Component', () => {
 
     test('renders hamburger menu for mobile', () => {
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
+
+      const hamburger = document.querySelector('.lg\\:hidden');
       expect(hamburger).toBeInTheDocument();
-      
-      const bars = document.querySelectorAll('.bar');
+
+      const bars = hamburger.querySelectorAll('span');
       expect(bars).toHaveLength(3);
     });
 
     test('navigation menu is initially not active', () => {
       render(<Header />);
-      
-      const navMenu = document.querySelector('.nav-menu');
-      expect(navMenu).not.toHaveClass('active');
+
+      const navMenu = document.querySelector('ul');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
+      expect(navMenu).not.toHaveClass('fixed', 'left-0', 'top-\\[70px\\]');
     });
 
     test('hamburger menu is initially not active', () => {
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      expect(hamburger).not.toHaveClass('active');
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      expect(hamburger).toBeInTheDocument();
+      expect(hamburger).toHaveClass('lg:hidden', 'flex', 'flex-col', 'cursor-pointer');
     });
   });
 
@@ -65,36 +67,35 @@ describe('Header Component', () => {
     test('toggles menu when hamburger is clicked', async () => {
       const user = userEvent.setup();
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
-      
-      // Initially not active
-      expect(navMenu).not.toHaveClass('active');
-      expect(hamburger).not.toHaveClass('active');
-      
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
+
+      // Initially not active (menu is hidden)
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
+
       // Click to open menu
       await user.click(hamburger);
-      expect(navMenu).toHaveClass('active');
-      expect(hamburger).toHaveClass('active');
-      
+      expect(navMenu).toHaveClass('fixed', 'left-0');
+      expect(navMenu).not.toHaveClass('hidden');
+
       // Click to close menu
       await user.click(hamburger);
-      expect(navMenu).not.toHaveClass('active');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
       expect(hamburger).not.toHaveClass('active');
     });
 
     test('closes menu when navigation link is clicked', async () => {
       const user = userEvent.setup();
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
       const homeLink = screen.getByText('Home');
-      
+
       // Open menu first
       await user.click(hamburger);
-      expect(navMenu).toHaveClass('active');
+      expect(navMenu).toHaveClass('fixed', 'left-0');
       
       // Mock getElementById to return a mock element
       const mockElement = { scrollIntoView: mockScrollIntoView };
@@ -102,9 +103,9 @@ describe('Header Component', () => {
       
       // Click navigation link
       await user.click(homeLink);
-      
+
       // Menu should be closed
-      expect(navMenu).not.toHaveClass('active');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
     });
   });
 
@@ -197,18 +198,17 @@ describe('Header Component', () => {
   describe('Keyboard Navigation', () => {
     test('hamburger menu responds to Enter key', () => {
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
-      
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
+
       // Initially not active
-      expect(navMenu).not.toHaveClass('active');
-      
-      // Press Enter on hamburger
-      fireEvent.keyDown(hamburger, { key: 'Enter', code: 'Enter' });
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
+
+      // Press Enter on hamburger (simulate click since hamburger doesn't have onKeyDown)
       fireEvent.click(hamburger);
-      
-      expect(navMenu).toHaveClass('active');
+
+      expect(navMenu).toHaveClass('fixed', 'left-0');
     });
 
     test('navigation links respond to Enter key', () => {
@@ -231,10 +231,10 @@ describe('Header Component', () => {
   describe('Accessibility', () => {
     test('hamburger menu is accessible', () => {
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
+
+      const hamburger = document.querySelector('.lg\\:hidden');
       expect(hamburger).toBeInTheDocument();
-      
+
       // Should be clickable (check by firing click event)
       fireEvent.click(hamburger);
       // If no error is thrown, the element is clickable
@@ -256,16 +256,16 @@ describe('Header Component', () => {
 
     test('navigation has proper semantic structure', () => {
       render(<Header />);
-      
+
       const nav = screen.getByRole('navigation');
       expect(nav).toBeInTheDocument();
-      expect(nav).toHaveClass('navbar');
-      
-      const navList = document.querySelector('.nav-menu');
+      expect(nav).toHaveClass('fixed', 'top-0', 'w-full');
+
+      const navList = document.querySelector('ul');
       expect(navList).toBeInTheDocument();
       expect(navList.tagName).toBe('UL');
-      
-      const navItems = document.querySelectorAll('.nav-menu li');
+
+      const navItems = document.querySelectorAll('ul li');
       expect(navItems).toHaveLength(5);
     });
   });
@@ -274,91 +274,86 @@ describe('Header Component', () => {
     test('maintains menu state correctly across multiple toggles', async () => {
       const user = userEvent.setup();
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
-      
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
+
       // Test multiple toggle cycles
       for (let i = 0; i < 3; i++) {
         // Open menu
         await user.click(hamburger);
-        expect(navMenu).toHaveClass('active');
-        expect(hamburger).toHaveClass('active');
-        
+        expect(navMenu).toHaveClass('fixed', 'left-0');
+
         // Close menu
         await user.click(hamburger);
-        expect(navMenu).not.toHaveClass('active');
-        expect(hamburger).not.toHaveClass('active');
+        expect(navMenu).toHaveClass('hidden', 'lg:flex');
       }
     });
 
     test('menu state resets when navigation link is clicked', async () => {
       const user = userEvent.setup();
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
       const homeLink = screen.getByText('Home');
-      
+
       const mockElement = { scrollIntoView: mockScrollIntoView };
       mockGetElementById.mockReturnValue(mockElement);
-      
+
       // Open menu
       await user.click(hamburger);
-      expect(navMenu).toHaveClass('active');
+      expect(navMenu).toHaveClass('fixed', 'left-0');
       
       // Click navigation link - should close menu
       await user.click(homeLink);
-      expect(navMenu).not.toHaveClass('active');
-      expect(hamburger).not.toHaveClass('active');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
       
       // Test with another link
       await user.click(hamburger);
-      expect(navMenu).toHaveClass('active');
-      
+      expect(navMenu).toHaveClass('fixed', 'left-0');
+
       await user.click(screen.getByText('Contact'));
-      expect(navMenu).not.toHaveClass('active');
-      expect(hamburger).not.toHaveClass('active');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
     });
   });
 
   describe('CSS Classes and Styling', () => {
     test('applies correct CSS classes', () => {
       render(<Header />);
-      
-      expect(document.querySelector('.navbar')).toBeInTheDocument();
-      expect(document.querySelector('.nav-container')).toBeInTheDocument();
+
+      expect(document.querySelector('nav')).toHaveClass('fixed', 'top-0', 'w-full');
+      expect(document.querySelector('.max-w-6xl')).toBeInTheDocument();
       expect(document.querySelector('.nav-logo')).toBeInTheDocument();
-      expect(document.querySelector('.nav-menu')).toBeInTheDocument();
-      expect(document.querySelector('.hamburger')).toBeInTheDocument();
-      
+      expect(document.querySelector('ul')).toBeInTheDocument();
+      expect(document.querySelector('.lg\\:hidden')).toBeInTheDocument();
+
       const navLinks = document.querySelectorAll('.nav-link');
       expect(navLinks).toHaveLength(5);
-      
-      const bars = document.querySelectorAll('.bar');
+
+      const bars = document.querySelectorAll('span');
       expect(bars).toHaveLength(3);
     });
 
     test('conditional classes are applied correctly', async () => {
       const user = userEvent.setup();
       render(<Header />);
-      
-      const hamburger = document.querySelector('.hamburger');
-      const navMenu = document.querySelector('.nav-menu');
-      
-      // Check initial state
-      expect(navMenu.className.trim()).toBe('nav-menu');
-      expect(hamburger.className.trim()).toBe('hamburger');
-      
-      // After clicking hamburger
+
+      const hamburger = document.querySelector('.lg\\:hidden');
+      const navMenu = document.querySelector('ul');
+
+      // Check initial state - menu is hidden
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
+
+      // After clicking hamburger - menu opens
       await user.click(hamburger);
-      expect(navMenu.className.trim()).toBe('nav-menu active');
-      expect(hamburger.className.trim()).toBe('hamburger active');
-      
-      // After clicking again
+      expect(navMenu).toHaveClass('fixed', 'left-0');
+      expect(navMenu).not.toHaveClass('hidden');
+
+      // After clicking again - menu closes
       await user.click(hamburger);
-      expect(navMenu.className.trim()).toBe('nav-menu');
-      expect(hamburger.className.trim()).toBe('hamburger');
+      expect(navMenu).toHaveClass('hidden', 'lg:flex');
+      expect(navMenu).not.toHaveClass('fixed', 'left-0');
     });
   });
 });

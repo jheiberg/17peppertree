@@ -136,6 +136,8 @@ class ApiService {
   }
 }
 
+export { ApiService };
+
 // Hook to use API service
 import { useAuth } from '../contexts/AuthContext';
 import { useMemo } from 'react';
