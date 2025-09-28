@@ -217,7 +217,7 @@ class TestBookingRequest:
         long_name = "A" * 200  # Longer than 100 char limit
         long_email = "a" * 200 + "@example.com"  # Longer than 120 char limit
         long_phone = "1" * 50  # Longer than 20 char limit
-        
+
         booking = BookingRequest(
             checkin_date=date.today() + timedelta(days=1),
             checkout_date=date.today() + timedelta(days=3),
@@ -227,9 +227,9 @@ class TestBookingRequest:
             phone=long_phone,
             special_requests="Regular request"
         )
-        
+
         db.session.add(booking)
-        
+
         # In SQLite, this might not enforce length limits
         # In PostgreSQL with proper varchar limits, this would fail
         try:
@@ -240,3 +240,41 @@ class TestBookingRequest:
             # In PostgreSQL, this would raise a DataError
             db.session.rollback()
             assert "value too long" in str(e).lower() or "data too long" in str(e).lower()
+
+    def test_booking_property_aliases(self, clean_db):
+        """Test property aliases for backward compatibility (lines 62, 66, 70, 74, 78)"""
+        checkin = date(2024, 7, 10)
+        checkout = date(2024, 7, 15)
+
+        booking = BookingRequest(
+            checkin_date=checkin,
+            checkout_date=checkout,
+            guests=2,
+            guest_name="Property Test",
+            email="property@example.com",
+            phone="+27555666777",
+            special_requests="Test message for alias"
+        )
+
+        db.session.add(booking)
+        db.session.commit()
+
+        # Test check_in property alias (line 62)
+        assert booking.check_in == checkin
+        assert booking.check_in == booking.checkin_date
+
+        # Test check_out property alias (line 66)
+        assert booking.check_out == checkout
+        assert booking.check_out == booking.checkout_date
+
+        # Test guest_email property alias (line 70)
+        assert booking.guest_email == "property@example.com"
+        assert booking.guest_email == booking.email
+
+        # Test guest_phone property alias (line 74)
+        assert booking.guest_phone == "+27555666777"
+        assert booking.guest_phone == booking.phone
+
+        # Test message property alias (line 78)
+        assert booking.message == "Test message for alias"
+        assert booking.message == booking.special_requests

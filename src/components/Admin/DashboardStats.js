@@ -126,7 +126,7 @@ const DashboardStats = ({ stats, onViewBookings }) => {
         </div>
 
         <div className="overflow-hidden">
-          {stats.recent_bookings.length > 0 ? (
+          {stats.recent_bookings && stats.recent_bookings.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">

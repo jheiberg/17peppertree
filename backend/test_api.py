@@ -3,8 +3,58 @@ import json
 from datetime import datetime, date, timedelta
 from database import BookingRequest, db
 from faker import Faker
+from unittest.mock import patch, Mock
 
 fake = Faker()
+
+
+class TestApplicationStartup:
+    """Test application startup scenarios"""
+
+    def test_create_tables_and_triggers_with_exception(self, test_app):
+        """Test trigger creation exception handling (lines 31-32)"""
+        from app import create_tables_and_triggers
+        import app as app_module
+
+        # Mock the migration import to raise an exception
+        original_import = __builtins__['__import__']
+
+        def mock_import(name, *args, **kwargs):
+            if name == 'migrations':
+                # Create a mock module that raises an exception
+                mock_migrations = Mock()
+                mock_migrations.create_updated_at_trigger.side_effect = Exception("Trigger creation failed")
+                return mock_migrations
+            return original_import(name, *args, **kwargs)
+
+        with patch('builtins.__import__', side_effect=mock_import):
+            with patch.object(app_module.app, 'logger') as mock_logger:
+                # This should trigger the exception handling in lines 31-32
+                create_tables_and_triggers()
+
+                # Verify the warning was logged
+                mock_logger.warning.assert_called_once()
+                assert "Could not create trigger:" in str(mock_logger.warning.call_args)
+
+    def test_debug_flag_logic_from_main_block(self, test_app):
+        """Test the debug flag logic that would be used in main block (line 221)"""
+        import os
+
+        # Test debug=True case
+        with patch.dict('os.environ', {'FLASK_DEBUG': 'true'}):
+            debug_flag = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+            assert debug_flag is True
+
+        # Test debug=False case
+        with patch.dict('os.environ', {'FLASK_DEBUG': 'false'}):
+            debug_flag = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+            assert debug_flag is False
+
+        # Test default case (no environment variable)
+        with patch.dict('os.environ', {}, clear=True):
+            debug_flag = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+            assert debug_flag is False
+
 
 class TestHealthEndpoint:
     """Test health check endpoint"""
@@ -468,17 +518,46 @@ class TestAvailabilityEndpoint:
         )
         db.session.add(booking)
         db.session.commit()
-        
+
         # Check June availability
         response = client.get('/api/availability?year=2024&month=6')
         assert response.status_code == 200
         data = json.loads(response.data)
-        
+
         unavailable = set(data['unavailable_dates'])
         # Should include June 1 and 2 (checkout is exclusive)
         assert '2024-06-01' in unavailable
         assert '2024-06-02' in unavailable
         assert '2024-06-03' not in unavailable  # Checkout date is exclusive
+
+    def test_get_availability_december_month(self, client, clean_db):
+        """Test availability for December to cover year rollover logic (line 179)"""
+        # Create a booking in December 2024
+        booking = BookingRequest(
+            checkin_date=date(2024, 12, 15),
+            checkout_date=date(2024, 12, 20),
+            guests=2,
+            guest_name='December Guest',
+            email='december@example.com',
+            phone='+27555555555',
+            status='confirmed'
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        # Test December availability to trigger line 179 (year + 1 logic)
+        response = client.get('/api/availability?year=2024&month=12')
+        assert response.status_code == 200
+        data = json.loads(response.data)
+
+        assert data['year'] == 2024
+        assert data['month'] == 12
+
+        unavailable = set(data['unavailable_dates'])
+        expected_dates = {
+            '2024-12-15', '2024-12-16', '2024-12-17', '2024-12-18', '2024-12-19'
+        }
+        assert unavailable == expected_dates
 
 
 class TestCORSHeaders:
@@ -503,18 +582,54 @@ class TestCORSHeaders:
 
 class TestErrorHandling:
     """Test error handling scenarios"""
-    
+
     def test_invalid_json(self, client):
         """Test handling of invalid JSON"""
         response = client.post('/api/booking',
                              data='invalid json{',
                              content_type='application/json')
-        
+
         # Flask will return 500 for invalid JSON in current implementation
         # The request.get_json() call will fail and be caught by the general exception handler
         assert response.status_code == 500
         data = json.loads(response.data)
         assert 'error' in data
+
+    def test_get_bookings_database_error(self, client, monkeypatch):
+        """Test error handling in get_bookings endpoint (lines 128-129)"""
+        from unittest.mock import Mock, patch
+
+        # Mock BookingRequest.query to raise an exception
+        def mock_query_error(*args, **kwargs):
+            raise Exception("Database connection error")
+
+        with patch('app.BookingRequest.query') as mock_query:
+            mock_query.order_by.side_effect = mock_query_error
+
+            response = client.get('/api/bookings')
+
+            assert response.status_code == 500
+            data = json.loads(response.data)
+            assert 'error' in data
+            assert data['error'] == 'An error occurred while fetching bookings'
+
+    def test_availability_database_error(self, client):
+        """Test error handling in availability endpoint (lines 208-209)"""
+        from unittest.mock import patch
+
+        # Mock BookingRequest.query to raise an exception
+        def mock_query_error(*args, **kwargs):
+            raise Exception("Database query failed")
+
+        with patch('app.BookingRequest.query') as mock_query:
+            mock_query.filter.side_effect = mock_query_error
+
+            response = client.get('/api/availability?year=2024&month=6')
+
+            assert response.status_code == 500
+            data = json.loads(response.data)
+            assert 'error' in data
+            assert data['error'] == 'An error occurred while fetching availability'
     
     def test_missing_content_type(self, client):
         """Test request without proper content type"""

@@ -563,3 +563,375 @@ class TestAdminErrorHandling:
             data = json.loads(response.data)
             assert 'error' in data
             assert 'permissions' in data['error'].lower()
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_get_bookings_with_date_filters(self, mock_verify_token, client, clean_db):
+        """Test filtering bookings by date range (lines 40, 43)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Create bookings with different dates
+        booking1 = BookingRequest(
+            checkin_date=date(2024, 6, 15),
+            checkout_date=date(2024, 6, 18),
+            guests=2,
+            guest_name="June Booking",
+            email="june@example.com",
+            phone="+27111111111"
+        )
+        booking2 = BookingRequest(
+            checkin_date=date(2024, 7, 10),
+            checkout_date=date(2024, 7, 15),
+            guests=1,
+            guest_name="July Booking",
+            email="july@example.com",
+            phone="+27222222222"
+        )
+
+        db.session.add(booking1)
+        db.session.add(booking2)
+        db.session.commit()
+
+        headers = {'Authorization': 'Bearer valid_token'}
+
+        # Test start_date filter (line 40)
+        response = client.get('/api/admin/bookings?start_date=2024-07-01', headers=headers)
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert len(data['bookings']) == 1
+        assert data['bookings'][0]['guest_name'] == 'July Booking'
+
+        # Test end_date filter (line 43)
+        response = client.get('/api/admin/bookings?end_date=2024-06-20', headers=headers)
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert len(data['bookings']) == 1
+        assert data['bookings'][0]['guest_name'] == 'June Booking'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.BookingRequest')
+    def test_get_all_bookings_database_error(self, mock_booking, mock_verify_token, client, clean_db):
+        """Test database error in get_all_bookings (lines 80-82)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Mock database error
+        mock_booking.query.count.side_effect = Exception("Database connection failed")
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = client.get('/api/admin/bookings', headers=headers)
+
+        assert response.status_code == 500
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Failed to fetch bookings'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.BookingRequest')
+    def test_get_booking_details_database_error(self, mock_booking, mock_verify_token, client, clean_db):
+        """Test database error in get_booking_details (lines 114-116)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Mock database error
+        mock_booking.query.get.side_effect = Exception("Database error")
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = client.get('/api/admin/booking/1', headers=headers)
+
+        assert response.status_code == 500
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Failed to fetch booking details'
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_update_booking_status_not_found(self, mock_verify_token, client, clean_db):
+        """Test updating status for non-existent booking (line 127)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        update_data = {'status': 'approved'}
+
+        response = client.put(
+            '/api/admin/booking/99999/status',
+            data=json.dumps(update_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        assert response.status_code == 404
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Booking not found'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.EmailNotification')
+    def test_update_booking_status_email_error(self, mock_email_class, mock_verify_token, client, clean_db):
+        """Test email notification failure (lines 166-167)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Mock email service to raise exception
+        mock_email_service = MagicMock()
+        mock_email_service.send_status_update_email.side_effect = Exception("Email service unavailable")
+        mock_email_class.return_value = mock_email_service
+
+        # Create test booking
+        booking = BookingRequest(
+            checkin_date=date.today() + timedelta(days=7),
+            checkout_date=date.today() + timedelta(days=10),
+            guests=2,
+            guest_name="John Doe",
+            email="john@example.com",
+            phone="+27123456789",
+            status="pending"
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        update_data = {
+            'status': 'approved',
+            'notify_guest': True
+        }
+
+        response = client.put(
+            f'/api/admin/booking/{booking.id}/status',
+            data=json.dumps(update_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        # Should still return success even if email fails
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data['message'] == 'Booking status updated successfully'
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_update_payment_status_not_found(self, mock_verify_token, client, clean_db):
+        """Test updating payment for non-existent booking (line 189)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        payment_data = {'payment_status': 'paid'}
+
+        response = client.put(
+            '/api/admin/booking/99999/payment',
+            data=json.dumps(payment_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        assert response.status_code == 404
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Booking not found'
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_update_payment_invalid_status(self, mock_verify_token, client, clean_db):
+        """Test invalid payment status validation (line 200)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Create test booking
+        booking = BookingRequest(
+            checkin_date=date.today() + timedelta(days=7),
+            checkout_date=date.today() + timedelta(days=10),
+            guests=2,
+            guest_name="John Doe",
+            email="john@example.com",
+            phone="+27123456789"
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        payment_data = {'payment_status': 'invalid_status'}
+
+        response = client.put(
+            f'/api/admin/booking/{booking.id}/payment',
+            data=json.dumps(payment_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        assert response.status_code == 400
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert 'Invalid payment status' in data['error']
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_update_payment_with_method(self, mock_verify_token, client, clean_db):
+        """Test updating payment with method field (line 213)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Create test booking
+        booking = BookingRequest(
+            checkin_date=date.today() + timedelta(days=7),
+            checkout_date=date.today() + timedelta(days=10),
+            guests=2,
+            guest_name="John Doe",
+            email="john@example.com",
+            phone="+27123456789"
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        payment_data = {
+            'payment_status': 'paid',
+            'payment_method': 'credit_card'
+        }
+
+        response = client.put(
+            f'/api/admin/booking/{booking.id}/payment',
+            data=json.dumps(payment_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data['message'] == 'Payment information updated successfully'
+
+        # Verify payment method was set
+        updated_booking = db.session.get(BookingRequest, booking.id)
+        assert updated_booking.payment_method == 'credit_card'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.db')
+    def test_update_payment_database_error(self, mock_db, mock_verify_token, client, clean_db):
+        """Test database error in update_payment_status (lines 242-245)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Create real booking first
+        booking = BookingRequest(
+            checkin_date=date.today() + timedelta(days=7),
+            checkout_date=date.today() + timedelta(days=10),
+            guests=2,
+            guest_name="John Doe",
+            email="john@example.com",
+            phone="+27123456789"
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        # Mock database commit to fail
+        mock_db.session.commit.side_effect = Exception("Database error")
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        payment_data = {'payment_status': 'paid'}
+
+        response = client.put(
+            f'/api/admin/booking/{booking.id}/payment',
+            data=json.dumps(payment_data),
+            content_type='application/json',
+            headers=headers
+        )
+
+        assert response.status_code == 500
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Failed to update payment information'
+
+    @patch('auth.keycloak_auth.verify_token')
+    def test_delete_booking_not_found(self, mock_verify_token, client, clean_db):
+        """Test deleting non-existent booking (line 256)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = client.delete('/api/admin/booking/99999', headers=headers)
+
+        assert response.status_code == 404
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Booking not found'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.db')
+    def test_delete_booking_database_error(self, mock_db, mock_verify_token, client, clean_db):
+        """Test database error in delete_booking (lines 271-274)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Create real booking first
+        booking = BookingRequest(
+            checkin_date=date.today() + timedelta(days=7),
+            checkout_date=date.today() + timedelta(days=10),
+            guests=2,
+            guest_name="John Doe",
+            email="john@example.com",
+            phone="+27123456789"
+        )
+        db.session.add(booking)
+        db.session.commit()
+
+        # Mock database commit to fail
+        mock_db.session.commit.side_effect = Exception("Database error")
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = client.delete(f'/api/admin/booking/{booking.id}', headers=headers)
+
+        assert response.status_code == 500
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Failed to delete booking'
+
+    @patch('auth.keycloak_auth.verify_token')
+    @patch('admin_routes.BookingRequest')
+    def test_get_dashboard_stats_database_error(self, mock_booking, mock_verify_token, client, clean_db):
+        """Test database error in get_dashboard_stats (lines 323-325)"""
+        mock_verify_token.return_value = {
+            'realm_access': {'roles': ['admin']},
+            'preferred_username': 'testadmin',
+            'email': 'admin@test.com'
+        }
+
+        # Mock database error
+        mock_booking.query.count.side_effect = Exception("Database connection failed")
+
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = client.get('/api/admin/dashboard/stats', headers=headers)
+
+        assert response.status_code == 500
+        data = json.loads(response.data)
+        assert 'error' in data
+        assert data['error'] == 'Failed to fetch dashboard statistics'

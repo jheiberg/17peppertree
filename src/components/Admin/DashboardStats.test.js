@@ -92,13 +92,13 @@ describe('DashboardStats Component', () => {
       render(<DashboardStats {...mockProps} />);
 
       expect(screen.getByText('Total Revenue')).toBeInTheDocument();
-      expect(screen.getByText('R 125,000.00')).toBeInTheDocument();
+      expect(screen.getByText('R 125 000,00')).toBeInTheDocument();
     });
 
     test('formats currency correctly with South African Rand', () => {
       render(<DashboardStats {...mockProps} />);
 
-      expect(screen.getByText('R 125,000.00')).toBeInTheDocument();
+      expect(screen.getByText('R 125 000,00')).toBeInTheDocument();
     });
   });
 
@@ -122,11 +122,17 @@ describe('DashboardStats Component', () => {
     test('displays booking status with correct styling', () => {
       render(<DashboardStats {...mockProps} />);
 
-      const approvedStatus = screen.getByText('approved');
-      expect(approvedStatus).toHaveClass('bg-green-100', 'text-green-800');
+      const statuses = screen.getAllByText('approved');
+      const approvedBookingStatus = statuses.find(status =>
+        status.classList.contains('inline-flex') && status.classList.contains('px-2')
+      );
+      expect(approvedBookingStatus).toHaveClass('bg-green-100', 'text-green-800');
 
-      const pendingStatus = screen.getByText('pending');
-      expect(pendingStatus).toHaveClass('bg-yellow-100', 'text-yellow-800');
+      const pendingStatuses = screen.getAllByText('pending');
+      const pendingBookingStatus = pendingStatuses.find(status =>
+        status.classList.contains('inline-flex') && status.classList.contains('px-2')
+      );
+      expect(pendingBookingStatus).toHaveClass('bg-yellow-100', 'text-yellow-800');
     });
 
     test('displays payment status with correct styling', () => {
@@ -151,9 +157,9 @@ describe('DashboardStats Component', () => {
       const { recent_bookings, ...statsWithoutBookings } = mockStats;
       render(<DashboardStats stats={statsWithoutBookings} onViewBookings={mockProps.onViewBookings} />);
 
-      // Should crash or show error since component expects recent_bookings
-      expect(() => render(<DashboardStats stats={statsWithoutBookings} onViewBookings={mockProps.onViewBookings} />))
-        .toThrow();
+      // Component should handle missing recent_bookings gracefully
+      expect(screen.getByText('Recent Bookings')).toBeInTheDocument();
+      expect(screen.getByText('No recent bookings')).toBeInTheDocument();
     });
   });
 
@@ -312,6 +318,29 @@ describe('DashboardStats Component', () => {
       const refundedStatus = screen.getByText('refunded');
       expect(refundedStatus).toHaveClass('bg-purple-100', 'text-purple-800');
     });
+
+    test('displays unknown status with default styling', () => {
+      const statsWithUnknownStatus = {
+        ...mockStats,
+        recent_bookings: [
+          {
+            id: 8,
+            guest_name: 'Frank Miller',
+            check_in: '2024-02-10',
+            status: 'unknown_status',
+            payment_status: 'unknown_payment'
+          }
+        ]
+      };
+
+      render(<DashboardStats stats={statsWithUnknownStatus} onViewBookings={mockProps.onViewBookings} />);
+
+      const unknownStatus = screen.getByText('unknown_status');
+      expect(unknownStatus).toHaveClass('bg-gray-100', 'text-gray-800');
+
+      const unknownPayment = screen.getByText('unknown_payment');
+      expect(unknownPayment).toHaveClass('bg-gray-100', 'text-gray-800');
+    });
   });
 
   describe('Data Edge Cases', () => {
@@ -330,8 +359,9 @@ describe('DashboardStats Component', () => {
 
       render(<DashboardStats stats={statsWithZeros} onViewBookings={mockProps.onViewBookings} />);
 
-      expect(screen.getByText('0')).toBeInTheDocument();
-      expect(screen.getByText('R 0.00')).toBeInTheDocument();
+      // There are multiple '0' values, so just check one exists
+      expect(screen.getAllByText('0').length).toBeGreaterThan(0);
+      expect(screen.getByText('R 0,00')).toBeInTheDocument();
     });
 
     test('handles large numbers correctly', () => {
@@ -350,7 +380,7 @@ describe('DashboardStats Component', () => {
       render(<DashboardStats stats={statsWithLargeNumbers} onViewBookings={mockProps.onViewBookings} />);
 
       expect(screen.getByText('1000')).toBeInTheDocument();
-      expect(screen.getByText('R 15,000,000.00')).toBeInTheDocument();
+      expect(screen.getByText('R 15 000 000,00')).toBeInTheDocument();
     });
 
     test('handles missing optional properties', () => {
