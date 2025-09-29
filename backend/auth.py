@@ -65,9 +65,12 @@ class KeycloakAuth:
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': self.redirect_uri,
-            'client_id': self.client_id,
-            'client_secret': self.client_secret
+            'client_id': self.client_id
         }
+
+        # Only include client_secret if it's set (for confidential clients)
+        if self.client_secret:
+            data['client_secret'] = self.client_secret
         
         try:
             response = requests.post(self.token_url, data=data)
@@ -82,9 +85,12 @@ class KeycloakAuth:
         data = {
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
-            'client_id': self.client_id,
-            'client_secret': self.client_secret
+            'client_id': self.client_id
         }
+
+        # Only include client_secret if it's set (for confidential clients)
+        if self.client_secret:
+            data['client_secret'] = self.client_secret
         
         try:
             response = requests.post(self.token_url, data=data)

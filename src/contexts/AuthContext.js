@@ -17,7 +17,9 @@ console.log('Keycloak Configuration (PKCE Public Client):', {
   realm: KEYCLOAK_CONFIG.realm,
   clientId: KEYCLOAK_CONFIG.clientId,
   redirectUri: KEYCLOAK_CONFIG.redirectUri,
-  clientSecret: 'NOT_SET (PKCE Public Client)'
+  clientSecret: 'NOT_SET (PKCE Public Client)',
+  currentOrigin: window.location.origin,
+  currentUrl: window.location.href
 });
 
 // Action types
@@ -106,12 +108,20 @@ const generateState = () => {
 };
 
 const generateCodeVerifier = () => {
-  const array = new Uint8Array(64);
+  // Generate a code verifier according to RFC 7636
+  // Must be 43-128 characters long, URL-safe
+  const array = new Uint8Array(32); // 32 bytes = 43 characters when base64url encoded
   crypto.getRandomValues(array);
-  return base64URLEncode(String.fromCharCode(...array));
+  return base64URLEncode(array);
 };
 
-const base64URLEncode = (str) => {
+const base64URLEncode = (input) => {
+  let str;
+  if (input instanceof Uint8Array) {
+    str = String.fromCharCode(...input);
+  } else {
+    str = input;
+  }
   return btoa(str)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -128,30 +138,28 @@ const sha256 = async (plain) => {
     return await window.crypto.subtle.digest('SHA-256', data);
   } catch (error) {
     console.error('SHA256 error:', error);
-    // Fallback: use a simple hash for development (not secure for production)
-    let hash = 0;
-    for (let i = 0; i < plain.length; i++) {
-      const char = plain.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    // Convert to Uint8Array format expected by the rest of the code
-    const bytes = new Uint8Array(32);
-    for (let i = 0; i < 32; i++) {
-      bytes[i] = (hash + i) & 0xFF;
-    }
-    return bytes.buffer;
+    // For HTTP environments, return null to indicate we should use plain method
+    return null;
   }
 };
 
 const generateCodeChallenge = async (verifier) => {
   try {
     const hashed = await sha256(verifier);
-    return base64URLEncode(String.fromCharCode(...new Uint8Array(hashed)));
+    if (hashed === null) {
+      // Web Crypto API not available, use plain method
+      console.log('Using PKCE plain method due to HTTP environment');
+      return { challenge: verifier, method: 'plain' };
+    }
+    return {
+      challenge: base64URLEncode(String.fromCharCode(...new Uint8Array(hashed))),
+      method: 'S256'
+    };
   } catch (error) {
     console.error('Code challenge generation error:', error);
-    // Fallback: return the verifier itself (not secure for production)
-    return base64URLEncode(verifier);
+    // Fallback: use plain method
+    console.log('Falling back to PKCE plain method');
+    return { challenge: verifier, method: 'plain' };
   }
 };
 
@@ -236,12 +244,15 @@ export function AuthProvider({ children }) {
 
       const state = generateState();
       const codeVerifier = generateCodeVerifier();
-      const codeChallenge = await generateCodeChallenge(codeVerifier);
+      const codeChallengeResult = await generateCodeChallenge(codeVerifier);
 
       console.log('PKCE generation:', {
         state: state,
         codeVerifier: codeVerifier.substring(0, 10) + '...',
-        codeChallenge: codeChallenge,
+        codeVerifierLength: codeVerifier.length,
+        codeChallenge: codeChallengeResult.challenge,
+        codeChallengeMethod: codeChallengeResult.method,
+        codeChallengeLength: codeChallengeResult.challenge.length,
         clientId: KEYCLOAK_CONFIG.clientId,
         redirectUri: KEYCLOAK_CONFIG.redirectUri
       });
@@ -256,8 +267,8 @@ export function AuthProvider({ children }) {
         response_type: 'code',
         scope: 'openid profile email',
         state: state,
-        code_challenge: codeChallenge,
-        code_challenge_method: 'S256'
+        code_challenge: codeChallengeResult.challenge,
+        code_challenge_method: codeChallengeResult.method
       });
 
       const authUrl = `${KEYCLOAK_CONFIG.url}/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/auth?${authParams}`;
@@ -426,7 +437,8 @@ export function AuthProvider({ children }) {
         ...tokenRequestBody,
         client_secret: tokenRequestBody.client_secret ? '[REDACTED]' : undefined,
         code: code ? '[PROVIDED]' : '[MISSING]',
-        code_verifier: codeVerifier ? '[PROVIDED]' : '[MISSING]'
+        code_verifier: codeVerifier ? `[PROVIDED-${codeVerifier.length}]` : '[MISSING]',
+        redirect_uri_match: tokenRequestBody.redirect_uri === KEYCLOAK_CONFIG.redirectUri
       }
     });
 

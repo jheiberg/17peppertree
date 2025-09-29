@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'; // Optional: for user notifications
 class ApiService {
   constructor(authProvider) {
     this.authProvider = authProvider;
-    this.baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
   }
 
   async request(endpoint, options = {}) {

@@ -37,8 +37,9 @@ create_tables_and_triggers()
 # Configure CORS with explicit settings for mobile/tablet access
 cors_origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000", 
+    "http://127.0.0.1:3000",
     "http://192.168.1.102:3000",
+    "http://192.168.1.102:3001",
     "http://0.0.0.0:3000"
 ]
 

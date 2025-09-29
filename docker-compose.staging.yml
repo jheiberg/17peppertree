@@ -1,54 +1,56 @@
-version: '3.8'
-
 services:
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    container_name: peppertree_nginx_staging
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx.staging.conf:/etc/nginx/nginx.conf:ro
-      - ./logs/nginx-staging:/var/log/nginx
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - peppertree_staging_network
-    restart: unless-stopped
-
-  # React Frontend
-  frontend:
-    image: ${DOCKER_HUB_USERNAME}/peppertree-frontend:latest
-    container_name: peppertree_frontend_staging
-    expose:
-      - "80"
-    networks:
-      - peppertree_staging_network
-    restart: unless-stopped
-
-  # Flask Backend API
-  backend:
-    image: ${DOCKER_HUB_USERNAME}/peppertree-backend:latest
-    container_name: peppertree_backend_staging
-    expose:
-      - "5000"
+  # Keycloak Database
+  keycloak_db:
+    image: postgres:15-alpine
+    container_name: peppertree_keycloak_db_staging
     environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/peppertree_staging
-      - SECRET_KEY=${SECRET_KEY}
-      - MAIL_SERVER=${MAIL_SERVER}
-      - MAIL_PORT=${MAIL_PORT}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
-      - OWNER_EMAIL=${OWNER_EMAIL}
-      - FLASK_ENV=staging
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-keycloak_staging_password}
+    volumes:
+      - keycloak_postgres_data_staging:/var/lib/postgresql/data
+    networks:
+      - peppertree_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Keycloak Identity Provider
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: peppertree_keycloak_staging
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak_db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_HOSTNAME: 192.168.1.102
+      KC_HOSTNAME_PORT: 8081
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_HTTP_PORT: 8080
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    command:
+      - start
+    ports:
+      - "8081:8080"
     depends_on:
-      db:
+      keycloak_db:
         condition: service_healthy
     networks:
-      - peppertree_staging_network
-    restart: unless-stopped
+      - peppertree_network
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   # PostgreSQL Database
   db:
@@ -60,20 +62,99 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data_staging:/var/lib/postgresql/data
-      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
     networks:
-      - peppertree_staging_network
-    restart: unless-stopped
+      - peppertree_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Flask Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: peppertree_backend_staging
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/peppertree_staging
+      - SECRET_KEY=${SECRET_KEY_STAGING}
+      - MAIL_SERVER=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
+      - OWNER_EMAIL=${OWNER_EMAIL}
+      - FLASK_ENV=staging
+      # Keycloak OAuth2 settings
+      - KEYCLOAK_SERVER_URL=http://192.168.1.102:8081
+      - KEYCLOAK_CLIENT_ID=peppertree-admin
+      # No client secret needed for public client
+      # - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET_STAGING}
+      - KEYCLOAK_REALM=peppertree
+      - KEYCLOAK_REDIRECT_URI=${KEYCLOAK_REDIRECT_URI_STAGING}
+    ports:
+      - "5001:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peppertree_frontend_staging
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+      - keycloak
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+    environment:
+      - REACT_APP_API_URL=http://192.168.1.102:5001/api
+      - REACT_APP_KEYCLOAK_URL=http://192.168.1.102:8081
+      - REACT_APP_KEYCLOAK_REALM=peppertree
+      - REACT_APP_KEYCLOAK_CLIENT_ID=peppertree-admin
+      - REACT_APP_KEYCLOAK_REDIRECT_URI=http://192.168.1.102:3001/auth/callback
+
+  # Nginx Reverse Proxy for 17peppertree.co.za
+  nginx:
+    image: nginx:alpine
+    container_name: peppertree_nginx_staging
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.staging.conf:/etc/nginx/nginx.conf
+      - ./logs/nginx-staging:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+
 volumes:
   postgres_data_staging:
     driver: local
+  keycloak_postgres_data_staging:
+    driver: local
 
 networks:
-  peppertree_staging_network:
+  peppertree_network:
     driver: bridge
