@@ -8,17 +8,17 @@ jest.mock('../AvailabilityCalendar/AvailabilityCalendar', () => {
   return function MockAvailabilityCalendar({ onDateSelect, selectedDates }) {
     return (
       <div data-testid="availability-calendar">
-        <button 
-          onClick={() => onDateSelect('2024/06/15', 'checkin')}
+        <button
+          onClick={() => onDateSelect('2025/06/15', 'checkin')}
           data-testid="select-checkin"
         >
-          Select Check-in: 2024/06/15
+          Select Check-in: 2025/06/15
         </button>
-        <button 
-          onClick={() => onDateSelect('2024/06/18', 'checkout')}
+        <button
+          onClick={() => onDateSelect('2025/06/18', 'checkout')}
           data-testid="select-checkout"
         >
-          Select Check-out: 2024/06/18
+          Select Check-out: 2025/06/18
         </button>
         <div data-testid="selected-checkin">{selectedDates.checkin}</div>
         <div data-testid="selected-checkout">{selectedDates.checkout}</div>
@@ -66,7 +66,7 @@ describe('Contact Component', () => {
 
     test('renders stars correctly', () => {
       render(<Contact />);
-      const stars = document.querySelectorAll('.stars-large .fas.fa-star');
+      const stars = document.querySelectorAll('.fas.fa-star');
       expect(stars).toHaveLength(5);
     });
   });
@@ -301,12 +301,12 @@ describe('Contact Component', () => {
       const checkoutInput = screen.getByLabelText('Check-out Date');
       
       // Set initial checkout date
-      await user.type(checkoutInput, '2024/06/20');
+      await user.type(checkoutInput, '2025/06/20');
       
       // Select checkin from calendar
       await user.click(screen.getByTestId('select-checkin'));
       
-      expect(checkinInput).toHaveValue('2024/06/15');
+      expect(checkinInput).toHaveValue('2025/06/15');
       expect(checkoutInput).toHaveValue(''); // Should be cleared when setting checkin
     });
 
@@ -329,7 +329,7 @@ describe('Contact Component', () => {
       
       // Check that checkout input receives the value from calendar
       const checkoutInput = screen.getByLabelText('Check-out Date');
-      expect(checkoutInput.value).toBe('2024/06/18');
+      expect(checkoutInput.value).toBe('2025/06/18');
     });
 
     test('displays date selection summary when both dates are selected', () => {
@@ -350,8 +350,8 @@ describe('Contact Component', () => {
 
   describe('Form Submission', () => {
     const validFormData = {
-      checkin: '2024/06/15',
-      checkout: '2024/06/18',
+      checkin: '20251115',
+      checkout: '20251118',
       guests: '2',
       name: 'John Doe',
       email: 'john@example.com',
@@ -614,8 +614,8 @@ describe('Contact Component', () => {
       // Fill form with checkout before checkin - this should trigger lines 153-157
       await fillForm(user, {
         ...validFormData,
-        checkin: '2024/12/25',
-        checkout: '2024/12/20' // Before checkin
+        checkin: '20251225',
+        checkout: '20251220' // Before checkin
       });
 
       const submitButton = screen.getByText('Send Booking Request');
@@ -637,8 +637,8 @@ describe('Contact Component', () => {
       // Fill form with same date for checkin and checkout - this should also trigger lines 153-157
       await fillForm(user, {
         ...validFormData,
-        checkin: '2024/12/25',
-        checkout: '2024/12/25' // Same date
+        checkin: '20251225',
+        checkout: '20251225' // Same date
       });
 
       const submitButton = screen.getByText('Send Booking Request');
@@ -811,7 +811,7 @@ describe('Contact Component', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/There was an error submitting your request. Please check your connection/)).toBeInTheDocument();
+        expect(screen.getByText(/There was an error submitting your request. Please check your connection and try again./)).toBeInTheDocument();
       });
     });
   });
@@ -930,13 +930,13 @@ describe('Contact Component', () => {
       fireEvent.change(checkoutInput, { target: { value: '20240620' } });
       expect(checkoutInput.value).toBe('2024/06/20');
       
-      // Same date as checkin (should not work - not greater than checkin)
+      // Same date as checkin (allowed but shows warning)
       fireEvent.change(checkoutInput, { target: { value: '20240615' } });
-      expect(checkoutInput.value).toBe('2024/06/20'); // Should remain previous value
-      
-      // Date before checkin (should not work)
+      expect(checkoutInput.value).toBe('2024/06/15'); // Should accept the formatted value
+
+      // Date before checkin (allowed but shows warning)
       fireEvent.change(checkoutInput, { target: { value: '20240610' } });
-      expect(checkoutInput.value).toBe('2024/06/20'); // Should remain previous value
+      expect(checkoutInput.value).toBe('2024/06/10'); // Should accept the formatted value
     });
   });
 

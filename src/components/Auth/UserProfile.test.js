@@ -2,7 +2,7 @@
  * Comprehensive tests for UserProfile component
  */
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserProfile } from './UserProfile';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,6 +17,28 @@ describe('UserProfile Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
+  // Helper function to click the profile button and open dropdown
+  const openDropdown = async (user, userName = 'John Doe') => {
+    let profileButton;
+
+    try {
+      // Try to find by name first
+      profileButton = screen.getAllByText(userName)[0].closest('button');
+    } catch {
+      try {
+        // Fallback to first button (should be the profile button)
+        profileButton = screen.getAllByRole('button')[0];
+      } catch {
+        throw new Error('Could not find profile button');
+      }
+    }
+
+    await act(async () => {
+      await user.click(profileButton);
+    });
+    return profileButton;
+  };
 
   const defaultUser = {
     given_name: 'John',
@@ -203,14 +225,19 @@ describe('UserProfile Component', () => {
       // Initially dropdown should be hidden
       expect(screen.queryByText('Username:')).not.toBeInTheDocument();
 
-      // Click to show dropdown
-      await user.click(screen.getByRole('button'));
+      // Click to show dropdown - use more specific selector
+      const profileButton = screen.getByText('John Doe').closest('button');
+      await act(async () => {
+        await user.click(profileButton);
+      });
 
       expect(screen.getByText('Username:')).toBeInTheDocument();
       expect(screen.getByText('Email Verified:')).toBeInTheDocument();
 
       // Click again to hide dropdown
-      await user.click(screen.getByRole('button'));
+      await act(async () => {
+        await user.click(profileButton);
+      });
 
       expect(screen.queryByText('Username:')).not.toBeInTheDocument();
     });
@@ -221,7 +248,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       const dropdown = screen.getByText('Username:').closest('.absolute');
       expect(dropdown).toHaveClass('right-0', 'mt-2', 'w-80', 'bg-white', 'rounded-lg', 'shadow-lg', 'border', 'z-50');
@@ -233,7 +260,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       // Should have both small avatar (in button) and large avatar (in dropdown)
       const avatars = screen.getAllByText('J');
@@ -255,7 +282,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Username:')).toBeInTheDocument();
       expect(screen.getByText('johndoe')).toBeInTheDocument();
@@ -267,7 +294,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Email Verified:')).toBeInTheDocument();
       expect(screen.getByText('Yes')).toBeInTheDocument();
@@ -285,7 +312,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Email Verified:')).toBeInTheDocument();
       expect(screen.getByText('No')).toBeInTheDocument();
@@ -303,7 +330,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('No')).toBeInTheDocument();
     });
@@ -314,7 +341,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       // Check header section
       expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('John Doe');
@@ -332,7 +359,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Roles:')).toBeInTheDocument();
       expect(screen.getByText('user')).toBeInTheDocument();
@@ -359,7 +386,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Roles:')).toBeInTheDocument();
       expect(screen.getByText('user')).toBeInTheDocument();
@@ -377,7 +404,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.queryByText('Roles:')).not.toBeInTheDocument();
     });
@@ -394,7 +421,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.queryByText('Roles:')).not.toBeInTheDocument();
     });
@@ -413,7 +440,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.queryByText('Roles:')).not.toBeInTheDocument();
     });
@@ -434,7 +461,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       expect(screen.getByText('Roles:')).toBeInTheDocument();
 
@@ -455,12 +482,14 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       const signOutButton = screen.getByText('Sign Out');
       expect(signOutButton).toBeInTheDocument();
 
-      await user.click(signOutButton);
+      await act(async () => {
+        await user.click(signOutButton);
+      });
 
       expect(mockLogout).toHaveBeenCalledTimes(1);
     });
@@ -471,7 +500,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       const signOutButton = screen.getByText('Sign Out');
       expect(signOutButton).toHaveClass('w-full', 'px-4', 'py-2', 'bg-red-600', 'text-white', 'rounded', 'hover:bg-red-700');
@@ -483,7 +512,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       const signOutButton = screen.getByText('Sign Out');
       const buttonContainer = signOutButton.closest('.border-t');
@@ -507,7 +536,7 @@ describe('UserProfile Component', () => {
       // Should still render with default values
       expect(screen.getByText('U')).toBeInTheDocument(); // Default avatar
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user, 'test@example.com');
 
       expect(screen.getByText('Username:')).toBeInTheDocument();
       expect(screen.getByText('Email Verified:')).toBeInTheDocument();
@@ -534,7 +563,7 @@ describe('UserProfile Component', () => {
 
       render(<UserProfile />);
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       const dropdown = screen.getByText('Sign Out').closest('.absolute');
       expect(dropdown).toHaveClass('absolute', 'right-0', 'z-50');
@@ -556,10 +585,10 @@ describe('UserProfile Component', () => {
 
       expect(screen.getByText('Very Long Full Name That Might Overflow')).toBeInTheDocument();
 
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user, 'Very Long Full Name That Might Overflow');
 
       expect(screen.getByText('very_long_username_that_might_break_layout')).toBeInTheDocument();
-      expect(screen.getByText('very.long.email.address.that.might.cause.issues@example-domain.com')).toBeInTheDocument();
+      expect(screen.getAllByText('very.long.email.address.that.might.cause.issues@example-domain.com')).toHaveLength(2); // Should appear twice: in button and dropdown
     });
   });
 
@@ -571,7 +600,7 @@ describe('UserProfile Component', () => {
       render(<UserProfile />);
 
       // Open dropdown
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
       expect(screen.getByText('Sign Out')).toBeInTheDocument();
 
       // Interact with logout button (without actually clicking it)
@@ -582,7 +611,7 @@ describe('UserProfile Component', () => {
       expect(screen.getByText('Sign Out')).toBeInTheDocument();
 
       // Close dropdown
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
       expect(screen.queryByText('Sign Out')).not.toBeInTheDocument();
     });
 
@@ -614,7 +643,7 @@ describe('UserProfile Component', () => {
       expect(screen.queryByText('Sign Out')).not.toBeInTheDocument();
 
       // 2. Click to open dropdown
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
 
       // 3. Verify all dropdown content
       expect(screen.getByText('Username:')).toBeInTheDocument();
@@ -626,11 +655,13 @@ describe('UserProfile Component', () => {
       expect(screen.getByText('admin')).toBeInTheDocument();
 
       // 4. Click logout
-      await user.click(screen.getByText('Sign Out'));
+      await act(async () => {
+        await user.click(screen.getByText('Sign Out'));
+      });
       expect(mockLogout).toHaveBeenCalledTimes(1);
 
       // 5. Close dropdown by clicking profile again
-      await user.click(screen.getByRole('button'));
+      await openDropdown(user);
       expect(screen.queryByText('Sign Out')).not.toBeInTheDocument();
     });
   });

@@ -52,7 +52,7 @@ export function UserProfile() {
               </div>
             </div>
             
-            {user.realm_access?.roles && (
+            {user.realm_access?.roles && user.realm_access.roles.length > 0 && (
               <div>
                 <span className="font-medium text-gray-700">Roles:</span>
                 <div className="flex flex-wrap gap-1 mt-1">

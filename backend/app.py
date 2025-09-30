@@ -136,7 +136,9 @@ def get_bookings():
 @app.route('/api/booking/<int:booking_id>', methods=['GET'])
 def get_booking(booking_id):
     try:
-        booking = BookingRequest.query.get_or_404(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
+        if not booking:
+            return jsonify({'error': 'Booking not found'}), 404
         return jsonify(booking.to_dict())
     except Exception as e:
         return jsonify({'error': 'Booking not found'}), 404
@@ -149,8 +151,10 @@ def update_booking_status(booking_id):
         
         if status not in ['pending', 'confirmed', 'rejected']:
             return jsonify({'error': 'Invalid status. Must be pending, confirmed, or rejected'}), 400
-        
-        booking = BookingRequest.query.get_or_404(booking_id)
+
+        booking = db.session.get(BookingRequest, booking_id)
+        if not booking:
+            return jsonify({'error': 'Booking not found'}), 404
         booking.status = status
         db.session.commit()
         

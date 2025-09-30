@@ -28,6 +28,9 @@ describe('ApiService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Set up default environment first
+    process.env.REACT_APP_API_URL = 'http://localhost:5000/api';
+
     mockAuthProvider = {
       getAccessToken: jest.fn(),
       refreshAccessToken: jest.fn(),
@@ -36,9 +39,6 @@ describe('ApiService', () => {
     };
 
     apiService = new ApiService(mockAuthProvider);
-
-    // Set up default environment
-    process.env.REACT_APP_API_BASE_URL = 'http://localhost:5000/api';
   });
 
   afterEach(() => {
@@ -47,13 +47,13 @@ describe('ApiService', () => {
 
   describe('Constructor', () => {
     test('initializes with custom base URL', () => {
-      process.env.REACT_APP_API_BASE_URL = 'https://api.example.com';
+      process.env.REACT_APP_API_URL = 'https://api.example.com';
       const customApiService = new ApiService(mockAuthProvider);
       expect(customApiService.baseURL).toBe('https://api.example.com');
     });
 
     test('initializes with default base URL when env var not set', () => {
-      delete process.env.REACT_APP_API_BASE_URL;
+      delete process.env.REACT_APP_API_URL;
       const defaultApiService = new ApiService(mockAuthProvider);
       expect(defaultApiService.baseURL).toBe('http://localhost:5000/api');
     });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { act } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApi } from '../../services/apiService';
 import { useSecureApi } from '../../services/secureApiService';
@@ -26,16 +27,24 @@ const AdminDashboard = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      act(() => {
+        setLoading(true);
+        setError(null);
+      });
       // Use secure API for dashboard stats
       const data = await secureApi.getSecureDashboardStats();
-      setStats(data);
+      act(() => {
+        setStats(data);
+      });
     } catch (err) {
       console.error('Failed to fetch dashboard stats:', err);
-      setError('Failed to load dashboard statistics');
+      act(() => {
+        setError('Failed to load dashboard statistics');
+      });
     } finally {
-      setLoading(false);
+      act(() => {
+        setLoading(false);
+      });
     }
   };
 

@@ -46,19 +46,19 @@ jest.mock('./DashboardStats', () => {
 
 // Mock the hooks
 const mockUseAuth = jest.fn();
-const mockUseApi = jest.fn();
+const mockUseSecureApi = jest.fn();
 
 jest.mock('../../contexts/AuthContext', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('../../services/apiService', () => ({
-  useApi: () => mockUseApi(),
+jest.mock('../../services/secureApiService', () => ({
+  useSecureApi: () => mockUseSecureApi(),
 }));
 
 describe('AdminDashboard Component', () => {
-  const mockApi = {
-    get: jest.fn(),
+  const mockSecureApi = {
+    getSecureDashboardStats: jest.fn(),
   };
 
   const mockAuthData = {
@@ -75,10 +75,10 @@ describe('AdminDashboard Component', () => {
     mockAuthData.logout = jest.fn();
 
     mockUseAuth.mockReturnValue(mockAuthData);
-    mockUseApi.mockReturnValue(mockApi);
+    mockUseSecureApi.mockReturnValue(mockSecureApi);
 
     // Ensure API mock returns a resolved promise
-    mockApi.get.mockImplementation(() =>
+    mockSecureApi.getSecureDashboardStats.mockImplementation(() =>
       Promise.resolve({ totalBookings: 10, revenue: 5000 })
     );
   });
@@ -149,14 +149,14 @@ describe('AdminDashboard Component', () => {
         expect(screen.getByText('You do not have permission to access this page')).toBeInTheDocument();
       });
 
-      expect(mockApi.get).not.toHaveBeenCalled();
+      expect(mockSecureApi.getSecureDashboardStats).not.toHaveBeenCalled();
     });
 
     test('fetches dashboard stats when user is admin', async () => {
       render(<AdminDashboard />);
 
       await waitFor(() => {
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+        expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
       });
 
       // Wait for loading to complete and stats to be displayed
@@ -213,7 +213,7 @@ describe('AdminDashboard Component', () => {
     });
 
     test('displays error when stats fetch fails', async () => {
-      mockApi.get.mockRejectedValue(new Error('API Error'));
+      mockSecureApi.getSecureDashboardStats.mockRejectedValue(new Error('API Error'));
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       render(<AdminDashboard />);
@@ -227,8 +227,8 @@ describe('AdminDashboard Component', () => {
     });
 
     test('allows retry when error occurs', async () => {
-      mockApi.get.mockRejectedValueOnce(new Error('API Error'));
-      mockApi.get.mockResolvedValueOnce({ totalBookings: 5 });
+      mockSecureApi.getSecureDashboardStats.mockRejectedValueOnce(new Error('API Error'));
+      mockSecureApi.getSecureDashboardStats.mockResolvedValueOnce({ totalBookings: 5 });
       const user = userEvent.setup();
 
       render(<AdminDashboard />);
@@ -244,7 +244,7 @@ describe('AdminDashboard Component', () => {
         expect(screen.queryByText('Failed to load dashboard statistics')).not.toBeInTheDocument();
       });
 
-      expect(mockApi.get).toHaveBeenCalledTimes(2);
+      expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -253,7 +253,7 @@ describe('AdminDashboard Component', () => {
       render(<AdminDashboard />);
       // Wait for API call to complete and stats to be loaded
       await waitFor(() => {
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+        expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
       });
       await waitFor(() => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
@@ -316,7 +316,7 @@ describe('AdminDashboard Component', () => {
       render(<AdminDashboard />);
       // Wait for API call to complete and stats to be loaded
       await waitFor(() => {
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+        expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
       });
       await waitFor(() => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
@@ -384,7 +384,7 @@ describe('AdminDashboard Component', () => {
 
       expect(screen.getByTestId('dashboard-stats')).toBeInTheDocument();
       expect(screen.queryByTestId('booking-list')).not.toBeInTheDocument();
-      expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+      expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
     });
 
     test('handles update callback from BookingDetails', async () => {
@@ -399,7 +399,7 @@ describe('AdminDashboard Component', () => {
       const updateButton = screen.getByRole('button', { name: /Update/i });
       await user.click(updateButton);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+      expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
     });
   });
 
@@ -444,7 +444,7 @@ describe('AdminDashboard Component', () => {
       render(<AdminDashboard />);
       // Wait for API call to complete and stats to be loaded
       await waitFor(() => {
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/dashboard/stats');
+        expect(mockSecureApi.getSecureDashboardStats).toHaveBeenCalled();
       });
       await waitFor(() => {
         expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
@@ -502,7 +502,7 @@ describe('AdminDashboard Component', () => {
       });
 
       // Set up API error for next dashboard navigation
-      mockApi.get.mockRejectedValueOnce(new Error('API Error'));
+      mockSecureApi.getSecureDashboardStats.mockRejectedValueOnce(new Error('API Error'));
 
       // Navigate to dashboard from bookings - this will trigger fetchDashboardStats
       const dashboardButtons = screen.getAllByRole('button', { name: /Dashboard/i });

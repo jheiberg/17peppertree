@@ -4,7 +4,7 @@ Secure API client for backend services using OAuth2 client credentials flow
 import os
 import requests
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 import threading
 
@@ -41,7 +41,7 @@ class SecureApiClient:
             # Check if we have a valid token
             if self._access_token and self._token_expires_at:
                 # Add 60 second buffer before expiration
-                if datetime.utcnow() < (self._token_expires_at - timedelta(seconds=60)):
+                if datetime.now(timezone.utc) < (self._token_expires_at - timedelta(seconds=60)):
                     return self._access_token
 
             # Need to get a new token
@@ -64,7 +64,7 @@ class SecureApiClient:
 
                 self._access_token = token_data['access_token']
                 expires_in = token_data.get('expires_in', 300)  # Default 5 minutes
-                self._token_expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+                self._token_expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
                 logger.info(f"Successfully obtained access token, expires in {expires_in} seconds")
                 return self._access_token
@@ -156,7 +156,7 @@ class SecureApiClient:
                 'expires_at': self._token_expires_at.isoformat() if self._token_expires_at else None,
                 'is_expired': (
                     self._token_expires_at is None or
-                    datetime.utcnow() >= self._token_expires_at
+                    datetime.now(timezone.utc) >= self._token_expires_at
                 ) if self._token_expires_at else True,
                 'client_id': self.client_id,
                 'realm': self.realm

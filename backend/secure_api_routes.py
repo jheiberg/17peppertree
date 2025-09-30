@@ -2,7 +2,7 @@
 Secure API routes for client credentials and service-to-service communication
 """
 from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime
+from datetime import datetime, timezone
 from secure_auth import client_credentials_required, user_or_client_required
 from database import db, BookingRequest
 from email_notifications import EmailNotification
@@ -22,7 +22,7 @@ def secure_health():
         'status': 'healthy',
         'message': 'Secure Peppertree API is running',
         'client_id': request.client['client_id'],
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(timezone.utc).isoformat()
     })
 
 @secure_api_bp.route('/bookings', methods=['GET'])
@@ -176,7 +176,7 @@ def create_secure_booking():
 def get_secure_booking(booking_id):
     """Get a specific booking via secure API"""
     try:
-        booking = BookingRequest.query.get(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
 
         if not booking:
             return jsonify({'error': 'Booking not found'}), 404
@@ -256,7 +256,7 @@ def get_secure_dashboard_stats():
             'auth_type': request.auth_type,
             'client_id': request.client['client_id'] if request.auth_type == 'client' else None,
             'user_id': request.user['sub'] if request.auth_type == 'user' else None,
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': datetime.now(timezone.utc).isoformat()
         })
 
     except Exception as e:
@@ -270,7 +270,7 @@ def test_client_credentials():
     return jsonify({
         'message': 'Client credentials authentication successful',
         'client': request.client,
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(timezone.utc).isoformat()
     })
 
 @secure_api_bp.route('/client/info', methods=['GET'])
@@ -282,5 +282,5 @@ def get_client_info():
     return jsonify({
         'client': request.client,
         'token_info': secure_client.get_token_info(),
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(timezone.utc).isoformat()
     })

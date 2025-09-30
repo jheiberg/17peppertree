@@ -2,7 +2,7 @@
 Admin routes for managing bookings and payments
 """
 from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime
+from datetime import datetime, timezone
 from auth import admin_required
 from database import db, BookingRequest
 from email_notifications import EmailNotification
@@ -87,7 +87,7 @@ def get_all_bookings():
 def get_booking_details(booking_id):
     """Get detailed information for a specific booking"""
     try:
-        booking = BookingRequest.query.get(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
         
         if not booking:
             return jsonify({'error': 'Booking not found'}), 404
@@ -121,7 +121,7 @@ def get_booking_details(booking_id):
 def update_booking_status(booking_id):
     """Update booking status (approve/reject/cancel)"""
     try:
-        booking = BookingRequest.query.get(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
         
         if not booking:
             return jsonify({'error': 'Booking not found'}), 404
@@ -143,7 +143,7 @@ def update_booking_status(booking_id):
         booking.status_history.append({
             'status': new_status,
             'changed_by': request.user['email'],
-            'changed_at': datetime.utcnow().isoformat(),
+            'changed_at': datetime.now(timezone.utc).isoformat(),
             'notes': admin_notes
         })
         
@@ -152,7 +152,7 @@ def update_booking_status(booking_id):
         booking.status = new_status
         if admin_notes:
             booking.admin_notes = admin_notes
-        booking.updated_at = datetime.utcnow()
+        booking.updated_at = datetime.now(timezone.utc)
         
         db.session.commit()
         
@@ -183,7 +183,7 @@ def update_booking_status(booking_id):
 def update_payment_status(booking_id):
     """Update payment information for a booking"""
     try:
-        booking = BookingRequest.query.get(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
         
         if not booking:
             return jsonify({'error': 'Booking not found'}), 404
@@ -214,9 +214,9 @@ def update_payment_status(booking_id):
         
         # Set payment date if marking as paid
         if payment_status == 'paid' and not booking.payment_date:
-            booking.payment_date = datetime.utcnow()
+            booking.payment_date = datetime.now(timezone.utc)
         
-        booking.updated_at = datetime.utcnow()
+        booking.updated_at = datetime.now(timezone.utc)
         
         # Add to status history
         if not booking.status_history:
@@ -227,7 +227,7 @@ def update_payment_status(booking_id):
             'payment_status': payment_status,
             'payment_amount': payment_amount,
             'changed_by': request.user['email'],
-            'changed_at': datetime.utcnow().isoformat()
+            'changed_at': datetime.now(timezone.utc).isoformat()
         })
         
         db.session.commit()
@@ -250,16 +250,16 @@ def update_payment_status(booking_id):
 def delete_booking(booking_id):
     """Delete a booking (soft delete)"""
     try:
-        booking = BookingRequest.query.get(booking_id)
+        booking = db.session.get(BookingRequest, booking_id)
         
         if not booking:
             return jsonify({'error': 'Booking not found'}), 404
         
         # Soft delete by setting status to deleted
         booking.status = 'deleted'
-        booking.deleted_at = datetime.utcnow()
+        booking.deleted_at = datetime.now(timezone.utc)
         booking.deleted_by = request.user['email']
-        booking.updated_at = datetime.utcnow()
+        booking.updated_at = datetime.now(timezone.utc)
         
         db.session.commit()
         
