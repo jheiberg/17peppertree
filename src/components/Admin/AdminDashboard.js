@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApi } from '../../services/apiService';
+import { useSecureApi } from '../../services/secureApiService';
 import BookingList from './BookingList';
 import BookingDetails from './BookingDetails';
 import DashboardStats from './DashboardStats';
@@ -8,6 +9,7 @@ import DashboardStats from './DashboardStats';
 const AdminDashboard = () => {
   const { user, isAdmin, logout } = useAuth();
   const api = useApi();
+  const secureApi = useSecureApi();
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [stats, setStats] = useState(null);
@@ -26,7 +28,8 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.get('/admin/dashboard/stats');
+      // Use secure API for dashboard stats
+      const data = await secureApi.getSecureDashboardStats();
       setStats(data);
     } catch (err) {
       console.error('Failed to fetch dashboard stats:', err);

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../services/apiService';
+import { useSecureApi } from '../../services/secureApiService';
 
 const BookingList = ({ onSelectBooking, onBack }) => {
   const api = useApi();
+  const secureApi = useSecureApi();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,7 +35,8 @@ const BookingList = ({ onSelectBooking, onBack }) => {
         )
       });
 
-      const response = await api.get(`/admin/bookings?${params}`);
+      // Use secure API for fetching bookings
+      const response = await secureApi.getSecureBookings(Object.fromEntries(params));
       // Handle both direct array and paginated response
       if (Array.isArray(response)) {
         setBookings(response);

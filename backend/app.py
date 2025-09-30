@@ -58,6 +58,10 @@ init_auth_routes(app)
 # Register admin blueprint
 app.register_blueprint(admin_bp)
 
+# Register secure API blueprint
+from secure_api_routes import secure_api_bp
+app.register_blueprint(secure_api_bp)
+
 # API Routes
 @app.route('/api/health', methods=['GET'])
 def health_check():
