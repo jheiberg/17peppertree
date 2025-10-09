@@ -17,20 +17,14 @@ const Contact = () => {
     // Remove any non-numeric characters except forward slashes
     let cleaned = value.replace(/[^\d/]/g, '');
 
-    // Smart year completion - if user types 2-3 digits, assume current decade
-    const currentYear = new Date().getFullYear();
-    if (cleaned.length === 2 && parseInt(cleaned) >= 24) {
-      cleaned = '20' + cleaned;
-    } else if (cleaned.length === 3) {
-      cleaned = currentYear.toString().slice(0, 1) + cleaned;
-    }
-
     // Add forward slashes automatically as user types
-    if (cleaned.length > 4 && cleaned.indexOf('/') === -1) {
+    // Only add slashes if they're not already there
+    if (cleaned.length >= 4 && !cleaned.includes('/')) {
       cleaned = cleaned.slice(0, 4) + '/' + cleaned.slice(4);
     }
-    if (cleaned.length > 7 && cleaned.split('/').length === 2) {
-      cleaned = cleaned.slice(0, 7) + '/' + cleaned.slice(7);
+    if (cleaned.length >= 7 && cleaned.split('/').length === 2) {
+      const parts = cleaned.split('/');
+      cleaned = parts[0] + '/' + parts[1].slice(0, 2) + '/' + parts[1].slice(2);
     }
 
     // Limit to 10 characters (yyyy/mm/dd)
