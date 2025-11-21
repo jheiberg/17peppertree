@@ -166,23 +166,47 @@ staging.your-domain.com → Your-Staging-IP
 
 ### Step 6: First Deployment
 
-#### 6.1 Manual First Deployment
+The `deploy.sh` script handles deployments for **both staging and production** environments.
+
+#### 6.1 Manual Staging Deployment
+```bash
+# On staging server
+cd /opt/peppertree-staging
+sudo bash scripts/deploy.sh staging
+```
+
+#### 6.2 Manual Production Deployment
 ```bash
 # On production server
 cd /opt/peppertree-production
-sudo ./scripts/deploy.sh production
+sudo bash scripts/deploy.sh production
 ```
 
-#### 6.2 Automated Deployment
-Push to your repository:
-```bash
-# Deploy to staging
-git push origin main
+**What the script does:**
+- ✅ Creates database backup
+- ✅ Pulls latest code (develop for staging, main for production)
+- ✅ Builds and restarts Docker containers
+- ✅ Runs health checks
+- ✅ Runs database migrations
+- ✅ Cleans up old resources
+- ✅ Logs everything to `/var/log/peppertree-deploy.log`
 
-# Deploy to production  
-git checkout production
-git merge main
-git push origin production
+**Note:** The same script works for both environments - it automatically:
+- Uses correct Git branch (`develop` for staging, `main` for production)
+- Checks correct API endpoint (port 5000 for staging, port 80/443 for production)
+- Creates environment-specific backups
+
+#### 6.3 Automated Deployment (CI/CD)
+Push to your repository to trigger automatic deployment:
+```bash
+# Deploy to staging (push to develop branch)
+git checkout develop
+git push origin develop
+
+# Deploy to production (push to main branch)
+git checkout main
+git merge develop  # Merge tested code from staging
+git push origin main
 ```
 
 ## 🔄 CI/CD Workflow
@@ -324,10 +348,90 @@ git reset --hard HEAD~1
 git push --force origin production
 ```
 
+## 🔧 Deployment Script Reference
+
+### Using deploy.sh
+
+The `deploy.sh` script is your **unified deployment tool** for both staging and production.
+
+**Basic Usage:**
+```bash
+# Staging deployment
+sudo bash scripts/deploy.sh staging
+
+# Production deployment
+sudo bash scripts/deploy.sh production
+
+# Default (staging) if no argument
+sudo bash scripts/deploy.sh
+```
+
+**Environment Configuration:**
+
+| Aspect | Staging | Production |
+|--------|---------|------------|
+| **Directory** | `/opt/peppertree-staging` | `/opt/peppertree-production` |
+| **Git Branch** | `develop` | `main` |
+| **Docker Compose** | `docker-compose.staging.yml` | `docker-compose.production.yml` |
+| **API Port** | 5000 | 80/443 |
+| **Backup Prefix** | `backup_staging_*` | `backup_production_*` |
+
+**Script Workflow:**
+1. 🔍 Validates environment (staging/production)
+2. 💾 Creates compressed database backup
+3. 📥 Pulls latest code from Git (correct branch)
+4. 🐳 Pulls and builds Docker images
+5. 🛑 Gracefully stops old containers
+6. 🚀 Starts new containers with `--build` flag
+7. ⏱️ Waits 30 seconds for services
+8. 🏥 Runs health checks (10 retries, 10s each)
+9. 🗄️ Runs database migrations
+10. 🧹 Cleans up old Docker resources
+11. 📊 Shows deployment summary
+12. 💬 Sends Slack notification (if configured)
+
+**Logs:**
+- Deployment log: `/var/log/peppertree-deploy.log`
+- View in real-time: `tail -f /var/log/peppertree-deploy.log`
+
+**Backups:**
+- Location: `/opt/peppertree-backups/`
+- Format: `backup_<env>_YYYYMMDD_HHMMSS.sql.gz`
+- Retention: Last 10 backups per environment
+
+**Restore from Backup:**
+```bash
+# List backups
+ls -lh /opt/peppertree-backups/
+
+# Restore (example)
+gunzip -c /opt/peppertree-backups/backup_production_20251121_140530.sql.gz | \
+  docker compose -f docker-compose.production.yml exec -T db psql -U postgres peppertree
+```
+
+**Testing Before Production:**
+```bash
+# Always test on staging first!
+sudo bash scripts/deploy.sh staging
+
+# Verify staging
+curl http://localhost:5000/api/health
+# Test the application manually
+
+# If good, deploy to production
+sudo bash scripts/deploy.sh production
+
+# Verify production
+curl http://localhost/api/health
+```
+
+**For more details, see:** `memory/deploy-script.md`
+
 ## 📞 Support & Updates
 
 ### Getting Help
 - **Documentation**: Check this guide first
+- **Deployment Reference**: See `memory/deploy-script.md`
 - **Logs**: Always check application and deployment logs
 - **GitHub Issues**: Create an issue for bugs/features
 - **Server Access**: Ensure you have SSH access
