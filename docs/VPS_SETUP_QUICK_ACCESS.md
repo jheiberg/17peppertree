@@ -24,7 +24,7 @@ The easiest method - no authentication required:
 
 ```bash
 # Download the script
-curl -O https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
 
 # Make it executable
 chmod +x vps-secure-setup.sh
@@ -122,7 +122,7 @@ sudo bash vps-setup.sh
 
 ```bash
 # Download and execute in one command
-curl -fsSL https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh | sudo bash
 ```
 
 **Why this can be dangerous:**
@@ -133,7 +133,7 @@ curl -fsSL https://raw.githubusercontent.com/yourusername/17@peppertree/main/scr
 **Safer version (review first):**
 ```bash
 # Download
-curl -fsSL https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh -o setup.sh
+curl -fsSL https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh -o setup.sh
 
 # Review
 less setup.sh
@@ -150,7 +150,7 @@ sudo bash setup.sh
 
 **Option A: GitHub Raw URL (Public Repo)**
 ```
-https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh
+https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
 ```
 
 **Option B: Create Short URL Service**
@@ -199,7 +199,7 @@ sudo bash vps-setup.sh
 
 1. Create `gh-pages` branch
 2. Add script to `setup/vps-setup.sh`
-3. Access via: `https://yourusername.github.io/17@peppertree/setup/vps-setup.sh`
+3. Access via: `https://yourusername.github.io/17peppertree/setup/vps-setup.sh`
 
 ### Using Netlify Drop
 
@@ -378,7 +378,7 @@ ssh root@154.12.34.56
 apt update
 
 # 3. Download setup script
-curl -O https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
 
 # 4. Verify size (should be ~23KB)
 ls -lh vps-secure-setup.sh
@@ -410,9 +410,9 @@ mkdir peppertree-deploy
 cd peppertree-deploy
 
 # Copy essential scripts
-cp ~/17@peppertree/scripts/vps-secure-setup.sh .
-cp ~/17@peppertree/scripts/setup-staging-auth.sh .
-cp ~/17@peppertree/.env.example .
+cp ~/17peppertree/scripts/vps-secure-setup.sh .
+cp ~/17peppertree/scripts/setup-staging-auth.sh .
+cp ~/17peppertree/.env.example .
 
 # Create README
 cat > README.txt << 'EOF'

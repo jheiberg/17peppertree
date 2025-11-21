@@ -32,7 +32,7 @@ ssh root@your-vps-ip
 **Option A: From Git Repository**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/17@peppertree.git
+git clone https://github.com/jheiberg/17peppertree.git
 cd 17@peppertree
 
 # Run the setup script
@@ -42,7 +42,7 @@ sudo bash scripts/vps-secure-setup.sh
 **Option B: Direct Download**
 ```bash
 # Download the script
-curl -O https://raw.githubusercontent.com/yourusername/17@peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
 
 # Make it executable
 chmod +x vps-secure-setup.sh
@@ -258,7 +258,7 @@ DOMAIN=17peppertree.co.za
 cd /opt/peppertree-production
 
 # Clone your repository
-git clone https://github.com/yourusername/17@peppertree.git .
+git clone https://github.com/jheiberg/17peppertree.git .
 
 # Verify files
 ls -la
