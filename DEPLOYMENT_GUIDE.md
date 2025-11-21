@@ -30,9 +30,9 @@ This guide sets up a complete CI/CD pipeline using GitHub Actions, Docker, and a
 ssh root@your-server-ip
 
 # Run the automated setup script
-wget https://raw.githubusercontent.com/yourusername/17-peppertree/main/scripts/setup-server.sh
-chmod +x setup-server.sh
-sudo ./setup-server.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+chmod +x vps-secure-setup.sh
+sudo bash vps-secure-setup.sh
 ```
 
 #### 1.2 Manual Configuration (Alternative)

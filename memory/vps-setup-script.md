@@ -1,9 +1,15 @@
 # VPS Setup Script Memory
 
-**Date:** 2025-11-21
+**Date:** 2025-11-21  
+**Last Updated:** 2025-11-21
 
-## Setup Script Location
-`/scripts/vps-secure-setup.sh`
+## Setup Scripts
+
+### Main Script: `vps-secure-setup.sh` ⭐
+Comprehensive VPS setup (23KB, 873 lines)
+
+### Deprecated: `setup-server.sh`
+Now a wrapper that calls vps-secure-setup.sh (backwards compatibility)
 
 ## What It Does
 Automated setup for Ubuntu 24.04 LTS VPS (10-15 minutes):
@@ -61,8 +67,18 @@ Automated setup for Ubuntu 24.04 LTS VPS (10-15 minutes):
 - Docker group access
 
 ## Usage
+
+### Recommended (Direct):
 ```bash
-sudo bash scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+chmod +x vps-secure-setup.sh
+sudo bash vps-secure-setup.sh
+```
+
+### Alternative (Backwards Compatible):
+```bash
+# This still works - automatically calls vps-secure-setup.sh
+sudo bash scripts/setup-server.sh
 ```
 
 ## Post-Setup Required

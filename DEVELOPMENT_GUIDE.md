@@ -147,9 +147,9 @@ Frontend will run on: http://localhost:3000
 #### Step 1: Server Preparation
 ```bash
 # Run automated setup script
-wget https://raw.githubusercontent.com/yourusername/17-peppertree/main/scripts/setup-server.sh
-chmod +x setup-server.sh
-sudo ./setup-server.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+chmod +x vps-secure-setup.sh
+sudo bash vps-secure-setup.sh
 ```
 
 #### Step 2: Clone Repository
