@@ -19,6 +19,11 @@ class EmailNotification:
         app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
         app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
         
+        # Debug logging
+        app.logger.info(f"Email configured - Server: {app.config['MAIL_SERVER']}, "
+                       f"Username: {app.config['MAIL_USERNAME']}, "
+                       f"Sender: {app.config['MAIL_DEFAULT_SENDER']}")
+        
     def _get_property_info(self):
         """Returns property information for email templates"""
         return {

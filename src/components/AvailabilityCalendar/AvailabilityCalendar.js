@@ -129,7 +129,7 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
       const disabled = isDateDisabled(date);
       const status = getDateStatus(dateStr);
 
-      let dayClass = 'aspect-square flex flex-col items-center justify-center cursor-pointer transition-all duration-200 font-medium relative rounded-lg border-2 border-transparent min-h-11';
+      let dayClass = 'aspect-square flex flex-col items-center justify-center cursor-pointer transition-all duration-200 font-medium relative rounded-lg border-2 border-transparent min-h-[2.75rem] sm:min-h-11';
       let title = 'Available - Click to select';
       let content = day;
 
@@ -143,8 +143,8 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
             title = 'Check-in date';
             content = (
               <div className="flex flex-col items-center">
-                <span className="text-base font-bold">{day}</span>
-                <span className="text-xs font-semibold tracking-wider">IN</span>
+                <span className="text-sm sm:text-base font-bold">{day}</span>
+                <span className="text-[0.625rem] sm:text-xs font-semibold tracking-wider">IN</span>
               </div>
             );
             break;
@@ -153,8 +153,8 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
             title = 'Check-out date';
             content = (
               <div className="flex flex-col items-center">
-                <span className="text-base font-bold">{day}</span>
-                <span className="text-xs font-semibold tracking-wider">OUT</span>
+                <span className="text-sm sm:text-base font-bold">{day}</span>
+                <span className="text-[0.625rem] sm:text-xs font-semibold tracking-wider">OUT</span>
               </div>
             );
             break;
@@ -195,7 +195,7 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white/95 rounded-2xl p-8 my-8 shadow-brown border border-primary/20">
+    <div className="bg-white/95 rounded-2xl p-4 sm:p-8 my-8 shadow-brown border border-primary/20">
       <div className="flex flex-col lg:flex-row justify-between items-center mb-6 pb-4 border-b-2 border-secondary">
         <h4 className="text-dark-brown m-0 text-2xl font-display font-semibold">Select Your Dates</h4>
         <div className="flex items-center gap-4 mt-4 lg:mt-0">
@@ -223,38 +223,38 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-8 mb-6 flex-wrap">
-        <div className="flex items-center gap-2 text-sm text-dark-brown">
-          <div className="w-4 h-4 rounded-full bg-green-50 border-2 border-green-500"></div>
-          <span>Available</span>
+      <div className="flex justify-center gap-3 sm:gap-6 mb-6 flex-wrap px-2">
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-dark-brown">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-green-50 border-2 border-green-500 flex-shrink-0"></div>
+          <span className="whitespace-nowrap">Available</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-dark-brown">
-          <div className="w-4 h-4 rounded-full bg-red-100 border-2 border-red-400"></div>
-          <span>Booked/Unavailable</span>
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-dark-brown">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-100 border-2 border-red-400 flex-shrink-0"></div>
+          <span className="whitespace-nowrap">Unavailable</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-dark-brown">
-          <div className="w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
-          <span>Check-in</span>
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-dark-brown">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-100 border-2 border-blue-500 flex-shrink-0"></div>
+          <span className="whitespace-nowrap">Check-in</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-dark-brown">
-          <div className="w-4 h-4 rounded-full bg-orange-100 border-2 border-orange-500"></div>
-          <span>Check-out</span>
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-dark-brown">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-orange-100 border-2 border-orange-500 flex-shrink-0"></div>
+          <span className="whitespace-nowrap">Check-out</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-dark-brown">
-          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-50 to-orange-50 border-2 border-accent"></div>
-          <span>Your Stay</span>
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-dark-brown">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-gradient-to-br from-blue-50 to-orange-50 border-2 border-accent flex-shrink-0"></div>
+          <span className="whitespace-nowrap">Your Stay</span>
         </div>
       </div>
 
       <div className="max-w-md mx-auto">
-        <div className="grid grid-cols-7 gap-0.5 mb-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
           {dayNames.map(day => (
-            <div key={day} className="py-3 px-2 text-center font-semibold text-dark-brown bg-secondary rounded-md text-sm">
+            <div key={day} className="py-2 sm:py-3 px-1 sm:px-2 text-center font-semibold text-dark-brown bg-secondary rounded-md text-xs sm:text-sm">
               {day}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-0.5 bg-primary/10 border-radius rounded-xl p-0.5">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 bg-primary/10 border-radius rounded-xl p-1 sm:p-2">
           {loading ? (
             <div className="col-span-7 flex flex-col items-center justify-center py-12 gap-4 text-dark-brown">
               <i className="fas fa-spinner fa-spin text-2xl text-accent"></i>

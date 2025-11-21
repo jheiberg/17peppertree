@@ -108,9 +108,11 @@ def create_secure_booking():
             if not data.get(field):
                 return jsonify({'error': f'Missing required field: {field}'}), 400
 
-        # Parse dates
-        checkin_date = datetime.strptime(data['checkin'], '%Y-%m-%d').date()
-        checkout_date = datetime.strptime(data['checkout'], '%Y-%m-%d').date()
+        # Parse dates - accept both YYYY-MM-DD and YYYY/MM/DD formats
+        checkin_str = data['checkin'].replace('/', '-')
+        checkout_str = data['checkout'].replace('/', '-')
+        checkin_date = datetime.strptime(checkin_str, '%Y-%m-%d').date()
+        checkout_date = datetime.strptime(checkout_str, '%Y-%m-%d').date()
 
         # Validate dates
         if checkin_date >= checkout_date:

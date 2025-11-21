@@ -3,13 +3,16 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from email_notifications import EmailNotification
 from database import DatabaseManager, BookingRequest, db
 from auth import init_auth_routes
 from admin_routes import admin_bp
 
-load_dotenv()
+# Load environment variables from .env file in backend directory
+env_path = Path(__file__).parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 app = Flask(__name__)
 
@@ -78,9 +81,11 @@ def create_booking():
             if not data.get(field):
                 return jsonify({'error': f'Missing required field: {field}'}), 400
         
-        # Parse dates
-        checkin_date = datetime.strptime(data['checkin'], '%Y-%m-%d').date()
-        checkout_date = datetime.strptime(data['checkout'], '%Y-%m-%d').date()
+        # Parse dates - accept both YYYY-MM-DD and YYYY/MM/DD formats
+        checkin_str = data['checkin'].replace('/', '-')
+        checkout_str = data['checkout'].replace('/', '-')
+        checkin_date = datetime.strptime(checkin_str, '%Y-%m-%d').date()
+        checkout_date = datetime.strptime(checkout_str, '%Y-%m-%d').date()
         
         # Validate dates
         if checkin_date >= checkout_date:
@@ -109,10 +114,24 @@ def create_booking():
         db.session.commit()
         
         # Send confirmation email to guest
-        email_service.send_booking_confirmation(booking)
+        try:
+            guest_email_sent = email_service.send_booking_confirmation(booking)
+            if guest_email_sent:
+                app.logger.info(f"Confirmation email sent to {booking.email}")
+            else:
+                app.logger.warning(f"Failed to send confirmation email to {booking.email}")
+        except Exception as e:
+            app.logger.error(f"Error sending confirmation email: {e}")
         
         # Send notification email to property owner
-        email_service.send_owner_notification(booking)
+        try:
+            owner_email_sent = email_service.send_owner_notification(booking)
+            if owner_email_sent:
+                app.logger.info(f"Owner notification email sent for booking {booking.id}")
+            else:
+                app.logger.warning(f"Failed to send owner notification for booking {booking.id}")
+        except Exception as e:
+            app.logger.error(f"Error sending owner notification: {e}")
         
         return jsonify({
             'message': 'Booking request submitted successfully',

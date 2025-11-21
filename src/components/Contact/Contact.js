@@ -253,7 +253,7 @@ const Contact = () => {
               <p className="text-cream">Rated 4.9/5 by 68 guests</p>
             </div>
           </div>
-          <div className="lg:col-span-3 bg-form-gradient p-12 rounded-3xl shadow-brown border-2 border-secondary/40 relative overflow-hidden">
+          <div className="lg:col-span-3 bg-form-gradient p-4 sm:p-8 lg:p-12 rounded-3xl shadow-brown border-2 border-secondary/40 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-accent to-gold"></div>
             <h3 className="text-primary mb-10 text-center text-3xl relative font-display">
               Reserve Your Stay
@@ -263,13 +263,13 @@ const Contact = () => {
               Create unforgettable memories at 17 @ Peppertree
             </p>
             <form onSubmit={handleSubmit}>
-              <div className="mb-10 p-6 bg-white/60 rounded-2xl border-l-4 border-accent">
-                <h4 className="text-primary text-xl mb-6 font-semibold flex items-center gap-2 font-display">
+              <div className="mb-10 p-4 sm:p-6 bg-white/60 rounded-2xl border-l-4 border-accent">
+                <h4 className="text-primary text-xl mb-6 font-semibold flex items-center gap-2 font-display px-2 sm:px-0">
                   <div className="w-2 h-2 bg-gold rounded-full"></div>
                   Stay Details
                 </h4>
 
-                <div className="mb-6 text-center">
+                <div className="mb-6 text-center px-2 sm:px-0">
                   <button
                     type="button"
                     className="btn-secondary inline-flex items-center gap-2"
@@ -281,18 +281,20 @@ const Contact = () => {
                 </div>
 
                 {showCalendar && (
-                  <AvailabilityCalendar
-                    onDateSelect={handleDateSelect}
-                    selectedDates={{
-                      checkin: formData.checkin,
-                      checkout: formData.checkout
-                    }}
-                    minDate={getMinDate()}
-                  />
+                  <div className="-mx-8 sm:-mx-12 lg:mx-0">
+                    <AvailabilityCalendar
+                      onDateSelect={handleDateSelect}
+                      selectedDates={{
+                        checkin: formData.checkin,
+                        checkout: formData.checkout
+                      }}
+                      minDate={getMinDate()}
+                    />
+                  </div>
                 )}
 
                 {formData.checkin && formData.checkout && isValidDateFormat(formData.checkin) && isValidDateFormat(formData.checkout) && (
-                  <div className="my-6 p-6 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl flex items-center gap-3 text-green-700 font-medium">
+                  <div className="my-6 mx-2 sm:mx-0 p-6 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl flex items-center gap-3 text-green-700 font-medium">
                     <i className="fas fa-calendar-check text-green-500 text-xl"></i>
                     <span>
                       <strong>Selected dates:</strong> {' '}
@@ -303,7 +305,7 @@ const Contact = () => {
                   </div>
                 )}
 
-                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4">
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4 px-2 sm:px-0">
                   <div className="mb-8">
                     <label htmlFor="checkin" className="form-label">Check-in Date</label>
                     <div className="relative">
