@@ -767,8 +767,8 @@ This HA/DR plan provides a cost-effective disaster recovery strategy suitable fo
 ## Related Documentation
 
 - [VPS_SPECIFICATIONS.md](./VPS_SPECIFICATIONS.md) - Infrastructure requirements
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Deployment procedures
-- [DOCKER_SETUP.md](../DOCKER_SETUP.md) - Container configuration
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment procedures
+- [DOCKER_SETUP.md](./DOCKER_SETUP.md) - Container configuration
 
 ---
 

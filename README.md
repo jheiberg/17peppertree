@@ -82,7 +82,7 @@ For Gmail, use an App Password (not your regular password).
 
 ## 🔐 Admin Portal Setup
 
-The admin portal provides secure management of bookings and payments. **See [ADMIN_SETUP.md](ADMIN_SETUP.md) for detailed instructions.**
+The admin portal provides secure management of bookings and payments. **See [ADMIN_SETUP.md](docs/ADMIN_SETUP.md) for detailed instructions.**
 
 ### Quick Setup
 ```bash

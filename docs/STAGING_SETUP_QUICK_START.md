@@ -503,7 +503,7 @@ Add to `.github/workflows/deploy-staging.yml`:
 
 - [STAGING_ACCESS_GUIDE.md](./STAGING_ACCESS_GUIDE.md) - Detailed guide (all methods)
 - [VPS_SETUP_GUIDE.md](./VPS_SETUP_GUIDE.md) - VPS initial setup
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Production deployment
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Production deployment
 
 ---
 

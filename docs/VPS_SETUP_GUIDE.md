@@ -635,7 +635,7 @@ proxy_cache_valid 200 60m;
 
 - [VPS_SPECIFICATIONS.md](./VPS_SPECIFICATIONS.md) - Server requirements
 - [HA_DR_PLAN.md](./HA_DR_PLAN.md) - Disaster recovery procedures
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Application deployment
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Application deployment
 
 ---
 

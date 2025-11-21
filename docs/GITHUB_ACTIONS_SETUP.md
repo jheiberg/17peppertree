@@ -565,7 +565,7 @@ After deployment fails:
 - [STAGING_SETUP_QUICK_START.md](./STAGING_SETUP_QUICK_START.md) - Staging authentication setup
 - [STAGING_ACCESS_GUIDE.md](./STAGING_ACCESS_GUIDE.md) - All staging access methods
 - [VPS_SETUP_GUIDE.md](./VPS_SETUP_GUIDE.md) - VPS initial configuration
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Manual deployment procedures
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Manual deployment procedures
 
 ---
 

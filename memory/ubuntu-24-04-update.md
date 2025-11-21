@@ -24,10 +24,10 @@ All documentation and scripts updated to use **Ubuntu 24.04 LTS** as the standar
    - Added: Shows current OS version if not 24.04
    - Better error message
 
-5. **DEPLOYMENT_GUIDE.md**
+5. **docs/DEPLOYMENT_GUIDE.md**
    - Changed: "Ubuntu 20.04 LTS or newer" → "Ubuntu 24.04 LTS"
 
-6. **DEVELOPMENT_GUIDE.md**
+6. **docs/DEVELOPMENT_GUIDE.md**
    - Changed: "Ubuntu 20.04+ recommended" → "Ubuntu 24.04 LTS recommended"
 
 7. **memory/vps-setup-script.md**

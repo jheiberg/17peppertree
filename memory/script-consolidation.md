@@ -157,8 +157,8 @@ peppertree-security-audit  # Audit security
 
 ## Documentation Updated
 
-- [x] DEPLOYMENT_GUIDE.md - Changed to vps-secure-setup.sh
-- [x] DEVELOPMENT_GUIDE.md - Changed to vps-secure-setup.sh
+- [x] docs/DEPLOYMENT_GUIDE.md - Changed to vps-secure-setup.sh
+- [x] docs/DEVELOPMENT_GUIDE.md - Changed to vps-secure-setup.sh
 - [x] memory/script-consolidation.md - Created (this file)
 - [x] memory/vps-setup-script.md - Already references vps-secure-setup.sh
 

@@ -261,6 +261,6 @@ The **2 vCPU / 8 GB RAM VPS specification** is well-suited for the 17 @ Peppertr
 
 ## Related Documentation
 
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Deployment procedures
-- [DOCKER_SETUP.md](../DOCKER_SETUP.md) - Docker configuration
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment procedures
+- [DOCKER_SETUP.md](./DOCKER_SETUP.md) - Docker configuration
 - [README.md](../README.md) - Project overview

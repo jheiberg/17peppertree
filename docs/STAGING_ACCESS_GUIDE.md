@@ -684,7 +684,7 @@ docker restart peppertree_nginx_staging
 
 - [VPS_SETUP_GUIDE.md](./VPS_SETUP_GUIDE.md) - VPS configuration
 - [HA_DR_PLAN.md](./HA_DR_PLAN.md) - Disaster recovery
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Deployment procedures
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment procedures
 
 ---
 

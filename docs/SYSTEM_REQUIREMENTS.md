@@ -449,7 +449,7 @@ random_page_cost = 1.1  # For SSD
 
 - [VPS_SPECIFICATIONS.md](./VPS_SPECIFICATIONS.md) - Hardware requirements
 - [VPS_SETUP_GUIDE.md](./VPS_SETUP_GUIDE.md) - Installation guide
-- [DEPLOYMENT_GUIDE.md](../DEPLOYMENT_GUIDE.md) - Deployment procedures
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment procedures
 - [HA_DR_PLAN.md](./HA_DR_PLAN.md) - Disaster recovery
 
 ---
