@@ -218,7 +218,11 @@ Required environment variables in `.env`:
 ├── docker-compose.production.yml
 ├── Dockerfile            # Backend image
 ├── Dockerfile.frontend   # Frontend image
-├── nginx.conf            # Nginx config
+├── config/               # Configuration files
+│   ├── nginx.conf            # Development nginx config
+│   ├── nginx.production.conf # Production nginx config
+│   ├── nginx.staging.conf    # Staging nginx config
+│   └── nginx-frontend.conf   # Frontend-only nginx config
 ├── package.json          # Frontend deps
 ├── requirements.txt      # Backend deps
 └── README.md             # Project overview

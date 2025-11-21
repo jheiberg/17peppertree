@@ -223,7 +223,7 @@ docker compose -f docker-compose.keycloak.yml up --build
 ```
 
 ### Production
-1. Configure SSL certificates in `nginx.conf`
+1. Configure SSL certificates in `config/nginx.conf`
 2. Update environment variables for production
 3. Set up proper domain and DNS
 4. Use Docker secrets for sensitive data

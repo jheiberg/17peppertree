@@ -479,7 +479,7 @@ tar -czf "$BACKUP_DIR/config_${DATE}.tar.gz" \
     -C /opt/peppertree-production \
     .env \
     docker-compose.production.yml \
-    nginx.production.conf \
+    config/nginx.production.conf \
     ssl 2>/dev/null || true
 
 # Sync to cloud (if configured)

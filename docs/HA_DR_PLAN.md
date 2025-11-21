@@ -238,7 +238,7 @@ gunzip -t /backups/peppertree_latest.sql.gz && echo "Backup OK" || echo "Backup 
 **Critical Files to Backup:**
 - `.env` files (encrypted storage)
 - `docker-compose.production.yml`
-- `nginx.production.conf`
+- `config/nginx.production.conf`
 - SSL certificates (`/ssl` directory)
 - Keycloak configuration exports
 
@@ -248,7 +248,7 @@ gunzip -t /backups/peppertree_latest.sql.gz && echo "Backup OK" || echo "Backup 
 tar -czf /backups/config_$(date +%Y%m%d).tar.gz \
   /home/jako/Development/17@peppertree/.env \
   /home/jako/Development/17@peppertree/docker-compose.production.yml \
-  /home/jako/Development/17@peppertree/nginx.production.conf \
+  /home/jako/Development/17@peppertree/config/nginx.production.conf \
   /home/jako/Development/17@peppertree/ssl
 ```
 

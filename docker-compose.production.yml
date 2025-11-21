@@ -142,7 +142,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.production.conf:/etc/nginx/nginx.conf
+      - ./config/nginx.production.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/nginx/ssl
       - ./logs/nginx:/var/log/nginx
     depends_on:

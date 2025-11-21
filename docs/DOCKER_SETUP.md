@@ -128,7 +128,11 @@ docker-compose up db
 17@peppertree/
 ├── Dockerfile                 # Frontend development
 ├── Dockerfile.frontend        # Frontend production
-├── nginx-frontend.conf        # Frontend nginx config
+├── config/
+│   ├── nginx-frontend.conf    # Frontend nginx config
+│   ├── nginx.conf             # Development nginx config
+│   ├── nginx.production.conf  # Production nginx config
+│   └── nginx.staging.conf     # Staging nginx config
 ├── docker-compose.yml         # Full stack orchestration
 ├── .dockerignore             # Build optimization
 ├── backend/
