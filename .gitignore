@@ -457,6 +457,3 @@ node_modules.tar.gz
 
 # pip
 pip-wheel-metadata/
-# Deployment package archives
-peppertree-deployment-package.tar.gz
-deployment-package/

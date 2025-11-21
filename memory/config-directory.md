@@ -35,7 +35,6 @@ All references updated in:
 - `docker-compose.production.yml`
 - `docker-compose.staging.yml`
 - `scripts/vps-secure-setup.sh`
-- `deployment-package/vps-secure-setup.sh`
 - `docs/HA_DR_PLAN.md`
 - `docs/DOCKER_SETUP.md`
 - `README.md`
