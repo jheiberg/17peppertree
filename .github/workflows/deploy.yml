@@ -158,10 +158,20 @@ jobs:
           script: |
             cd /opt/peppertree-staging
             git pull origin main
-            docker-compose -f docker-compose.staging.yml pull
-            docker-compose -f docker-compose.staging.yml down
-            docker-compose -f docker-compose.staging.yml up -d
+            docker compose -f docker-compose.staging.yml pull
+            docker compose -f docker-compose.staging.yml down
+            docker compose -f docker-compose.staging.yml up -d --build
             docker system prune -f
+
+      - name: Wait for staging to be ready
+        run: sleep 20
+
+      - name: Health check (staging with auth)
+        run: |
+          curl -f -u "${{ secrets.STAGING_AUTH_USER }}:${{ secrets.STAGING_AUTH_PASSWORD }}" \
+            https://staging.17peppertree.co.za/api/health || \
+          curl -f -u "${{ secrets.STAGING_AUTH_USER }}:${{ secrets.STAGING_AUTH_PASSWORD }}" \
+            http://${{ secrets.STAGING_HOST }}:8080/api/health || exit 1
 
   # Deploy to production (production branch)
   deploy-production:
@@ -184,9 +194,9 @@ jobs:
           script: |
             cd /opt/peppertree-production
             git pull origin production
-            docker-compose -f docker-compose.production.yml pull
-            docker-compose -f docker-compose.production.yml down
-            docker-compose -f docker-compose.production.yml up -d
+            docker compose -f docker-compose.production.yml pull
+            docker compose -f docker-compose.production.yml down
+            docker compose -f docker-compose.production.yml up -d --build
             docker system prune -f
 
       - name: Health check

@@ -14,7 +14,7 @@ This guide sets up a complete CI/CD pipeline using GitHub Actions, Docker, and a
 - **Domain name** with DNS access
 
 ### Server Requirements
-- **OS**: Ubuntu 20.04 LTS or newer
+- **OS**: Ubuntu 24.04 LTS
 - **RAM**: Minimum 2GB (4GB+ recommended)
 - **Storage**: Minimum 20GB SSD
 - **CPU**: 2+ cores recommended

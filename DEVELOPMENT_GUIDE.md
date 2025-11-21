@@ -14,7 +14,7 @@ This guide explains how to run the 17 @ Peppertree booking application in both d
 
 ### Production Environment
 - **Docker** and **Docker Compose**
-- **Linux server** (Ubuntu 20.04+ recommended)
+- **Linux server** (Ubuntu 24.04 LTS recommended)
 - **Domain name** with SSL certificate
 - **2GB+ RAM** recommended
 
