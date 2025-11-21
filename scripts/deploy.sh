@@ -63,7 +63,7 @@ fi
 
 # Check prerequisites
 command -v docker >/dev/null 2>&1 || error "Docker is not installed"
-command -v docker-compose >/dev/null 2>&1 || error "Docker Compose is not installed"
+docker compose version >/dev/null 2>&1 || error "Docker Compose V2 is not installed"
 
 # Navigate to project directory
 cd "$PROJECT_DIR" || error "Failed to navigate to $PROJECT_DIR"
@@ -81,11 +81,13 @@ mkdir -p "$BACKUP_DIR"
 
 # Pre-deployment backup
 log "Creating pre-deployment backup"
-if docker-compose -f "$COMPOSE_FILE" ps | grep -q "Up"; then
+if docker compose -f "$COMPOSE_FILE" ps | grep -q "Up"; then
     BACKUP_FILENAME="backup_${ENVIRONMENT}_$(date +%Y%m%d_%H%M%S).sql"
     
-    if docker-compose -f "$COMPOSE_FILE" exec -T db pg_dump -U postgres peppertree > "$BACKUP_DIR/$BACKUP_FILENAME"; then
+    if docker compose -f "$COMPOSE_FILE" exec -T db pg_dump -U postgres peppertree > "$BACKUP_DIR/$BACKUP_FILENAME"; then
         log "Database backup created: $BACKUP_FILENAME"
+        gzip "$BACKUP_DIR/$BACKUP_FILENAME"
+        log "Backup compressed"
     else
         warning "Failed to create database backup, continuing anyway..."
     fi
@@ -95,24 +97,24 @@ fi
 log "Pulling latest code from Git"
 git fetch origin
 if [[ "$ENVIRONMENT" == "production" ]]; then
-    git checkout production
-    git pull origin production
-else
     git checkout main
     git pull origin main
+else
+    git checkout develop
+    git pull origin develop
 fi
 
 # Pull latest Docker images
 log "Pulling latest Docker images"
-docker-compose -f "$COMPOSE_FILE" pull || warning "Failed to pull some images"
+docker compose -f "$COMPOSE_FILE" pull || warning "Failed to pull some images"
 
 # Stop existing containers
 log "Stopping existing containers"
-docker-compose -f "$COMPOSE_FILE" down || warning "Some containers failed to stop"
+docker compose -f "$COMPOSE_FILE" down || warning "Some containers failed to stop"
 
-# Start new containers
-log "Starting new containers"
-docker-compose -f "$COMPOSE_FILE" up -d || error "Failed to start containers"
+# Build and start new containers
+log "Building and starting new containers"
+docker compose -f "$COMPOSE_FILE" up -d --build || error "Failed to start containers"
 
 # Wait for services to be ready
 log "Waiting for services to start..."
@@ -122,19 +124,21 @@ sleep 30
 log "Performing health checks"
 
 # Check if containers are running
-if ! docker-compose -f "$COMPOSE_FILE" ps | grep -q "Up"; then
+if ! docker compose -f "$COMPOSE_FILE" ps | grep -q "Up"; then
     error "Not all containers are running"
 fi
 
 # Check database connectivity
-if ! docker-compose -f "$COMPOSE_FILE" exec -T db pg_isready -U postgres >/dev/null 2>&1; then
+if ! docker compose -f "$COMPOSE_FILE" exec -T db pg_isready -U postgres >/dev/null 2>&1; then
     error "Database health check failed"
 fi
 
 # Check backend API
-API_URL="http://localhost:5000/api/health"
-if [[ "$ENVIRONMENT" == "staging" ]]; then
-    API_URL="http://localhost:8080/api/health"
+if [[ "$ENVIRONMENT" == "production" ]]; then
+    API_URL="http://localhost/api/health"
+else
+    # Staging backend runs on port 5000 inside container, proxied through nginx on 8081
+    API_URL="http://localhost:5000/api/health"
 fi
 
 for i in {1..10}; do
@@ -152,7 +156,7 @@ done
 
 # Run database migrations if needed
 log "Running database migrations"
-docker-compose -f "$COMPOSE_FILE" exec -T backend python -c "
+docker compose -f "$COMPOSE_FILE" exec -T backend python -c "
 from app import app, db
 with app.app_context():
     db.create_all()
@@ -166,18 +170,19 @@ docker system prune -f >/dev/null 2>&1 || true
 # Clean up old backups (keep last 10)
 log "Cleaning up old backups"
 cd "$BACKUP_DIR"
-ls -t backup_${ENVIRONMENT}_*.sql | tail -n +11 | xargs -r rm || true
+ls -t backup_${ENVIRONMENT}_*.sql.gz 2>/dev/null | tail -n +11 | xargs -r rm || true
+ls -t backup_${ENVIRONMENT}_*.sql 2>/dev/null | tail -n +11 | xargs -r rm || true
 
 # Display deployment summary
 log "=== Deployment Summary ==="
 info "Environment: $ENVIRONMENT"
-info "Git branch: $(git branch --show-current)"
-info "Git commit: $(git rev-parse --short HEAD)"
+info "Git branch: $(cd "$PROJECT_DIR" && git branch --show-current)"
+info "Git commit: $(cd "$PROJECT_DIR" && git rev-parse --short HEAD)"
 info "Deployment time: $(date)"
 
 # Show running containers
 info "Running containers:"
-docker-compose -f "$COMPOSE_FILE" ps
+docker compose -f "$COMPOSE_FILE" ps
 
 log "Deployment completed successfully!"
 
