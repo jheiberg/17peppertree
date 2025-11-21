@@ -19,6 +19,82 @@ This guide explains how to use the automated VPS setup script to prepare a fresh
 
 ---
 
+## VPS Specifications
+
+### Current Single-Site Configuration
+
+**Selected Configuration:** 2 vCPU / 8 GB RAM
+
+#### Minimum Specs:
+- **CPU:** 2 vCPUs
+- **RAM:** 4 GB
+- **Storage:** 40 GB SSD
+- **Bandwidth:** 2 TB/month
+
+#### Optimal Specs (Recommended):
+- **CPU:** 2 vCPUs  
+- **RAM:** 8 GB
+- **Storage:** 60-80 GB SSD
+- **Bandwidth:** 3-5 TB/month
+
+### Docker Container Resource Allocation
+
+The application runs 6 Docker containers:
+
+| Service | Container | RAM Usage | CPU Usage |
+|---------|-----------|-----------|-----------|
+| Identity Management | Keycloak | ~512 MB | Medium |
+| Identity Database | Keycloak PostgreSQL | ~256 MB | Low |
+| Main Database | PostgreSQL | ~256 MB | Low |
+| API Backend | Flask/Gunicorn | ~256 MB | Low-Medium |
+| Frontend | React/Nginx | ~128 MB | Minimal |
+| Reverse Proxy | Nginx | ~128 MB | Low |
+| **Total** | | **~1.5-2 GB** | |
+
+### Resource Headroom
+
+With 8 GB RAM:
+- Container usage: ~1.5-2 GB
+- OS overhead: ~1 GB
+- **Available buffer:** ~5-6 GB for traffic spikes, caching, and growth
+
+### Storage Breakdown
+
+| Component | Space Required |
+|-----------|----------------|
+| Docker images | 2-3 GB |
+| PostgreSQL databases | 5-10 GB (with growth) |
+| Application logs | 2-5 GB |
+| SSL certificates & backups | 5 GB |
+| Operating system | 10 GB |
+| **Recommended Total** | **60-80 GB SSD** |
+
+### Multi-Tenant Capacity Planning
+
+The architecture allows multiple accommodation websites to share backend infrastructure:
+- **Shared:** Backend API, Database, Keycloak, Nginx
+- **Per-Site:** React frontend container (~128 MB RAM each)
+
+**Capacity Estimates on 2 vCPU / 8 GB RAM:**
+
+| Total Websites | Frontend RAM | Backend RAM | Total RAM Used | CPU Load | Status |
+|----------------|--------------|-------------|----------------|----------|--------|
+| 1 (current) | 128 MB | 1.5 GB | ~2.5 GB | Low | ✅ Current |
+| 3 sites | 384 MB | 2 GB | ~3.4 GB | Low-Med | ✅ Safe |
+| 5 sites | 640 MB | 2.5 GB | ~4.1 GB | Medium | ✅ Comfortable |
+| 8 sites | 1 GB | 3.5 GB | ~5.5 GB | Med-High | ⚠️ Monitor Closely |
+| 10+ sites | 1.3+ GB | 4+ GB | ~6.3+ GB | High | ❌ Upgrade Required |
+
+**Safe Operating Zone:** 4-6 total properties
+
+**When to Upgrade to 4 vCPU / 16 GB RAM:**
+- Hosting 7+ properties
+- Consistent RAM usage >70% (>5.6 GB)
+- CPU load averages >1.5 consistently
+- Database query response times degrading
+
+---
+
 ## Quick Start
 
 ### 1. Connect to Your VPS
@@ -29,17 +105,10 @@ ssh root@your-vps-ip
 
 ### 2. Download and Run the Setup Script
 
-**Option A: From Git Repository**
-```bash
-# Clone the repository
-git clone https://github.com/jheiberg/17peppertree.git
-cd 17@peppertree
+#### Method 1: Direct Download (Raw GitHub URL) ⭐ **RECOMMENDED**
 
-# Run the setup script
-sudo bash scripts/vps-secure-setup.sh
-```
+The easiest method - no authentication required:
 
-**Option B: Direct Download**
 ```bash
 # Download the script
 curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
@@ -49,6 +118,63 @@ chmod +x vps-secure-setup.sh
 
 # Run it
 sudo bash vps-secure-setup.sh
+```
+
+**Why this works:**
+- GitHub raw URLs are public (no authentication needed)
+- Works immediately on fresh VPS
+- Only requires `curl` (pre-installed on Ubuntu)
+
+#### Method 2: From Git Repository
+
+```bash
+# Clone the repository
+git clone https://github.com/jheiberg/17peppertree.git
+cd 17peppertree
+
+# Run the setup script
+sudo bash scripts/vps-secure-setup.sh
+```
+
+**Note:** Requires Git to be installed first (`sudo apt install git`)
+
+#### Method 3: Copy-Paste (For Very Fresh VPS)
+
+```bash
+# On VPS, create the file
+nano vps-setup.sh
+
+# Paste the script content (Ctrl+Shift+V)
+# Save: Ctrl+O, Enter
+# Exit: Ctrl+X
+
+# Make executable and run
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+```
+
+#### Alternative: Using Short URL or Custom Domain
+
+You can create easier access URLs:
+
+**GitHub Gist:**
+```bash
+curl -O https://gist.githubusercontent.com/yourusername/abc123/raw/vps-setup.sh
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+```
+
+**Your Own Domain:**
+```bash
+curl -O https://setup.17peppertree.co.za/vps-setup.sh
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+```
+
+**URL Shortener (bit.ly, tinyurl.com):**
+```
+Original: https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+Short:    https://bit.ly/peppertree-vps-setup
 ```
 
 ### 3. Wait for Completion
@@ -633,9 +759,10 @@ proxy_cache_valid 200 60m;
 
 ## Related Documentation
 
-- [VPS_SPECIFICATIONS.md](./VPS_SPECIFICATIONS.md) - Server requirements
+- [SYSTEM_REQUIREMENTS.md](./SYSTEM_REQUIREMENTS.md) - Complete system requirements and versions
 - [HA_DR_PLAN.md](./HA_DR_PLAN.md) - Disaster recovery procedures
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Application deployment
+- [DOCKER_SETUP.md](./DOCKER_SETUP.md) - Docker configuration details
 
 ---
 

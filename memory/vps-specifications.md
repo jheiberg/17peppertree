@@ -31,4 +31,4 @@
 - Upgrade trigger: Sustained high usage or 7+ properties
 
 ## Full Documentation
-See: `/docs/VPS_SPECIFICATIONS.md`
+See: `/docs/VPS_SETUP_GUIDE.md` (includes specifications and capacity planning)

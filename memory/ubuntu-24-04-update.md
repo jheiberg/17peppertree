@@ -15,7 +15,7 @@ All documentation and scripts updated to use **Ubuntu 24.04 LTS** as the standar
    - Changed: "Ubuntu 22.04 VPS" → "Ubuntu 24.04 LTS VPS"
    - Removed: "(or Ubuntu 24.04)" - now standard
 
-3. **docs/VPS_SPECIFICATIONS.md**
+3. **docs/VPS_SETUP_GUIDE.md** (merged from VPS_SPECIFICATIONS.md)
    - Changed: "Ubuntu 22.04 LTS or Debian 11+" → "Ubuntu 24.04 LTS"
 
 4. **scripts/vps-secure-setup.sh**

@@ -174,8 +174,8 @@ bash scripts/setup-staging-auth.sh staging.domain.com office-ip
 ## Documentation Created
 
 1. `/scripts/setup-staging-auth.sh` (17KB) - Main script
-2. `/docs/STAGING_SETUP_QUICK_START.md` (11KB) - Quick guide
+2. `/docs/STAGING.md` (merged comprehensive staging guide)
 3. Updated `/scripts/vps-secure-setup.sh` - Added staging info
 
 ## Full Documentation
-See: `/docs/STAGING_SETUP_QUICK_START.md`
+See: `/docs/STAGING.md`

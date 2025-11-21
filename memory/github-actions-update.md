@@ -198,10 +198,10 @@ sudo ufw reload
 
 ## Documentation Created
 
-- `/docs/GITHUB_ACTIONS_SETUP.md` (14KB)
+- `/docs/DEPLOYMENT_GUIDE.md` (includes GitHub Actions setup)
 - Comprehensive guide with all secrets
 - Troubleshooting steps
 - Security best practices
 
 ## Full Documentation
-See: `/docs/GITHUB_ACTIONS_SETUP.md`
+See: `/docs/DEPLOYMENT_GUIDE.md`

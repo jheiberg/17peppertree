@@ -129,4 +129,4 @@ staging3.property3.co.za
 All behind Basic Auth with unique passwords.
 
 ## Full Documentation
-See: `/docs/STAGING_ACCESS_GUIDE.md`
+See: `/docs/STAGING.md`
