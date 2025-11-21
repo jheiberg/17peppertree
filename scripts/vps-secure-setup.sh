@@ -730,9 +730,21 @@ log "Setting timezone to Africa/Johannesburg..."
 timedatectl set-timezone Africa/Johannesburg
 
 log "Enabling NTP time synchronization..."
-timedatectl set-ntp true
+if timedatectl set-ntp true 2>/dev/null; then
+    log "NTP time synchronization enabled"
+else
+    warning "NTP not supported on this system (using systemd-timesyncd or other method)"
+    # Try alternative time sync methods
+    if systemctl is-enabled systemd-timesyncd >/dev/null 2>&1; then
+        systemctl enable systemd-timesyncd
+        systemctl start systemd-timesyncd
+        log "Using systemd-timesyncd for time synchronization"
+    else
+        warning "Time synchronization may need manual configuration"
+    fi
+fi
 
-log "Timezone and NTP configured"
+log "Timezone configured"
 
 # ==========================================
 # 14. SECURITY AUDIT SCRIPT
