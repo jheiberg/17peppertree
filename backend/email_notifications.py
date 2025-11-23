@@ -60,6 +60,7 @@ The Team at {property_info['name']}
             
             msg = Message(
                 subject=subject,
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
                 recipients=[booking.email],
                 body=body
             )
@@ -69,6 +70,8 @@ The Team at {property_info['name']}
             
         except Exception as e:
             current_app.logger.error(f"Error sending confirmation email: {e}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
             return False
     
     def send_owner_notification(self, booking):
@@ -103,6 +106,7 @@ Please review and respond to this booking request.
             
             msg = Message(
                 subject=subject,
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
                 recipients=[owner_email],
                 body=body
             )
@@ -153,6 +157,7 @@ Phone: {property_info['phone']}
             
             msg = Message(
                 subject=subject,
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
                 recipients=[booking.email],
                 body=body
             )
@@ -183,6 +188,7 @@ Phone: {property_info['phone']}
             
             msg = Message(
                 subject=subject,
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
                 recipients=[recipient],
                 body=body
             )

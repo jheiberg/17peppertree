@@ -82,8 +82,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:password@db:5432/peppertree
       - SECRET_KEY=development-secret-key-not-for-production
-      - MAIL_SERVER=smtp.gmail.com
-      - MAIL_PORT=587
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_PORT=${MAIL_PORT}
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER}
