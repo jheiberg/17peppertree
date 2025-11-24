@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CI/CD Deployment Guide - 17 @ Peppertree - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" class="active">🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>🚀 CI/CD Deployment Guide - 17 @ Peppertree</h1>
+<h2>Overview</h2>
+<p>This guide sets up a complete CI/CD pipeline using GitHub Actions, Docker, and automated deployment to your servers. The pipeline supports both staging and production environments with automatic testing, building, and deployment.</p>
+<h2>📋 Prerequisites</h2>
+<h3>Required Accounts &amp; Services</h3>
+<ul>
+<li><strong>GitHub repository</strong> with your code</li>
+<li><strong>Docker Hub account</strong> for image storage</li>
+<li><strong>Production server</strong> (VPS/Cloud instance)</li>
+<li><strong>Staging server</strong> (optional but recommended)</li>
+<li><strong>Domain name</strong> with DNS access</li>
+</ul>
+<h3>Server Requirements</h3>
+<ul>
+<li><strong>OS</strong>: Ubuntu 24.04 LTS</li>
+<li><strong>RAM</strong>: Minimum 2GB (4GB+ recommended)</li>
+<li><strong>Storage</strong>: Minimum 20GB SSD</li>
+<li><strong>CPU</strong>: 2+ cores recommended</li>
+<li><strong>Network</strong>: Static IP address</li>
+</ul>
+<h2>🛠️ Setup Instructions</h2>
+<h3>Step 1: Server Setup</h3>
+<h4>1.1 Initial Server Configuration</h4>
+<pre><code class="language-bash"># Connect to your server
+ssh root@your-server-ip
+
+# Run the automated setup script
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+chmod +x vps-secure-setup.sh
+sudo bash vps-secure-setup.sh
+</code></pre>
+<h4>1.2 Manual Configuration (Alternative)</h4>
+<p>If you prefer manual setup, follow these steps:</p>
+<pre><code class="language-bash"># Update system
+sudo apt update &amp;&amp; sudo apt upgrade -y
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Install Docker Compose
+sudo curl -L &quot;https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)&quot; -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Create project directories
+sudo mkdir -p /opt/peppertree-production
+sudo mkdir -p /opt/peppertree-staging
+sudo mkdir -p /opt/peppertree-backups
+
+# Create deploy user
+sudo useradd -m -s /bin/bash deploy
+sudo usermod -aG docker deploy
+</code></pre>
+<h3>Step 2: Repository Setup</h3>
+<h4>2.1 Clone Repository on Servers</h4>
+<pre><code class="language-bash"># Production
+cd /opt/peppertree-production
+git clone https://github.com/yourusername/17-peppertree.git .
+
+# Staging  
+cd /opt/peppertree-staging
+git clone https://github.com/yourusername/17-peppertree.git .
+</code></pre>
+<h4>2.2 Environment Configuration</h4>
+<pre><code class="language-bash"># Production
+cp /opt/peppertree-production/.env.example /opt/peppertree-production/.env
+nano /opt/peppertree-production/.env
+
+# Staging
+cp /opt/peppertree-staging/.env.example /opt/peppertree-staging/.env
+nano /opt/peppertree-staging/.env
+</code></pre>
+<h3>Step 3: SSL Certificate Setup</h3>
+<h4>3.1 Install Certbot</h4>
+<pre><code class="language-bash">sudo apt install certbot python3-certbot-nginx
+</code></pre>
+<h4>3.2 Generate SSL Certificate</h4>
+<pre><code class="language-bash"># Stop nginx if running
+sudo systemctl stop nginx
+
+# Generate certificate
+sudo certbot certonly --standalone -d your-domain.com -d www.your-domain.com
+
+# Copy certificates to project directory
+sudo cp /etc/letsencrypt/live/your-domain.com/fullchain.pem /opt/peppertree-production/ssl/
+sudo cp /etc/letsencrypt/live/your-domain.com/privkey.pem /opt/peppertree-production/ssl/
+sudo chown -R deploy:deploy /opt/peppertree-production/ssl/
+</code></pre>
+<h4>3.3 Setup Certificate Renewal</h4>
+<pre><code class="language-bash"># Add to crontab
+echo &quot;0 3 * * 0 /usr/bin/certbot renew --quiet &amp;&amp; /opt/peppertree-production/scripts/deploy.sh production&quot; | sudo crontab -
+</code></pre>
+<h3>Step 4: GitHub Secrets Configuration</h3>
+<p>Go to your GitHub repository → Settings → Secrets and Variables → Actions</p>
+<h4>4.1 Required Secrets</h4>
+<p><strong>Docker Hub:</strong></p>
+<ul>
+<li><code>DOCKER_HUB_USERNAME</code>: Your Docker Hub username</li>
+<li><code>DOCKER_HUB_TOKEN</code>: Docker Hub access token</li>
+</ul>
+<p><strong>Production Server:</strong></p>
+<ul>
+<li><code>PRODUCTION_HOST</code>: Your production server IP/domain</li>
+<li><code>PRODUCTION_USERNAME</code>: SSH username (usually &#39;deploy&#39;)</li>
+<li><code>PRODUCTION_SSH_KEY</code>: Private SSH key content</li>
+<li><code>PRODUCTION_SSH_PORT</code>: SSH port (default: 22)</li>
+<li><code>PRODUCTION_URL</code>: Your production URL (<a href="https://your-domain.com">https://your-domain.com</a>)</li>
+</ul>
+<p><strong>Staging Server:</strong></p>
+<ul>
+<li><code>STAGING_HOST</code>: Your staging server IP/domain</li>
+<li><code>STAGING_USERNAME</code>: SSH username (usually &#39;deploy&#39;)</li>
+<li><code>STAGING_SSH_KEY</code>: Private SSH key content</li>
+<li><code>STAGING_SSH_PORT</code>: SSH port (default: 22)</li>
+</ul>
+<p><strong>Application:</strong></p>
+<ul>
+<li><code>REACT_APP_API_URL</code>: Your production API URL</li>
+</ul>
+<p><strong>Optional:</strong></p>
+<ul>
+<li><code>SLACK_WEBHOOK_URL</code>: For deployment notifications</li>
+</ul>
+<h4>4.2 Generate SSH Keys for CI/CD</h4>
+<pre><code class="language-bash"># On your local machine
+ssh-keygen -t ed25519 -C &quot;cicd@peppertree&quot; -f ~/.ssh/peppertree_deploy
+
+# Add public key to server
+ssh-copy-id -i ~/.ssh/peppertree_deploy.pub deploy@your-server-ip
+
+# Copy private key content to GitHub secret
+cat ~/.ssh/peppertree_deploy
+</code></pre>
+<h3>Step 5: DNS Configuration</h3>
+<p>Point your domain to your server:</p>
+<pre><code># A Records
+your-domain.com     → Your-Server-IP
+www.your-domain.com → Your-Server-IP
+
+# For staging (optional)
+staging.your-domain.com → Your-Staging-IP
+</code></pre>
+<h3>Step 6: First Deployment</h3>
+<p>The <code>deploy.sh</code> script handles deployments for <strong>both staging and production</strong> environments.</p>
+<h4>6.1 Manual Staging Deployment</h4>
+<pre><code class="language-bash"># On staging server
+cd /opt/peppertree-staging
+sudo bash scripts/deploy.sh staging
+</code></pre>
+<h4>6.2 Manual Production Deployment</h4>
+<pre><code class="language-bash"># On production server
+cd /opt/peppertree-production
+sudo bash scripts/deploy.sh production
+</code></pre>
+<p><strong>What the script does:</strong></p>
+<ul>
+<li>✅ Creates database backup</li>
+<li>✅ Pulls latest code (develop for staging, main for production)</li>
+<li>✅ Builds and restarts Docker containers</li>
+<li>✅ Runs health checks</li>
+<li>✅ Runs database migrations</li>
+<li>✅ Cleans up old resources</li>
+<li>✅ Logs everything to <code>/var/log/peppertree-deploy.log</code></li>
+</ul>
+<p><strong>Note:</strong> The same script works for both environments - it automatically:</p>
+<ul>
+<li>Uses correct Git branch (<code>develop</code> for staging, <code>main</code> for production)</li>
+<li>Checks correct API endpoint (port 5000 for staging, port 80/443 for production)</li>
+<li>Creates environment-specific backups</li>
+</ul>
+<h4>6.3 Automated Deployment (CI/CD)</h4>
+<p>Push to your repository to trigger automatic deployment:</p>
+<pre><code class="language-bash"># Deploy to staging (push to develop branch)
+git checkout develop
+git push origin develop
+
+# Deploy to production (push to main branch)
+git checkout main
+git merge develop  # Merge tested code from staging
+git push origin main
+</code></pre>
+<h2>🔄 CI/CD Workflow</h2>
+<h3>Deployment Flow</h3>
+<ol>
+<li><strong>Code Push</strong> → Triggers GitHub Actions</li>
+<li><strong>Testing</strong> → Runs frontend/backend tests</li>
+<li><strong>Building</strong> → Creates Docker images</li>
+<li><strong>Publishing</strong> → Pushes to Docker Hub</li>
+<li><strong>Deployment</strong> → Deploys to staging/production</li>
+<li><strong>Health Checks</strong> → Verifies deployment</li>
+<li><strong>Notifications</strong> → Sends status updates</li>
+</ol>
+<h3>Branch Strategy</h3>
+<ul>
+<li><strong><code>main</code> branch</strong> → Deploys to staging automatically</li>
+<li><strong><code>production</code> branch</strong> → Deploys to production automatically</li>
+<li><strong>Pull Requests</strong> → Runs tests only (no deployment)</li>
+</ul>
+<h3>Environment Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Branch</th>
+<th>Environment</th>
+<th>URL</th>
+<th>Auto-Deploy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>main</code></td>
+<td>Staging</td>
+<td><a href="http://staging.your-domain.com:8080">http://staging.your-domain.com:8080</a></td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>production</code></td>
+<td>Production</td>
+<td><a href="https://your-domain.com">https://your-domain.com</a></td>
+<td>✅ Yes</td>
+</tr>
+</tbody></table>
+<h2>📊 Monitoring &amp; Maintenance</h2>
+<h3>Health Checks</h3>
+<p>The pipeline includes automatic health checks:</p>
+<ul>
+<li><strong>Container Health</strong>: All services running</li>
+<li><strong>Database</strong>: Connection and readiness</li>
+<li><strong>API</strong>: Endpoint responsiveness</li>
+<li><strong>SSL</strong>: Certificate validity</li>
+</ul>
+<h3>Backup Strategy</h3>
+<p><strong>Automatic Backups:</strong></p>
+<ul>
+<li><strong>Daily</strong>: Database backups at 2 AM</li>
+<li><strong>Retention</strong>: 30 days</li>
+<li><strong>Location</strong>: <code>/opt/peppertree-backups/</code></li>
+</ul>
+<p><strong>Manual Backup:</strong></p>
+<pre><code class="language-bash">/opt/peppertree-production/scripts/backup.sh production
+</code></pre>
+<h3>Log Management</h3>
+<p><strong>Log Locations:</strong></p>
+<ul>
+<li><strong>Application</strong>: <code>/var/log/peppertree/</code></li>
+<li><strong>Nginx</strong>: <code>/opt/peppertree-*/logs/nginx/</code></li>
+<li><strong>Docker</strong>: <code>docker-compose logs</code></li>
+</ul>
+<p><strong>Log Rotation</strong>: Automatic via logrotate (weekly)</p>
+<h3>Monitoring Commands</h3>
+<pre><code class="language-bash"># Check service status
+docker-compose -f docker-compose.production.yml ps
+
+# View logs
+docker-compose -f docker-compose.production.yml logs -f
+
+# Check resource usage
+htop
+docker stats
+
+# Monitor disk space
+df -h
+du -sh /opt/peppertree-*
+</code></pre>
+<h2>🚨 Troubleshooting</h2>
+<h3>Common Issues</h3>
+<h4>1. Deployment Fails</h4>
+<pre><code class="language-bash"># Check GitHub Actions logs
+# Check server logs
+tail -f /var/log/peppertree-deploy.log
+
+# Manual deployment
+cd /opt/peppertree-production
+./scripts/deploy.sh production
+</code></pre>
+<h4>2. SSL Certificate Issues</h4>
+<pre><code class="language-bash"># Check certificate status
+sudo certbot certificates
+
+# Renew certificate
+sudo certbot renew --dry-run
+</code></pre>
+<h4>3. Database Connection Issues</h4>
+<pre><code class="language-bash"># Check database container
+docker-compose -f docker-compose.production.yml exec db pg_isready -U postgres
+
+# View database logs
+docker-compose -f docker-compose.production.yml logs db
+</code></pre>
+<h4>4. Performance Issues</h4>
+<pre><code class="language-bash"># Check resource usage
+htop
+docker stats
+
+# Check disk space
+df -h
+
+# Clean up Docker
+docker system prune -f
+</code></pre>
+<h3>Recovery Procedures</h3>
+<h4>Database Recovery</h4>
+<pre><code class="language-bash"># List available backups
+ls -la /opt/peppertree-backups/
+
+# Restore from backup
+docker-compose -f docker-compose.production.yml exec -T db psql -U postgres peppertree &lt; /backups/backup_production_YYYYMMDD_HHMMSS.sql
+</code></pre>
+<h4>Rollback Deployment</h4>
+<pre><code class="language-bash"># Rollback to previous version
+git checkout production
+git reset --hard HEAD~1
+git push --force origin production
+</code></pre>
+<h2>🔧 Deployment Script Reference</h2>
+<h3>Using deploy.sh</h3>
+<p>The <code>deploy.sh</code> script is your <strong>unified deployment tool</strong> for both staging and production.</p>
+<p><strong>Basic Usage:</strong></p>
+<pre><code class="language-bash"># Staging deployment
+sudo bash scripts/deploy.sh staging
+
+# Production deployment
+sudo bash scripts/deploy.sh production
+
+# Default (staging) if no argument
+sudo bash scripts/deploy.sh
+</code></pre>
+<p><strong>Environment Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Staging</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Directory</strong></td>
+<td><code>/opt/peppertree-staging</code></td>
+<td><code>/opt/peppertree-production</code></td>
+</tr>
+<tr>
+<td><strong>Git Branch</strong></td>
+<td><code>develop</code></td>
+<td><code>main</code></td>
+</tr>
+<tr>
+<td><strong>Docker Compose</strong></td>
+<td><code>docker-compose.staging.yml</code></td>
+<td><code>docker-compose.production.yml</code></td>
+</tr>
+<tr>
+<td><strong>API Port</strong></td>
+<td>5000</td>
+<td>80/443</td>
+</tr>
+<tr>
+<td><strong>Backup Prefix</strong></td>
+<td><code>backup_staging_*</code></td>
+<td><code>backup_production_*</code></td>
+</tr>
+</tbody></table>
+<p><strong>Script Workflow:</strong></p>
+<ol>
+<li>🔍 Validates environment (staging/production)</li>
+<li>💾 Creates compressed database backup</li>
+<li>📥 Pulls latest code from Git (correct branch)</li>
+<li>🐳 Pulls and builds Docker images</li>
+<li>🛑 Gracefully stops old containers</li>
+<li>🚀 Starts new containers with <code>--build</code> flag</li>
+<li>⏱️ Waits 30 seconds for services</li>
+<li>🏥 Runs health checks (10 retries, 10s each)</li>
+<li>🗄️ Runs database migrations</li>
+<li>🧹 Cleans up old Docker resources</li>
+<li>📊 Shows deployment summary</li>
+<li>💬 Sends Slack notification (if configured)</li>
+</ol>
+<p><strong>Logs:</strong></p>
+<ul>
+<li>Deployment log: <code>/var/log/peppertree-deploy.log</code></li>
+<li>View in real-time: <code>tail -f /var/log/peppertree-deploy.log</code></li>
+</ul>
+<p><strong>Backups:</strong></p>
+<ul>
+<li>Location: <code>/opt/peppertree-backups/</code></li>
+<li>Format: <code>backup_&lt;env&gt;_YYYYMMDD_HHMMSS.sql.gz</code></li>
+<li>Retention: Last 10 backups per environment</li>
+</ul>
+<p><strong>Restore from Backup:</strong></p>
+<pre><code class="language-bash"># List backups
+ls -lh /opt/peppertree-backups/
+
+# Restore (example)
+gunzip -c /opt/peppertree-backups/backup_production_20251121_140530.sql.gz | \
+  docker compose -f docker-compose.production.yml exec -T db psql -U postgres peppertree
+</code></pre>
+<p><strong>Testing Before Production:</strong></p>
+<pre><code class="language-bash"># Always test on staging first!
+sudo bash scripts/deploy.sh staging
+
+# Verify staging
+curl http://localhost:5000/api/health
+# Test the application manually
+
+# If good, deploy to production
+sudo bash scripts/deploy.sh production
+
+# Verify production
+curl http://localhost/api/health
+</code></pre>
+<p><strong>For more details, see:</strong> <code>memory/deploy-script.md</code></p>
+<h2>📞 Support &amp; Updates</h2>
+<h3>Getting Help</h3>
+<ul>
+<li><strong>Documentation</strong>: Check this guide first</li>
+<li><strong>Deployment Reference</strong>: See <code>memory/deploy-script.md</code></li>
+<li><strong>Logs</strong>: Always check application and deployment logs</li>
+<li><strong>GitHub Issues</strong>: Create an issue for bugs/features</li>
+<li><strong>Server Access</strong>: Ensure you have SSH access</li>
+</ul>
+<h3>Updating the Pipeline</h3>
+<ul>
+<li><strong>Workflow</strong>: Edit <code>.github/workflows/deploy.yml</code></li>
+<li><strong>Docker</strong>: Update Dockerfiles and compose files</li>
+<li><strong>Scripts</strong>: Modify deployment scripts as needed</li>
+<li><strong>Environment</strong>: Update environment variables</li>
+</ul>
+<h3>Security Updates</h3>
+<ul>
+<li><strong>Server</strong>: Run <code>sudo apt update &amp;&amp; sudo apt upgrade</code> monthly</li>
+<li><strong>Docker Images</strong>: Rebuild images regularly</li>
+<li><strong>SSL</strong>: Certificates auto-renew every 60 days</li>
+<li><strong>Secrets</strong>: Rotate secrets quarterly</li>
+</ul>
+<h2>✅ Checklist</h2>
+<h3>Pre-Deployment</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Server is set up and accessible</li>
+<li><input disabled="" type="checkbox"> DNS is pointing to your server</li>
+<li><input disabled="" type="checkbox"> SSL certificate is installed</li>
+<li><input disabled="" type="checkbox"> Environment variables are configured</li>
+<li><input disabled="" type="checkbox"> GitHub secrets are set up</li>
+<li><input disabled="" type="checkbox"> SSH keys are configured for CI/CD</li>
+</ul>
+<h3>Post-Deployment</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Website is accessible via HTTPS</li>
+<li><input disabled="" type="checkbox"> API endpoints are responding</li>
+<li><input disabled="" type="checkbox"> Database is connected and migrations ran</li>
+<li><input disabled="" type="checkbox"> Email functionality is working</li>
+<li><input disabled="" type="checkbox"> Monitoring is active</li>
+<li><input disabled="" type="checkbox"> Backups are scheduled</li>
+</ul>
+<h3>Regular Maintenance</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Monitor server resources monthly</li>
+<li><input disabled="" type="checkbox"> Check backup integrity monthly</li>
+<li><input disabled="" type="checkbox"> Update server packages monthly</li>
+<li><input disabled="" type="checkbox"> Review security logs weekly</li>
+<li><input disabled="" type="checkbox"> Test disaster recovery quarterly</li>
+</ul>
+<hr>
+<h2>🎉 Congratulations!</h2>
+<p>Your CI/CD pipeline is now set up! Every push to <code>main</code> deploys to staging, and every push to <code>production</code> deploys to production with full testing, building, and health checks.</p>
+<p><strong>Next Steps:</strong></p>
+<ol>
+<li>Set up monitoring and alerting</li>
+<li>Configure backup to cloud storage</li>
+<li>Add performance monitoring</li>
+<li>Set up log aggregation</li>
+<li>Plan disaster recovery procedures</li>
+</ol>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

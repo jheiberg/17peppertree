@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPS Setup Guide - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>VPS Setup Guide</h1>
+<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-11-21<br><strong>Script:</strong> <code>/scripts/vps-secure-setup.sh</code></p>
+<hr>
+<h2>Overview</h2>
+<p>This guide explains how to use the automated VPS setup script to prepare a fresh Ubuntu 24.04 LTS VPS for hosting the 17 @ Peppertree application with comprehensive security hardening.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Fresh Ubuntu 24.04 LTS VPS</li>
+<li>Root or sudo access</li>
+<li>Minimum specs: 2 vCPU / 8 GB RAM / 60 GB SSD</li>
+<li>SSH access to the server</li>
+</ul>
+<hr>
+<h2>VPS Specifications</h2>
+<h3>Current Single-Site Configuration</h3>
+<p><strong>Selected Configuration:</strong> 2 vCPU / 8 GB RAM</p>
+<h4>Minimum Specs:</h4>
+<ul>
+<li><strong>CPU:</strong> 2 vCPUs</li>
+<li><strong>RAM:</strong> 4 GB</li>
+<li><strong>Storage:</strong> 40 GB SSD</li>
+<li><strong>Bandwidth:</strong> 2 TB/month</li>
+</ul>
+<h4>Optimal Specs (Recommended):</h4>
+<ul>
+<li><strong>CPU:</strong> 2 vCPUs  </li>
+<li><strong>RAM:</strong> 8 GB</li>
+<li><strong>Storage:</strong> 60-80 GB SSD</li>
+<li><strong>Bandwidth:</strong> 3-5 TB/month</li>
+</ul>
+<h3>Docker Container Resource Allocation</h3>
+<p>The application runs 6 Docker containers:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Container</th>
+<th>RAM Usage</th>
+<th>CPU Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Identity Management</td>
+<td>Keycloak</td>
+<td>~512 MB</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Identity Database</td>
+<td>Keycloak PostgreSQL</td>
+<td>~256 MB</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Main Database</td>
+<td>PostgreSQL</td>
+<td>~256 MB</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>API Backend</td>
+<td>Flask/Gunicorn</td>
+<td>~256 MB</td>
+<td>Low-Medium</td>
+</tr>
+<tr>
+<td>Frontend</td>
+<td>React/Nginx</td>
+<td>~128 MB</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>Reverse Proxy</td>
+<td>Nginx</td>
+<td>~128 MB</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>~1.5-2 GB</strong></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3>Resource Headroom</h3>
+<p>With 8 GB RAM:</p>
+<ul>
+<li>Container usage: ~1.5-2 GB</li>
+<li>OS overhead: ~1 GB</li>
+<li><strong>Available buffer:</strong> ~5-6 GB for traffic spikes, caching, and growth</li>
+</ul>
+<h3>Storage Breakdown</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Space Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker images</td>
+<td>2-3 GB</td>
+</tr>
+<tr>
+<td>PostgreSQL databases</td>
+<td>5-10 GB (with growth)</td>
+</tr>
+<tr>
+<td>Application logs</td>
+<td>2-5 GB</td>
+</tr>
+<tr>
+<td>SSL certificates &amp; backups</td>
+<td>5 GB</td>
+</tr>
+<tr>
+<td>Operating system</td>
+<td>10 GB</td>
+</tr>
+<tr>
+<td><strong>Recommended Total</strong></td>
+<td><strong>60-80 GB SSD</strong></td>
+</tr>
+</tbody></table>
+<h3>Multi-Tenant Capacity Planning</h3>
+<p>The architecture allows multiple accommodation websites to share backend infrastructure:</p>
+<ul>
+<li><strong>Shared:</strong> Backend API, Database, Keycloak, Nginx</li>
+<li><strong>Per-Site:</strong> React frontend container (~128 MB RAM each)</li>
+</ul>
+<p><strong>Capacity Estimates on 2 vCPU / 8 GB RAM:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Total Websites</th>
+<th>Frontend RAM</th>
+<th>Backend RAM</th>
+<th>Total RAM Used</th>
+<th>CPU Load</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 (current)</td>
+<td>128 MB</td>
+<td>1.5 GB</td>
+<td>~2.5 GB</td>
+<td>Low</td>
+<td>✅ Current</td>
+</tr>
+<tr>
+<td>3 sites</td>
+<td>384 MB</td>
+<td>2 GB</td>
+<td>~3.4 GB</td>
+<td>Low-Med</td>
+<td>✅ Safe</td>
+</tr>
+<tr>
+<td>5 sites</td>
+<td>640 MB</td>
+<td>2.5 GB</td>
+<td>~4.1 GB</td>
+<td>Medium</td>
+<td>✅ Comfortable</td>
+</tr>
+<tr>
+<td>8 sites</td>
+<td>1 GB</td>
+<td>3.5 GB</td>
+<td>~5.5 GB</td>
+<td>Med-High</td>
+<td>⚠️ Monitor Closely</td>
+</tr>
+<tr>
+<td>10+ sites</td>
+<td>1.3+ GB</td>
+<td>4+ GB</td>
+<td>~6.3+ GB</td>
+<td>High</td>
+<td>❌ Upgrade Required</td>
+</tr>
+</tbody></table>
+<p><strong>Safe Operating Zone:</strong> 4-6 total properties</p>
+<p><strong>When to Upgrade to 4 vCPU / 16 GB RAM:</strong></p>
+<ul>
+<li>Hosting 7+ properties</li>
+<li>Consistent RAM usage &gt;70% (&gt;5.6 GB)</li>
+<li>CPU load averages &gt;1.5 consistently</li>
+<li>Database query response times degrading</li>
+</ul>
+<hr>
+<h2>Quick Start</h2>
+<h3>1. Connect to Your VPS</h3>
+<pre><code class="language-bash">ssh root@your-vps-ip
+</code></pre>
+<h3>2. Download and Run the Setup Script</h3>
+<h4>Method 1: Direct Download (Raw GitHub URL) ⭐ <strong>RECOMMENDED</strong></h4>
+<p>The easiest method - no authentication required:</p>
+<pre><code class="language-bash"># Download the script
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+
+# Make it executable
+chmod +x vps-secure-setup.sh
+
+# Run it
+sudo bash vps-secure-setup.sh
+</code></pre>
+<p><strong>Why this works:</strong></p>
+<ul>
+<li>GitHub raw URLs are public (no authentication needed)</li>
+<li>Works immediately on fresh VPS</li>
+<li>Only requires <code>curl</code> (pre-installed on Ubuntu)</li>
+</ul>
+<h4>Method 2: From Git Repository</h4>
+<pre><code class="language-bash"># Clone the repository
+git clone https://github.com/jheiberg/17peppertree.git
+cd 17peppertree
+
+# Run the setup script
+sudo bash scripts/vps-secure-setup.sh
+</code></pre>
+<p><strong>Note:</strong> Requires Git to be installed first (<code>sudo apt install git</code>)</p>
+<h4>Method 3: Copy-Paste (For Very Fresh VPS)</h4>
+<pre><code class="language-bash"># On VPS, create the file
+nano vps-setup.sh
+
+# Paste the script content (Ctrl+Shift+V)
+# Save: Ctrl+O, Enter
+# Exit: Ctrl+X
+
+# Make executable and run
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+</code></pre>
+<h4>Alternative: Using Short URL or Custom Domain</h4>
+<p>You can create easier access URLs:</p>
+<p><strong>GitHub Gist:</strong></p>
+<pre><code class="language-bash">curl -O https://gist.githubusercontent.com/yourusername/abc123/raw/vps-setup.sh
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+</code></pre>
+<p><strong>Your Own Domain:</strong></p>
+<pre><code class="language-bash">curl -O https://setup.17peppertree.co.za/vps-setup.sh
+chmod +x vps-setup.sh
+sudo bash vps-setup.sh
+</code></pre>
+<p><strong>URL Shortener (bit.ly, tinyurl.com):</strong></p>
+<pre><code>Original: https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+Short:    https://bit.ly/peppertree-vps-setup
+</code></pre>
+<h3>3. Wait for Completion</h3>
+<p>The script takes approximately <strong>10-15 minutes</strong> to complete. It will:</p>
+<ul>
+<li>Update all system packages</li>
+<li>Install and configure Docker</li>
+<li>Harden system security</li>
+<li>Set up monitoring and backups</li>
+<li>Create project directories</li>
+<li>Configure logging and rotation</li>
+</ul>
+<hr>
+<h2>What the Script Does</h2>
+<h3>1. System Updates (2-3 minutes)</h3>
+<ul>
+<li>Updates all system packages</li>
+<li>Installs essential utilities (curl, wget, git, vim, htop, etc.)</li>
+<li>Configures automatic security updates</li>
+</ul>
+<h3>2. Docker Installation (2-3 minutes)</h3>
+<ul>
+<li>Installs latest Docker Engine</li>
+<li>Installs Docker Compose plugin</li>
+<li>Adds user to docker group</li>
+<li>Configures Docker security settings</li>
+</ul>
+<h3>3. Security Hardening (3-5 minutes)</h3>
+<h4>Firewall (UFW)</h4>
+<ul>
+<li>Denies all incoming by default</li>
+<li>Allows SSH (port 22 or custom)</li>
+<li>Allows HTTP (port 80)</li>
+<li>Allows HTTPS (port 443)</li>
+</ul>
+<h4>fail2ban</h4>
+<ul>
+<li>Monitors SSH login attempts</li>
+<li>Blocks brute force attacks</li>
+<li>Protects Nginx from abuse</li>
+<li>Bans for 1 hour after 5 failed attempts</li>
+</ul>
+<h4>SSH Hardening</h4>
+<ul>
+<li>Disables root login</li>
+<li>Disables password authentication</li>
+<li>Requires SSH key authentication only</li>
+<li>Reduces login attempts to 3</li>
+<li>Sets connection timeouts</li>
+</ul>
+<h4>Automatic Updates</h4>
+<ul>
+<li>Enables unattended security upgrades</li>
+<li>Auto-installs critical patches</li>
+<li>Configured for minimal disruption</li>
+</ul>
+<h3>4. System Optimization (1 minute)</h3>
+<h4>Swap Configuration</h4>
+<ul>
+<li>Creates 2GB swap file</li>
+<li>Sets swappiness to 10 (prefer RAM)</li>
+<li>Enables on boot</li>
+</ul>
+<h4>Kernel Tuning</h4>
+<ul>
+<li>Optimizes network parameters</li>
+<li>Improves memory management</li>
+<li>Enhances file system performance</li>
+</ul>
+<h4>System Limits</h4>
+<ul>
+<li>Increases file descriptor limits</li>
+<li>Adjusts process limits</li>
+<li>Optimized for Docker workloads</li>
+</ul>
+<h3>5. Project Structure (1 minute)</h3>
+<p>Creates organized directory structure:</p>
+<pre><code>/opt/
+├── peppertree-production/
+│   ├── ssl/
+│   ├── logs/nginx/
+│   └── .env.example
+├── peppertree-staging/
+│   ├── ssl/
+│   ├── logs/nginx/
+│   └── .env.example
+├── peppertree-backups/
+└── /var/log/peppertree/
+</code></pre>
+<h3>6. Backup System (1 minute)</h3>
+<h4>Automated Backups</h4>
+<ul>
+<li>Daily backups at 2 AM</li>
+<li>Backs up PostgreSQL databases (main + Keycloak)</li>
+<li>Backs up configuration files</li>
+<li>30-day retention policy</li>
+<li>Cloud sync support (rclone)</li>
+</ul>
+<h4>Backup Verification</h4>
+<ul>
+<li>Weekly integrity checks</li>
+<li>Automatic cleanup of old backups</li>
+<li>Logging to <code>/var/log/peppertree/backup.log</code></li>
+</ul>
+<h3>7. Monitoring Tools (1 minute)</h3>
+<h4>System Monitoring</h4>
+<ul>
+<li><code>htop</code> - CPU and memory monitoring</li>
+<li><code>iotop</code> - Disk I/O monitoring</li>
+<li><code>nethogs</code> - Network bandwidth monitoring</li>
+<li><code>ncdu</code> - Disk usage analyzer</li>
+</ul>
+<h4>Custom Scripts</h4>
+<ul>
+<li><code>peppertree-status</code> - Quick system overview</li>
+<li><code>peppertree-healthcheck</code> - Health validation</li>
+<li><code>peppertree-security-audit</code> - Security review</li>
+</ul>
+<h3>8. Log Management (1 minute)</h3>
+<h4>Log Rotation</h4>
+<ul>
+<li>Daily rotation for application logs</li>
+<li>30-day retention for system logs</li>
+<li>14-day retention for Nginx logs</li>
+<li>Automatic compression</li>
+<li>Nginx log reopening on rotation</li>
+</ul>
+<h3>9. Deploy User (1 minute)</h3>
+<ul>
+<li>Creates dedicated <code>deploy</code> user</li>
+<li>Adds to docker group</li>
+<li>Sets up SSH directory</li>
+<li>Ready for CI/CD integration</li>
+</ul>
+<hr>
+<h2>Post-Setup Configuration</h2>
+<p>After the script completes, follow these steps:</p>
+<h3>1. Set Up SSH Key Authentication</h3>
+<p><strong>On your local machine:</strong></p>
+<pre><code class="language-bash"># Generate SSH key if you don&#39;t have one
+ssh-keygen -t ed25519 -C &quot;your-email@example.com&quot;
+
+# Copy public key to server
+ssh-copy-id your-username@your-vps-ip
+</code></pre>
+<p><strong>Test SSH key login:</strong></p>
+<pre><code class="language-bash">ssh your-username@your-vps-ip
+</code></pre>
+<h3>2. Configure rclone for Cloud Backups</h3>
+<pre><code class="language-bash"># Run rclone configuration wizard
+rclone config
+
+# Follow prompts to add cloud provider:
+# - Google Drive (free 15GB)
+# - Dropbox
+# - AWS S3
+# - Backblaze B2
+# - etc.
+
+# Name your remote: peppertree
+
+# Test connection
+rclone lsd peppertree:
+
+# Manual backup test
+peppertree-backup
+</code></pre>
+<h3>3. Configure Environment Variables</h3>
+<pre><code class="language-bash"># Navigate to production directory
+cd /opt/peppertree-production
+
+# Copy and edit environment file
+cp .env.example .env
+nano .env
+</code></pre>
+<p><strong>Required variables to change:</strong></p>
+<pre><code class="language-env"># Generate secure passwords (use: openssl rand -base64 32)
+POSTGRES_PASSWORD=your_secure_password_here
+SECRET_KEY=your_super_long_secret_key_min_50_chars
+KEYCLOAK_DB_PASSWORD=another_secure_password
+KEYCLOAK_ADMIN_PASSWORD=keycloak_admin_password
+KEYCLOAK_CLIENT_SECRET=client_secret_here
+
+# Email configuration
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-gmail-app-password
+MAIL_DEFAULT_SENDER=your-email@gmail.com
+OWNER_EMAIL=owner@17peppertree.co.za
+
+# Domain
+DOMAIN=17peppertree.co.za
+</code></pre>
+<h3>4. Clone Application Repository</h3>
+<pre><code class="language-bash"># Navigate to production directory
+cd /opt/peppertree-production
+
+# Clone your repository
+git clone https://github.com/jheiberg/17peppertree.git .
+
+# Verify files
+ls -la
+</code></pre>
+<h3>5. Generate SSL Certificates</h3>
+<pre><code class="language-bash"># Install certificates using Let&#39;s Encrypt
+certbot --nginx -d 17peppertree.co.za -d www.17peppertree.co.za
+
+# Follow prompts:
+# - Enter email address
+# - Agree to terms
+# - Choose redirect HTTP to HTTPS (recommended)
+
+# Verify auto-renewal
+certbot renew --dry-run
+</code></pre>
+<h3>6. Deploy Application</h3>
+<pre><code class="language-bash"># Navigate to production directory
+cd /opt/peppertree-production
+
+# Build and start containers
+docker compose -f docker-compose.production.yml up -d --build
+
+# Monitor deployment
+docker compose -f docker-compose.production.yml logs -f
+
+# Verify all containers are running
+docker ps
+</code></pre>
+<h3>7. Verify Deployment</h3>
+<pre><code class="language-bash"># Run health check
+peppertree-healthcheck
+
+# Check system status
+peppertree-status
+
+# Test website
+curl https://17peppertree.co.za
+
+# Test API
+curl https://17peppertree.co.za/api/health
+</code></pre>
+<h3>8. Configure CI/CD (Optional)</h3>
+<pre><code class="language-bash"># Add deploy user SSH key
+nano /home/deploy/.ssh/authorized_keys
+# Paste your CI/CD public key (GitHub Actions, GitLab CI, etc.)
+
+# Test deploy user access
+ssh deploy@your-vps-ip docker ps
+</code></pre>
+<h3>9. Final Reboot</h3>
+<pre><code class="language-bash"># Reboot to apply all kernel changes
+sudo reboot
+</code></pre>
+<hr>
+<h2>Useful Commands</h2>
+<h3>System Management</h3>
+<pre><code class="language-bash"># Check system status
+peppertree-status
+
+# Run health checks
+peppertree-healthcheck
+
+# Run security audit
+peppertree-security-audit
+
+# Monitor resources
+htop                    # CPU and RAM
+docker stats           # Container resources
+df -h                  # Disk usage
+free -h                # Memory usage
+</code></pre>
+<h3>Docker Management</h3>
+<pre><code class="language-bash"># View running containers
+docker ps
+
+# View all containers (including stopped)
+docker ps -a
+
+# View container logs
+docker logs peppertree_backend_prod
+docker logs peppertree_backend_prod --tail 100 -f
+
+# Restart a container
+docker restart peppertree_backend_prod
+
+# Restart all containers
+docker compose -f docker-compose.production.yml restart
+
+# Stop all containers
+docker compose -f docker-compose.production.yml down
+
+# Start all containers
+docker compose -f docker-compose.production.yml up -d
+
+# Rebuild and restart
+docker compose -f docker-compose.production.yml up -d --build
+</code></pre>
+<h3>Backup Management</h3>
+<pre><code class="language-bash"># Run manual backup
+peppertree-backup
+
+# List backups
+ls -lh /opt/peppertree-backups/
+
+# Test backup integrity
+gunzip -t /opt/peppertree-backups/peppertree_prod_*.sql.gz
+
+# Restore from backup
+BACKUP_FILE=&quot;/opt/peppertree-backups/peppertree_prod_20250121_020000.sql.gz&quot;
+gunzip -c $BACKUP_FILE | docker exec -i peppertree_db_prod psql -U postgres peppertree
+</code></pre>
+<h3>Security Management</h3>
+<pre><code class="language-bash"># Check firewall status
+sudo ufw status verbose
+
+# Check fail2ban status
+sudo fail2ban-client status
+
+# Check banned IPs
+sudo fail2ban-client status sshd
+
+# Unban an IP
+sudo fail2ban-client set sshd unbanip 1.2.3.4
+
+# View failed login attempts
+sudo grep &quot;Failed password&quot; /var/log/auth.log | tail -20
+
+# View successful logins
+sudo last -20
+</code></pre>
+<h3>Log Management</h3>
+<pre><code class="language-bash"># View application logs
+tail -f /var/log/peppertree/backup.log
+tail -f /opt/peppertree-production/logs/nginx/access.log
+tail -f /opt/peppertree-production/logs/nginx/error.log
+
+# View Docker logs
+docker logs peppertree_backend_prod --tail 100
+docker logs peppertree_nginx_prod --tail 100
+
+# Disk usage by logs
+ncdu /var/log
+ncdu /opt/peppertree-production/logs
+</code></pre>
+<h3>Updates and Maintenance</h3>
+<pre><code class="language-bash"># Update system packages
+sudo apt update &amp;&amp; sudo apt upgrade -y
+
+# Update Docker images
+cd /opt/peppertree-production
+docker compose -f docker-compose.production.yml pull
+docker compose -f docker-compose.production.yml up -d
+
+# Clean up old Docker images
+docker image prune -a
+
+# Check for security updates
+sudo apt list --upgradable
+</code></pre>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Container Won&#39;t Start</h3>
+<pre><code class="language-bash"># Check logs
+docker logs peppertree_backend_prod --tail 100
+
+# Check if port is already in use
+sudo netstat -tulpn | grep :5000
+
+# Restart container
+docker restart peppertree_backend_prod
+
+# Rebuild container
+docker compose -f docker-compose.production.yml up -d --build backend
+</code></pre>
+<h3>Website Not Accessible</h3>
+<pre><code class="language-bash"># Check if Nginx is running
+docker ps | grep nginx
+
+# Check Nginx configuration
+docker exec peppertree_nginx_prod nginx -t
+
+# Check firewall
+sudo ufw status
+
+# Check if ports are listening
+sudo netstat -tulpn | grep -E &#39;:80|:443&#39;
+
+# View Nginx error logs
+docker logs peppertree_nginx_prod --tail 50
+</code></pre>
+<h3>Database Connection Issues</h3>
+<pre><code class="language-bash"># Check if database is running
+docker ps | grep db
+
+# Check database logs
+docker logs peppertree_db_prod --tail 50
+
+# Test database connection
+docker exec -it peppertree_db_prod psql -U postgres -d peppertree
+
+# Check environment variables
+docker exec peppertree_backend_prod env | grep DATABASE
+</code></pre>
+<h3>High Memory Usage</h3>
+<pre><code class="language-bash"># Check memory usage
+free -h
+docker stats --no-stream
+
+# Restart services
+docker compose -f docker-compose.production.yml restart
+
+# Clear system cache
+sudo sync &amp;&amp; echo 3 | sudo tee /proc/sys/vm/drop_caches
+</code></pre>
+<h3>Disk Space Full</h3>
+<pre><code class="language-bash"># Check disk usage
+df -h
+ncdu /
+
+# Clean Docker
+docker system prune -a --volumes
+docker image prune -a
+
+# Clean old logs
+sudo journalctl --vacuum-time=7d
+find /var/log -name &quot;*.gz&quot; -mtime +30 -delete
+
+# Clean old backups
+find /opt/peppertree-backups -name &quot;*.sql.gz&quot; -mtime +30 -delete
+</code></pre>
+<hr>
+<h2>Security Best Practices</h2>
+<h3>Regular Maintenance</h3>
+<p><strong>Weekly:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Review monitoring alerts</li>
+<li><input disabled="" type="checkbox"> Check disk space (<code>df -h</code>)</li>
+<li><input disabled="" type="checkbox"> Review logs for errors</li>
+<li><input disabled="" type="checkbox"> Verify backup completion</li>
+</ul>
+<p><strong>Monthly:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Update system packages</li>
+<li><input disabled="" type="checkbox"> Update Docker images</li>
+<li><input disabled="" type="checkbox"> Review fail2ban logs</li>
+<li><input disabled="" type="checkbox"> Test backup restoration</li>
+<li><input disabled="" type="checkbox"> Review SSL certificate expiry</li>
+</ul>
+<p><strong>Quarterly:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Run security audit (<code>peppertree-security-audit</code>)</li>
+<li><input disabled="" type="checkbox"> Review user access</li>
+<li><input disabled="" type="checkbox"> Test disaster recovery procedures</li>
+<li><input disabled="" type="checkbox"> Update documentation</li>
+</ul>
+<h3>SSH Security Tips</h3>
+<ol>
+<li><strong>Use SSH keys only</strong> (password auth disabled by script)</li>
+<li><strong>Protect your private key</strong>: <code>chmod 600 ~/.ssh/id_ed25519</code></li>
+<li><strong>Use SSH agent</strong>: <code>ssh-add ~/.ssh/id_ed25519</code></li>
+<li><strong>Change SSH port</strong> (optional): Edit <code>/etc/ssh/sshd_config</code></li>
+<li><strong>Monitor auth logs</strong>: <code>tail -f /var/log/auth.log</code></li>
+</ol>
+<h3>Password Security</h3>
+<ol>
+<li><strong>Use strong passwords</strong>: Minimum 20 characters</li>
+<li><strong>Generate random passwords</strong>: <code>openssl rand -base64 32</code></li>
+<li><strong>Never reuse passwords</strong>: Each service should have unique password</li>
+<li><strong>Store securely</strong>: Use password manager</li>
+<li><strong>Rotate regularly</strong>: Change every 90 days</li>
+</ol>
+<h3>Docker Security</h3>
+<ol>
+<li><strong>Keep images updated</strong>: Run updates monthly</li>
+<li><strong>Scan for vulnerabilities</strong>: Use <code>docker scan</code></li>
+<li><strong>Limit container resources</strong>: Set memory/CPU limits</li>
+<li><strong>Use secrets</strong>: Never store passwords in Dockerfiles</li>
+<li><strong>Review logs</strong>: Monitor for suspicious activity</li>
+</ol>
+<hr>
+<h2>Performance Tuning</h2>
+<h3>For High Traffic</h3>
+<p>If hosting 5+ properties or experiencing high traffic:</p>
+<p><strong>Increase Swap:</strong></p>
+<pre><code class="language-bash">sudo swapoff /swapfile
+sudo fallocate -l 4G /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+</code></pre>
+<p><strong>Optimize PostgreSQL:</strong></p>
+<pre><code class="language-bash"># Edit postgresql.conf in container
+docker exec -it peppertree_db_prod bash
+vi /var/lib/postgresql/data/postgresql.conf
+
+# Recommended settings for 8GB RAM:
+shared_buffers = 2GB
+effective_cache_size = 6GB
+maintenance_work_mem = 512MB
+work_mem = 16MB
+</code></pre>
+<p><strong>Nginx Caching:</strong></p>
+<pre><code class="language-nginx"># Add to nginx.conf
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=1g inactive=60m;
+proxy_cache my_cache;
+proxy_cache_valid 200 60m;
+</code></pre>
+<hr>
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="./SYSTEM_REQUIREMENTS.html">SYSTEM_REQUIREMENTS.md</a> - Complete system requirements and versions</li>
+<li><a href="./HA_DR_PLAN.html">HA_DR_PLAN.md</a> - Disaster recovery procedures</li>
+<li><a href="./DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a> - Application deployment</li>
+<li><a href="./DOCKER_SETUP.html">DOCKER_SETUP.md</a> - Docker configuration details</li>
+</ul>
+<hr>
+<p><strong>Support:</strong> For issues or questions, contact technical support or review logs in <code>/var/log/peppertree/</code></p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

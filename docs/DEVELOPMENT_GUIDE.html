@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Development & Production Setup Guide - 17 @ Peppertree - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" class="active">💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>🚀 Development &amp; Production Setup Guide - 17 @ Peppertree</h1>
+<h2>Overview</h2>
+<p>This guide explains how to run the 17 @ Peppertree booking application in both development and production environments. The application consists of a React frontend and Flask backend with PostgreSQL database.</p>
+<h2>📋 Prerequisites</h2>
+<h3>Development Environment</h3>
+<ul>
+<li><strong>Node.js</strong> (v16+)</li>
+<li><strong>Python</strong> (3.9+)</li>
+<li><strong>PostgreSQL</strong> (12+) or Docker</li>
+<li><strong>Git</strong></li>
+</ul>
+<h3>Production Environment</h3>
+<ul>
+<li><strong>Docker</strong> and <strong>Docker Compose</strong></li>
+<li><strong>Linux server</strong> (Ubuntu 24.04 LTS recommended)</li>
+<li><strong>Domain name</strong> with SSL certificate</li>
+<li><strong>2GB+ RAM</strong> recommended</li>
+</ul>
+<hr>
+<h2>🛠️ Development Setup</h2>
+<h3>Step 1: Clone Repository</h3>
+<pre><code class="language-bash">git clone &lt;your-repository-url&gt;
+cd 17@peppertree
+</code></pre>
+<h3>Step 2: Environment Configuration</h3>
+<pre><code class="language-bash"># Copy environment template
+cp .env.example .env
+cp backend/.env.example backend/.env
+
+# Edit with your development values
+nano .env
+nano backend/.env
+</code></pre>
+<p><strong>Development Environment Variables:</strong></p>
+<pre><code class="language-bash"># Database (use local PostgreSQL or Docker)
+DATABASE_URL=postgresql://postgres:password@localhost:5432/peppertree
+
+# Security (use simple values for dev)
+SECRET_KEY=dev-secret-key-change-in-production
+
+# Email (use mailtrap.io or similar for testing)
+MAIL_SERVER=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your-mailtrap-username
+MAIL_PASSWORD=your-mailtrap-password
+MAIL_DEFAULT_SENDER=noreply@peppertree-dev.local
+OWNER_EMAIL=owner@peppertree-dev.local
+
+# Flask Configuration
+FLASK_ENV=development
+FLASK_DEBUG=1
+
+# React API URL
+REACT_APP_API_URL=http://localhost:5000/api
+</code></pre>
+<h3>Step 3: Database Setup</h3>
+<h4>Option A: Local PostgreSQL</h4>
+<pre><code class="language-bash"># Install PostgreSQL (Ubuntu/Debian)
+sudo apt install postgresql postgresql-contrib
+
+# Create database and user
+sudo -u postgres psql
+CREATE DATABASE peppertree;
+CREATE USER peppertree_user WITH PASSWORD &#39;your_password&#39;;
+GRANT ALL PRIVILEGES ON DATABASE peppertree TO peppertree_user;
+\q
+</code></pre>
+<h4>Option B: Docker PostgreSQL</h4>
+<pre><code class="language-bash"># Start PostgreSQL container
+docker run --name peppertree-db \
+  -e POSTGRES_DB=peppertree \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  -d postgres:15-alpine
+</code></pre>
+<h3>Step 4: Backend Setup</h3>
+<pre><code class="language-bash">cd backend
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate     # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Initialize database
+python app.py  # This will create tables automatically
+</code></pre>
+<h3>Step 5: Frontend Setup</h3>
+<pre><code class="language-bash">cd ..  # Back to root directory
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+</code></pre>
+<h3>Step 6: Start Development Servers</h3>
+<p><strong>Terminal 1 - Backend:</strong></p>
+<pre><code class="language-bash">cd backend
+source venv/bin/activate
+python app.py
+</code></pre>
+<p>Backend will run on: <a href="http://localhost:5000">http://localhost:5000</a></p>
+<p><strong>Terminal 2 - Frontend:</strong></p>
+<pre><code class="language-bash">npm start
+</code></pre>
+<p>Frontend will run on: <a href="http://localhost:3000">http://localhost:3000</a></p>
+<h3>Development URLs</h3>
+<ul>
+<li><strong>Frontend</strong>: <a href="http://localhost:3000">http://localhost:3000</a></li>
+<li><strong>Backend API</strong>: <a href="http://localhost:5000/api">http://localhost:5000/api</a></li>
+<li><strong>API Health Check</strong>: <a href="http://localhost:5000/api/health">http://localhost:5000/api/health</a></li>
+</ul>
+<hr>
+<h2>🏗️ Production Deployment</h2>
+<h3>Method 1: Docker Compose (Recommended)</h3>
+<h4>Step 1: Server Preparation</h4>
+<pre><code class="language-bash"># Run automated setup script
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+chmod +x vps-secure-setup.sh
+sudo bash vps-secure-setup.sh
+</code></pre>
+<h4>Step 2: Clone Repository</h4>
+<pre><code class="language-bash">cd /opt/peppertree-production
+git clone &lt;your-repository-url&gt; .
+</code></pre>
+<h4>Step 3: Production Environment</h4>
+<pre><code class="language-bash"># Copy and configure environment
+cp .env.example .env
+nano .env
+</code></pre>
+<p><strong>Production Environment Variables:</strong></p>
+<pre><code class="language-bash"># Database
+DATABASE_URL=postgresql://postgres:STRONG_PASSWORD@db:5432/peppertree
+POSTGRES_PASSWORD=STRONG_POSTGRES_PASSWORD
+
+# Security (generate strong keys!)
+SECRET_KEY=your-super-secure-64-character-secret-key-for-production
+REDIS_PASSWORD=strong-redis-password
+
+# Email (use real SMTP service)
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-production-email@gmail.com
+MAIL_PASSWORD=your-gmail-app-password
+MAIL_DEFAULT_SENDER=noreply@peppertree.co.za
+OWNER_EMAIL=bookings@peppertree.co.za
+
+# Docker Hub
+DOCKER_HUB_USERNAME=your-dockerhub-username
+
+# Domain
+DOMAIN_NAME=peppertree.co.za
+DOMAIN_WWW=www.peppertree.co.za
+
+# Production API URL
+REACT_APP_API_URL=https://peppertree.co.za/api
+</code></pre>
+<h4>Step 4: SSL Certificate</h4>
+<pre><code class="language-bash"># Generate Let&#39;s Encrypt certificate
+sudo certbot certonly --standalone -d peppertree.co.za -d www.peppertree.co.za
+
+# Copy certificates
+sudo cp /etc/letsencrypt/live/peppertree.co.za/fullchain.pem ./ssl/
+sudo cp /etc/letsencrypt/live/peppertree.co.za/privkey.pem ./ssl/
+sudo chown -R deploy:deploy ./ssl/
+</code></pre>
+<h4>Step 5: Deploy Application</h4>
+<pre><code class="language-bash"># Build and start services
+docker-compose -f docker-compose.production.yml up -d
+
+# Check status
+docker-compose -f docker-compose.production.yml ps
+
+# View logs
+docker-compose -f docker-compose.production.yml logs -f
+</code></pre>
+<h3>Method 2: Manual Production Setup</h3>
+<h4>Step 1: Build Frontend</h4>
+<pre><code class="language-bash"># Build production React app
+npm run build
+
+# Serve with nginx (configure separately)
+</code></pre>
+<h4>Step 2: Deploy Backend</h4>
+<pre><code class="language-bash">cd backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start with Gunicorn
+gunicorn --config gunicorn.conf.py wsgi:application
+</code></pre>
+<h4>Step 3: Process Manager (PM2 or systemd)</h4>
+<pre><code class="language-bash"># Using PM2
+npm install -g pm2
+pm2 start gunicorn.conf.py --name peppertree-backend
+
+# Or create systemd service
+sudo nano /etc/systemd/system/peppertree.service
+</code></pre>
+<hr>
+<h2>🔧 Development vs Production Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Development</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Server</strong></td>
+<td>Flask dev server</td>
+<td>Gunicorn WSGI</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>Local/Docker PostgreSQL</td>
+<td>PostgreSQL container</td>
+</tr>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>React dev server</td>
+<td>Nginx static files</td>
+</tr>
+<tr>
+<td><strong>SSL</strong></td>
+<td>None (HTTP)</td>
+<td>Let&#39;s Encrypt (HTTPS)</td>
+</tr>
+<tr>
+<td><strong>Environment</strong></td>
+<td>FLASK_DEBUG=1</td>
+<td>FLASK_ENV=production</td>
+</tr>
+<tr>
+<td><strong>Hot Reload</strong></td>
+<td>✅ Enabled</td>
+<td>❌ Disabled</td>
+</tr>
+<tr>
+<td><strong>Error Details</strong></td>
+<td>✅ Full stack traces</td>
+<td>❌ Generic messages</td>
+</tr>
+<tr>
+<td><strong>Email</strong></td>
+<td>Test service (Mailtrap)</td>
+<td>Real SMTP</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Manual</td>
+<td>Docker health checks</td>
+</tr>
+<tr>
+<td><strong>Backups</strong></td>
+<td>None</td>
+<td>Automated daily</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Relaxed</td>
+<td>Hardened</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🚨 Troubleshooting</h2>
+<h3>Development Issues</h3>
+<h4>Backend Not Starting</h4>
+<pre><code class="language-bash"># Check Python environment
+python --version
+pip list | grep Flask
+
+# Check database connection
+psql -h localhost -U postgres -d peppertree
+
+# Check logs
+python app.py  # Look for error messages
+</code></pre>
+<h4>Frontend Not Loading</h4>
+<pre><code class="language-bash"># Check Node version
+node --version
+npm --version
+
+# Clear cache
+npm run build
+rm -rf node_modules package-lock.json
+npm install
+
+# Check environment variables
+echo $REACT_APP_API_URL
+</code></pre>
+<h4>CORS Issues</h4>
+<pre><code class="language-bash"># Verify backend CORS configuration
+# Check that FLASK_ENV=development in backend/.env
+# Ensure REACT_APP_API_URL matches backend URL
+</code></pre>
+<h3>Production Issues</h3>
+<h4>Health Check Failures</h4>
+<pre><code class="language-bash"># Check container status
+docker-compose -f docker-compose.production.yml ps
+
+# Check individual service health
+curl http://localhost:5000/api/health
+
+# View service logs
+docker-compose -f docker-compose.production.yml logs backend
+</code></pre>
+<h4>Database Connection Issues</h4>
+<pre><code class="language-bash"># Check database container
+docker-compose -f docker-compose.production.yml exec db pg_isready
+
+# Connect to database
+docker-compose -f docker-compose.production.yml exec db psql -U postgres peppertree
+
+# Check connection from backend
+docker-compose -f docker-compose.production.yml exec backend python -c &quot;
+from database import DatabaseManager
+print(&#39;Database connection:&#39;, DatabaseManager.test_connection())
+&quot;
+</code></pre>
+<h4>SSL Certificate Issues</h4>
+<pre><code class="language-bash"># Check certificate status
+sudo certbot certificates
+
+# Test certificate renewal
+sudo certbot renew --dry-run
+
+# Check nginx configuration
+docker-compose -f docker-compose.production.yml exec nginx nginx -t
+</code></pre>
+<hr>
+<h2>🔄 Common Development Workflows</h2>
+<h3>Making Code Changes</h3>
+<h4>Frontend Changes</h4>
+<pre><code class="language-bash"># Changes are automatically reloaded in development
+# For production, rebuild:
+npm run build
+docker-compose -f docker-compose.production.yml restart frontend
+</code></pre>
+<h4>Backend Changes</h4>
+<pre><code class="language-bash"># Development: Flask auto-reloads
+# Production: Restart container
+docker-compose -f docker-compose.production.yml restart backend
+</code></pre>
+<h3>Database Migrations</h3>
+<pre><code class="language-bash"># Development
+cd backend
+python app.py  # Creates tables automatically
+
+# Production
+docker-compose -f docker-compose.production.yml exec backend python app.py
+</code></pre>
+<h3>Testing API Endpoints</h3>
+<pre><code class="language-bash"># Health check
+curl http://localhost:5000/api/health
+
+# Create booking (development)
+curl -X POST http://localhost:5000/api/booking \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{
+    &quot;checkin&quot;: &quot;2024-03-15&quot;,
+    &quot;checkout&quot;: &quot;2024-03-17&quot;, 
+    &quot;guests&quot;: 2,
+    &quot;name&quot;: &quot;Test User&quot;,
+    &quot;email&quot;: &quot;test@example.com&quot;,
+    &quot;phone&quot;: &quot;+27123456789&quot;
+  }&#39;
+
+# Check availability
+curl http://localhost:5000/api/availability?month=2024-03
+</code></pre>
+<hr>
+<h2>📝 Environment Variables Reference</h2>
+<h3>Backend Variables</h3>
+<pre><code class="language-bash"># Database
+DATABASE_URL=postgresql://user:pass@host:port/database
+
+# Security  
+SECRET_KEY=your-secret-key
+
+# Email
+MAIL_SERVER=smtp.server.com
+MAIL_PORT=587
+MAIL_USERNAME=username
+MAIL_PASSWORD=password  
+MAIL_DEFAULT_SENDER=sender@domain.com
+OWNER_EMAIL=owner@domain.com
+
+# Flask
+FLASK_ENV=development|production
+FLASK_DEBUG=0|1
+</code></pre>
+<h3>Frontend Variables</h3>
+<pre><code class="language-bash"># API endpoint
+REACT_APP_API_URL=http://localhost:5000/api  # Dev
+REACT_APP_API_URL=https://domain.com/api     # Prod
+
+# Optional
+REACT_APP_GOOGLE_ANALYTICS_ID=GA-XXXXXXXXX
+</code></pre>
+<h3>Docker Variables</h3>
+<pre><code class="language-bash"># Database
+POSTGRES_PASSWORD=secure-password
+
+# Redis
+REDIS_PASSWORD=redis-password
+
+# Docker Hub
+DOCKER_HUB_USERNAME=username
+</code></pre>
+<hr>
+<h2>🎯 Next Steps</h2>
+<h3>Development</h3>
+<ol>
+<li>Set up your local environment following Step 1-6</li>
+<li>Make your code changes</li>
+<li>Test thoroughly with the API endpoints</li>
+<li>Commit and push to your repository</li>
+</ol>
+<h3>Production</h3>
+<ol>
+<li>Follow the deployment guide for CI/CD setup</li>
+<li>Configure your server and domain</li>
+<li>Set up monitoring and backups</li>
+<li>Test the production deployment</li>
+</ol>
+<h3>Maintenance</h3>
+<ul>
+<li>Monitor logs regularly</li>
+<li>Update dependencies monthly  </li>
+<li>Backup database weekly</li>
+<li>Renew SSL certificates (automatic with Let&#39;s Encrypt)</li>
+</ul>
+<hr>
+<h2>📞 Support</h2>
+<ul>
+<li><strong>Documentation</strong>: Check this guide and DEPLOYMENT_GUIDE.md</li>
+<li><strong>Logs</strong>: Always check application logs for errors</li>
+<li><strong>Health Checks</strong>: Use <code>/api/health</code> endpoint to verify backend</li>
+<li><strong>GitHub Issues</strong>: Create issues for bugs or feature requests</li>
+</ul>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

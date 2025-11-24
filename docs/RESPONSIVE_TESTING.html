@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Design Testing Guide - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" class="active">📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>📱 Responsive Design Testing Guide</h1>
+<blockquote>
+<p>Comprehensive testing guide for ensuring optimal display across all devices</p>
+</blockquote>
+<hr>
+<h2>📊 Device Categories Supported</h2>
+<h3>📱 Mobile Phones</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Screen Width</th>
+<th>Devices</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Extra Small</strong></td>
+<td>320px - 374px</td>
+<td>iPhone SE, older Android phones</td>
+</tr>
+<tr>
+<td><strong>Small</strong></td>
+<td>375px - 480px</td>
+<td>iPhone 12/13/14, most Android phones</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>481px - 767px</td>
+<td>iPhone Plus, large Android phones</td>
+</tr>
+</tbody></table>
+<h3>📲 Tablets</h3>
+<table>
+<thead>
+<tr>
+<th>Orientation</th>
+<th>Screen Width</th>
+<th>Devices</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Portrait</strong></td>
+<td>768px - 1024px</td>
+<td>iPad, Android tablets</td>
+</tr>
+<tr>
+<td><strong>Landscape</strong></td>
+<td>Handled with orientation-specific styles</td>
+<td>All tablets</td>
+</tr>
+</tbody></table>
+<h3>💻 Desktops</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Screen Width</th>
+<th>Devices</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Small Desktop</strong></td>
+<td>1025px - 1199px</td>
+<td>Small laptops, compact displays</td>
+</tr>
+<tr>
+<td><strong>Medium Desktop</strong></td>
+<td>1200px - 1439px</td>
+<td>Standard monitors</td>
+</tr>
+<tr>
+<td><strong>Large Desktop</strong></td>
+<td>1440px+</td>
+<td>Wide monitors, 4K displays</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>✨ Key Responsive Features</h2>
+<h3>📐 Mobile-First Design</h3>
+<p>✅ <strong>Base styles</strong> optimized for 320px+ screens<br>✅ <strong>Progressive enhancement</strong> for larger screens<br>✅ <strong>Touch-friendly</strong> interface elements (48px+ touch targets)<br>✅ <strong>Optimized performance</strong> for mobile networks</p>
+<h3>📅 Calendar Optimizations</h3>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Layout Features</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mobile</strong></td>
+<td>Compact layout, stacked navigation, swipe gestures</td>
+</tr>
+<tr>
+<td><strong>Tablet</strong></td>
+<td>Medium-sized calendar, improved spacing, dual-column where appropriate</td>
+</tr>
+<tr>
+<td><strong>Desktop</strong></td>
+<td>Full-featured calendar, optimal sizing, hover interactions</td>
+</tr>
+</tbody></table>
+<h3>🧭 Navigation System</h3>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Navigation Style</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mobile</strong></td>
+<td>Hamburger menu with slide-out navigation, full-screen menu</td>
+</tr>
+<tr>
+<td><strong>Tablet</strong></td>
+<td>Collapsible menu with improved spacing</td>
+</tr>
+<tr>
+<td><strong>Desktop</strong></td>
+<td>Horizontal navigation bar with dropdowns</td>
+</tr>
+</tbody></table>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Smooth animations and transitions</li>
+<li>Touch-friendly tap targets (48px minimum)</li>
+<li>Keyboard navigation support</li>
+<li>Focus indicators for accessibility</li>
+</ul>
+<h3>📐 Grid Layouts</h3>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Grid Configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Mobile</strong></td>
+<td>Single column layout, stacked content</td>
+</tr>
+<tr>
+<td><strong>Tablet</strong></td>
+<td>2-column grids with flexible spacing</td>
+</tr>
+<tr>
+<td><strong>Desktop</strong></td>
+<td>3-4 column grids with optimal white space</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>✅ Testing Checklist</h2>
+<h3>📱 Mobile Testing (320px - 767px)</h3>
+<h4>Navigation &amp; Interaction</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Hamburger menu opens and closes smoothly</li>
+<li><input disabled="" type="checkbox"> All menu items are accessible and tappable</li>
+<li><input disabled="" type="checkbox"> Touch targets meet 48px minimum size</li>
+<li><input disabled="" type="checkbox"> Swipe gestures work (if implemented)</li>
+</ul>
+<h4>Content &amp; Layout</h4>
+<ul>
+<li><input disabled="" type="checkbox"> All text is readable without horizontal scrolling</li>
+<li><input disabled="" type="checkbox"> Images scale properly and maintain aspect ratio</li>
+<li><input disabled="" type="checkbox"> No content overflow or hidden elements</li>
+<li><input disabled="" type="checkbox"> Proper spacing between interactive elements</li>
+</ul>
+<h4>Forms &amp; Inputs</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Form inputs are easy to tap and fill</li>
+<li><input disabled="" type="checkbox"> Virtual keyboard doesn&#39;t obscure inputs</li>
+<li><input disabled="" type="checkbox"> Date picker works on mobile devices</li>
+<li><input disabled="" type="checkbox"> Contact form fits screen without overflow</li>
+</ul>
+<h4>Calendar</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Calendar days are touch-friendly (48px minimum)</li>
+<li><input disabled="" type="checkbox"> Month navigation is easy to use</li>
+<li><input disabled="" type="checkbox"> Selected dates are clearly indicated</li>
+<li><input disabled="" type="checkbox"> Availability status is visible</li>
+</ul>
+<hr>
+<h3>📲 Tablet Testing (768px - 1024px)</h3>
+<h4>Layout &amp; Structure</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Two-column layouts display correctly</li>
+<li><input disabled="" type="checkbox"> Content doesn&#39;t feel too stretched</li>
+<li><input disabled="" type="checkbox"> Proper use of white space</li>
+<li><input disabled="" type="checkbox"> Images and media scale appropriately</li>
+</ul>
+<h4>Navigation</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Navigation transitions smoothly from mobile style</li>
+<li><input disabled="" type="checkbox"> All menu items remain accessible</li>
+<li><input disabled="" type="checkbox"> Dropdown menus work properly (if applicable)</li>
+</ul>
+<h4>Interactive Elements</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Calendar has appropriate sizing for tablet</li>
+<li><input disabled="" type="checkbox"> Form elements have proper spacing</li>
+<li><input disabled="" type="checkbox"> Buttons are adequately sized</li>
+<li><input disabled="" type="checkbox"> Both portrait and landscape orientations work</li>
+</ul>
+<hr>
+<h3>💻 Desktop Testing (1025px+)</h3>
+<h4>Layout &amp; Structure</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Multi-column layouts work properly</li>
+<li><input disabled="" type="checkbox"> Content is well-spaced and readable</li>
+<li><input disabled="" type="checkbox"> Maximum content width is enforced (not too wide)</li>
+<li><input disabled="" type="checkbox"> Grid systems align correctly</li>
+</ul>
+<h4>Navigation &amp; Interaction</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Navigation is horizontal and accessible</li>
+<li><input disabled="" type="checkbox"> All hover effects work correctly</li>
+<li><input disabled="" type="checkbox"> Focus states are visible for keyboard navigation</li>
+<li><input disabled="" type="checkbox"> Dropdown menus function properly</li>
+</ul>
+<h4>Components</h4>
+<ul>
+<li><input disabled="" type="checkbox"> Calendar is optimally sized (not too large/small)</li>
+<li><input disabled="" type="checkbox"> Forms display in appropriate columns</li>
+<li><input disabled="" type="checkbox"> Images display at optimal resolution</li>
+<li><input disabled="" type="checkbox"> Modal dialogs are properly centered</li>
+</ul>
+<hr>
+<h2>🌐 Browser Compatibility</h2>
+<h3>Required Browser Support</h3>
+<h4>Mobile Browsers</h4>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Minimum Version</th>
+<th>Market Share</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Safari iOS</strong></td>
+<td>iOS 14+</td>
+<td>~60% mobile</td>
+</tr>
+<tr>
+<td><strong>Chrome Android</strong></td>
+<td>Android 8+</td>
+<td>~30% mobile</td>
+</tr>
+<tr>
+<td><strong>Samsung Internet</strong></td>
+<td>Latest</td>
+<td>~8% mobile</td>
+</tr>
+<tr>
+<td><strong>Firefox Mobile</strong></td>
+<td>Latest</td>
+<td>~2% mobile</td>
+</tr>
+</tbody></table>
+<h4>Desktop Browsers</h4>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Minimum Version</th>
+<th>Market Share</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Chrome</strong></td>
+<td>90+</td>
+<td>~65%</td>
+</tr>
+<tr>
+<td><strong>Edge</strong></td>
+<td>90+</td>
+<td>~12%</td>
+</tr>
+<tr>
+<td><strong>Firefox</strong></td>
+<td>88+</td>
+<td>~8%</td>
+</tr>
+<tr>
+<td><strong>Safari</strong></td>
+<td>14+</td>
+<td>~10%</td>
+</tr>
+</tbody></table>
+<h3>🎯 Special Considerations</h3>
+<h4>Touch Device Optimization</h4>
+<ul>
+<li>✅ Hover effects automatically disabled on touch screens</li>
+<li>✅ Touch-optimized tap targets (48px minimum)</li>
+<li>✅ Swipe gestures for calendar navigation</li>
+<li>✅ No hover-dependent functionality</li>
+</ul>
+<h4>High DPI Displays</h4>
+<ul>
+<li>✅ Retina-ready images and icons</li>
+<li>✅ SVG icons for crisp rendering</li>
+<li>✅ Proper image sizing with <code>srcset</code></li>
+<li>✅ High-resolution media queries</li>
+</ul>
+<h4>Accessibility Features</h4>
+<ul>
+<li>✅ <strong>Reduced Motion</strong>: Respects <code>prefers-reduced-motion</code></li>
+<li>✅ <strong>High Contrast</strong>: Supports high contrast modes</li>
+<li>✅ <strong>Screen Readers</strong>: Semantic HTML and ARIA labels</li>
+<li>✅ <strong>Keyboard Navigation</strong>: Full keyboard support</li>
+</ul>
+<h4>Print Styles</h4>
+<ul>
+<li>✅ Calendar prints cleanly</li>
+<li>✅ Navigation elements hidden</li>
+<li>✅ Proper page breaks</li>
+<li>✅ Black and white optimization</li>
+</ul>
+<hr>
+<h2>📐 Breakpoint Reference</h2>
+<h3>CSS Media Query Breakpoints</h3>
+<pre><code class="language-css">/* ========================================
+   Mobile-First Responsive Breakpoints
+   ======================================== */
+
+/* Base Styles - Mobile First (320px+) */
+.element {
+  /* Optimized for smallest screens */
+}
+
+/* Extra Small Phones (320px - 374px) */
+@media (max-width: 374px) {
+  /* iPhone SE, older Android phones */
+}
+
+/* Small Phones (375px - 480px) */
+@media (min-width: 375px) and (max-width: 480px) {
+  /* iPhone 12/13/14, standard Android */
+}
+
+/* Large Phones (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  /* iPhone Plus, large Android phones */
+}
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* iPad, Android tablets */
+}
+
+/* Small Desktop (1025px - 1199px) */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  /* Small laptops, compact displays */
+}
+
+/* Medium Desktop (1200px - 1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  /* Standard monitors */
+}
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+  /* Wide monitors, 4K displays */
+}
+</code></pre>
+<h3>Tailwind CSS Breakpoints</h3>
+<p>The application uses Tailwind CSS with these breakpoints:</p>
+<table>
+<thead>
+<tr>
+<th>Breakpoint</th>
+<th>Min Width</th>
+<th>CSS</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sm</code></td>
+<td>640px</td>
+<td><code>@media (min-width: 640px)</code></td>
+<td>Small devices and up</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td>768px</td>
+<td><code>@media (min-width: 768px)</code></td>
+<td>Tablets and up</td>
+</tr>
+<tr>
+<td><code>lg</code></td>
+<td>1024px</td>
+<td><code>@media (min-width: 1024px)</code></td>
+<td>Desktops and up</td>
+</tr>
+<tr>
+<td><code>xl</code></td>
+<td>1280px</td>
+<td><code>@media (min-width: 1280px)</code></td>
+<td>Large desktops and up</td>
+</tr>
+<tr>
+<td><code>2xl</code></td>
+<td>1536px</td>
+<td><code>@media (min-width: 1536px)</code></td>
+<td>Extra large screens</td>
+</tr>
+</tbody></table>
+<p><strong>Example Usage:</strong></p>
+<pre><code class="language-jsx">&lt;div className=&quot;w-full md:w-1/2 lg:w-1/3&quot;&gt;
+  {/* Full width on mobile, half on tablet, third on desktop */}
+&lt;/div&gt;
+</code></pre>
+<hr>
+<h2>⚡ Performance Optimizations</h2>
+<h3>Applied Optimizations</h3>
+<h4>Layout &amp; Rendering</h4>
+<p>✅ <strong>CSS Grid</strong> with flexbox fallbacks for older browsers<br>✅ <strong>Mobile-first</strong> media queries for minimal CSS overhead<br>✅ <strong>Lazy loading</strong> for images and heavy components<br>✅ <strong>Optimized fonts</strong> with subset loading</p>
+<h4>Interactions</h4>
+<p>✅ <strong>Touch target sizing</strong> follows WCAG accessibility guidelines (48px minimum)<br>✅ <strong>Debounced scroll events</strong> to reduce CPU usage<br>✅ <strong>Optimized animations</strong> with CSS transforms<br>✅ <strong>Reduced motion support</strong> for users with motion sensitivity</p>
+<h4>Network &amp; Assets</h4>
+<p>✅ <strong>Responsive images</strong> with <code>srcset</code> for appropriate sizes<br>✅ <strong>SVG icons</strong> for scalable, lightweight graphics<br>✅ <strong>Compressed assets</strong> (CSS, JS, images)<br>✅ <strong>HTTP/2</strong> for parallel resource loading</p>
+<h4>Print Optimization</h4>
+<p>✅ <strong>Print styles</strong> for calendar functionality<br>✅ <strong>Hidden navigation</strong> and interactive elements<br>✅ <strong>Optimized page breaks</strong><br>✅ <strong>Black and white friendly</strong> color scheme</p>
+<h3>Performance Targets</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>First Contentful Paint</strong></td>
+<td>&lt; 1.5s</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Largest Contentful Paint</strong></td>
+<td>&lt; 2.5s</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Time to Interactive</strong></td>
+<td>&lt; 3.5s</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Cumulative Layout Shift</strong></td>
+<td>&lt; 0.1</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Mobile PageSpeed Score</strong></td>
+<td>&gt; 85</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Desktop PageSpeed Score</strong></td>
+<td>&gt; 90</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🧪 Testing Tools &amp; Commands</h2>
+<h3>Browser Developer Tools</h3>
+<h4>Google Chrome / Edge</h4>
+<pre><code>1. Open DevTools: F12 (Windows/Linux) or Cmd+Option+I (Mac)
+2. Toggle Device Mode: Ctrl+Shift+M (Windows/Linux) or Cmd+Shift+M (Mac)
+3. Select device from dropdown
+4. Test at different screen sizes
+5. Throttle network to simulate mobile connections
+</code></pre>
+<h4>Mozilla Firefox</h4>
+<pre><code>1. Open Developer Tools: F12 or Cmd+Option+I (Mac)
+2. Enable Responsive Design Mode: Ctrl+Shift+M or Cmd+Option+M (Mac)
+3. Choose device or custom dimensions
+4. Test touch events
+5. Rotate device orientation
+</code></pre>
+<h4>Safari (Mac only)</h4>
+<pre><code>1. Enable Developer Menu: Preferences → Advanced → Show Develop menu
+2. Develop menu → Enter Responsive Design Mode
+3. Choose device or custom size
+4. Test with actual iOS Simulator for better accuracy
+</code></pre>
+<h3>Popular Device Simulations</h3>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Screen Size</th>
+<th>Viewport</th>
+<th>Density</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>iPhone SE</strong></td>
+<td>375x667</td>
+<td>375x667</td>
+<td>2x</td>
+</tr>
+<tr>
+<td><strong>iPhone 12/13</strong></td>
+<td>390x844</td>
+<td>390x844</td>
+<td>3x</td>
+</tr>
+<tr>
+<td><strong>iPhone 14 Pro Max</strong></td>
+<td>430x932</td>
+<td>430x932</td>
+<td>3x</td>
+</tr>
+<tr>
+<td><strong>iPad</strong></td>
+<td>768x1024</td>
+<td>768x1024</td>
+<td>2x</td>
+</tr>
+<tr>
+<td><strong>iPad Pro</strong></td>
+<td>1024x1366</td>
+<td>1024x1366</td>
+<td>2x</td>
+</tr>
+<tr>
+<td><strong>Galaxy S21</strong></td>
+<td>360x800</td>
+<td>360x800</td>
+<td>3x</td>
+</tr>
+<tr>
+<td><strong>Desktop HD</strong></td>
+<td>1920x1080</td>
+<td>1920x1080</td>
+<td>1x</td>
+</tr>
+<tr>
+<td><strong>Desktop 4K</strong></td>
+<td>3840x2160</td>
+<td>3840x2160</td>
+<td>2x</td>
+</tr>
+</tbody></table>
+<h3>Automated Testing Tools</h3>
+<h4>Lighthouse (Built into Chrome)</h4>
+<pre><code class="language-bash"># Run Lighthouse audit
+1. Open Chrome DevTools (F12)
+2. Navigate to &quot;Lighthouse&quot; tab
+3. Select &quot;Mobile&quot; or &quot;Desktop&quot;
+4. Check &quot;Performance&quot;, &quot;Accessibility&quot;, &quot;Best Practices&quot;
+5. Click &quot;Generate report&quot;
+</code></pre>
+<h4>Responsive Design Checker (Online)</h4>
+<ul>
+<li><strong>Responsinator</strong>: <a href="https://www.responsinator.com/">https://www.responsinator.com/</a></li>
+<li><strong>BrowserStack</strong>: <a href="https://www.browserstack.com/responsive">https://www.browserstack.com/responsive</a></li>
+<li><strong>LambdaTest</strong>: <a href="https://www.lambdatest.com/responsive-test">https://www.lambdatest.com/responsive-test</a></li>
+</ul>
+<hr>
+<h2>♿ Accessibility Features</h2>
+<h3>Touch &amp; Interaction</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+<th>Standard</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Touch Targets</strong></td>
+<td>Minimum 48x48px</td>
+<td>WCAG 2.1 Level AAA</td>
+</tr>
+<tr>
+<td><strong>Tap Spacing</strong></td>
+<td>Minimum 8px between</td>
+<td>WCAG 2.1</td>
+</tr>
+<tr>
+<td><strong>Hit Areas</strong></td>
+<td>Extended beyond visual</td>
+<td>Best Practice</td>
+</tr>
+</tbody></table>
+<h3>Visual Accessibility</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Font Scaling</strong></td>
+<td>Respects user&#39;s text size preferences (up to 200%)</td>
+</tr>
+<tr>
+<td><strong>Color Contrast</strong></td>
+<td>Maintains WCAG AA standards (4.5:1 for normal text)</td>
+</tr>
+<tr>
+<td><strong>Focus Indicators</strong></td>
+<td>Clear 2px visible outline on all interactive elements</td>
+</tr>
+<tr>
+<td><strong>High Contrast Mode</strong></td>
+<td>Supports Windows High Contrast Mode</td>
+</tr>
+</tbody></table>
+<h3>Motion &amp; Animation</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Reduced Motion</strong></td>
+<td>Respects <code>prefers-reduced-motion</code> media query</td>
+</tr>
+<tr>
+<td><strong>Animation Duration</strong></td>
+<td>Reduced by 75% when reduced motion is enabled</td>
+</tr>
+<tr>
+<td><strong>No Animation Blockers</strong></td>
+<td>All functionality works without animations</td>
+</tr>
+</tbody></table>
+<h3>Keyboard Navigation</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Tab Order</strong></td>
+<td>Logical flow following visual layout</td>
+</tr>
+<tr>
+<td><strong>Skip Links</strong></td>
+<td>&quot;Skip to main content&quot; link available</td>
+</tr>
+<tr>
+<td><strong>Escape Key</strong></td>
+<td>Closes modals and dropdown menus</td>
+</tr>
+<tr>
+<td><strong>Arrow Keys</strong></td>
+<td>Navigate through calendar and date pickers</td>
+</tr>
+</tbody></table>
+<h3>Screen Reader Support</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Semantic HTML</strong></td>
+<td>Proper heading hierarchy (h1-h6)</td>
+</tr>
+<tr>
+<td><strong>ARIA Labels</strong></td>
+<td>Descriptive labels for all interactive elements</td>
+</tr>
+<tr>
+<td><strong>Live Regions</strong></td>
+<td>Announces dynamic content changes</td>
+</tr>
+<tr>
+<td><strong>Alt Text</strong></td>
+<td>Descriptive alternative text for all images</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>📚 Related Resources</h2>
+<ul>
+<li><a href="https://www.w3.org/WAI/WCAG21/quickref/">WCAG 2.1 Guidelines</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design">MDN Responsive Design</a></li>
+<li><a href="https://tailwindcss.com/docs/responsive-design">Tailwind CSS Responsive Design</a></li>
+<li><a href="https://developers.google.com/web/fundamentals">Google Web Fundamentals</a></li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> 2025-11-24<br><strong>Version:</strong> 1.0<br><strong>Maintained By:</strong> Development Team</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

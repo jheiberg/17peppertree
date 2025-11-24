@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Requirements and Versions - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>System Requirements and Versions</h1>
+<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-11-21</p>
+<hr>
+<h2>Overview</h2>
+<p>This document specifies all system requirements, software versions, and dependencies for the 17 @ Peppertree application.</p>
+<hr>
+<h2>Server Requirements (VPS)</h2>
+<h3>Operating System</h3>
+<ul>
+<li><strong>Required:</strong> Ubuntu 24.04 LTS</li>
+<li><strong>Alternative:</strong> Ubuntu 24.04 LTS (no other versions officially supported)</li>
+<li><strong>Architecture:</strong> x86_64 (amd64)</li>
+</ul>
+<h3>Minimum Hardware (Single Property)</h3>
+<ul>
+<li><strong>CPU:</strong> 2 vCPUs</li>
+<li><strong>RAM:</strong> 4 GB</li>
+<li><strong>Storage:</strong> 40 GB SSD</li>
+<li><strong>Bandwidth:</strong> 2 TB/month</li>
+</ul>
+<h3>Recommended Hardware (Production)</h3>
+<ul>
+<li><strong>CPU:</strong> 2 vCPUs</li>
+<li><strong>RAM:</strong> 8 GB</li>
+<li><strong>Storage:</strong> 60-80 GB SSD</li>
+<li><strong>Bandwidth:</strong> 3-5 TB/month</li>
+</ul>
+<h3>Multi-Tenant Capacity (4-6 Properties)</h3>
+<ul>
+<li><strong>CPU:</strong> 2 vCPUs (sufficient)</li>
+<li><strong>RAM:</strong> 8 GB (recommended)</li>
+<li><strong>Storage:</strong> 80-100 GB SSD</li>
+<li><strong>Bandwidth:</strong> 5 TB/month</li>
+</ul>
+<hr>
+<h2>Software Versions</h2>
+<h3>Core Runtime Environments</h3>
+<table>
+<thead>
+<tr>
+<th>Software</th>
+<th>Version</th>
+<th>Used In</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Ubuntu</strong></td>
+<td>24.04 LTS</td>
+<td>VPS</td>
+<td>Long-term support until 2029</td>
+</tr>
+<tr>
+<td><strong>Docker</strong></td>
+<td>24.x+</td>
+<td>All environments</td>
+<td>Compose V2 plugin required</td>
+</tr>
+<tr>
+<td><strong>Docker Compose</strong></td>
+<td>2.x+ (plugin)</td>
+<td>All environments</td>
+<td>Use <code>docker compose</code> not <code>docker-compose</code></td>
+</tr>
+<tr>
+<td><strong>Python</strong></td>
+<td>3.11</td>
+<td>Backend</td>
+<td>Used in Flask application</td>
+</tr>
+<tr>
+<td><strong>Node.js</strong></td>
+<td>18.x LTS</td>
+<td>Frontend build</td>
+<td>Used for React compilation</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL</strong></td>
+<td>15</td>
+<td>Database</td>
+<td>Alpine Linux image</td>
+</tr>
+<tr>
+<td><strong>Nginx</strong></td>
+<td>Alpine latest</td>
+<td>Reverse proxy</td>
+<td>Alpine Linux image</td>
+</tr>
+<tr>
+<td><strong>Keycloak</strong></td>
+<td>23.0</td>
+<td>Authentication</td>
+<td>Quay.io official image</td>
+</tr>
+</tbody></table>
+<h3>Frontend Dependencies</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>React</td>
+<td>18.2.0</td>
+<td>UI framework</td>
+</tr>
+<tr>
+<td>React Router</td>
+<td>6.20.1</td>
+<td>Client-side routing</td>
+</tr>
+<tr>
+<td>Axios</td>
+<td>1.6.2</td>
+<td>HTTP client</td>
+</tr>
+<tr>
+<td>Keycloak JS</td>
+<td>23.0.3</td>
+<td>Authentication client</td>
+</tr>
+<tr>
+<td>React Toastify</td>
+<td>11.0.5</td>
+<td>Notifications</td>
+</tr>
+<tr>
+<td>React Scripts</td>
+<td>5.0.1</td>
+<td>Build tooling</td>
+</tr>
+<tr>
+<td>Tailwind CSS</td>
+<td>3.4.17</td>
+<td>Styling</td>
+</tr>
+</tbody></table>
+<h3>Backend Dependencies</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Flask</td>
+<td>2.3.3</td>
+<td>Web framework</td>
+</tr>
+<tr>
+<td>Flask-SQLAlchemy</td>
+<td>3.0.5</td>
+<td>ORM</td>
+</tr>
+<tr>
+<td>Flask-CORS</td>
+<td>4.0.0</td>
+<td>Cross-origin support</td>
+</tr>
+<tr>
+<td>Flask-Mail</td>
+<td>0.9.1</td>
+<td>Email service</td>
+</tr>
+<tr>
+<td>psycopg2-binary</td>
+<td>2.9.10</td>
+<td>PostgreSQL driver</td>
+</tr>
+<tr>
+<td>Gunicorn</td>
+<td>21.2.0</td>
+<td>WSGI server</td>
+</tr>
+<tr>
+<td>PyJWT</td>
+<td>2.8.0</td>
+<td>JWT handling</td>
+</tr>
+<tr>
+<td>cryptography</td>
+<td>41.0.7</td>
+<td>Encryption</td>
+</tr>
+</tbody></table>
+<h3>Testing Dependencies</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pytest</td>
+<td>7.4.3</td>
+<td>Python testing</td>
+</tr>
+<tr>
+<td>pytest-flask</td>
+<td>1.3.0</td>
+<td>Flask test utilities</td>
+</tr>
+<tr>
+<td>pytest-cov</td>
+<td>4.1.0</td>
+<td>Coverage reporting</td>
+</tr>
+<tr>
+<td>@testing-library/react</td>
+<td>13.4.0</td>
+<td>React testing</td>
+</tr>
+<tr>
+<td>@testing-library/jest-dom</td>
+<td>6.1.4</td>
+<td>DOM matchers</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Development Environment</h2>
+<h3>Local Development Requirements</h3>
+<p><strong>Operating Systems:</strong></p>
+<ul>
+<li>Linux (Ubuntu 24.04 LTS recommended)</li>
+<li>macOS 11+ (Big Sur or later)</li>
+<li>Windows 10/11 with WSL2 (Ubuntu 24.04)</li>
+</ul>
+<p><strong>Required Software:</strong></p>
+<ul>
+<li>Git 2.x+</li>
+<li>Docker Desktop 4.x+ (includes Docker Compose)</li>
+<li>Node.js 18.x LTS</li>
+<li>Python 3.11+</li>
+<li>Text editor/IDE (VS Code recommended)</li>
+</ul>
+<p><strong>Optional Tools:</strong></p>
+<ul>
+<li>GitHub CLI (<code>gh</code>)</li>
+<li>PostgreSQL client (<code>psql</code>)</li>
+<li>Postman or similar API testing tool</li>
+</ul>
+<h3>VS Code Extensions (Recommended)</h3>
+<pre><code class="language-json">{
+  &quot;recommendations&quot;: [
+    &quot;ms-python.python&quot;,
+    &quot;ms-python.vscode-pylance&quot;,
+    &quot;dbaeumer.vscode-eslint&quot;,
+    &quot;esbenp.prettier-vscode&quot;,
+    &quot;ms-azuretools.vscode-docker&quot;,
+    &quot;bradlc.vscode-tailwindcss&quot;
+  ]
+}
+</code></pre>
+<hr>
+<h2>Production Environment</h2>
+<h3>Required Services</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Container</th>
+<th>Image</th>
+<th>Port(s)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PostgreSQL (Main)</td>
+<td>peppertree_db_prod</td>
+<td>postgres:15-alpine</td>
+<td>5432</td>
+</tr>
+<tr>
+<td>PostgreSQL (Keycloak)</td>
+<td>peppertree_keycloak_db_prod</td>
+<td>postgres:15-alpine</td>
+<td>Internal</td>
+</tr>
+<tr>
+<td>Flask Backend</td>
+<td>peppertree_backend_prod</td>
+<td>Custom (Python 3.11)</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>React Frontend</td>
+<td>peppertree_frontend_prod</td>
+<td>Custom (Node 18 + Nginx)</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>Keycloak</td>
+<td>peppertree_keycloak_prod</td>
+<td>quay.io/keycloak/keycloak:23.0</td>
+<td>8080/8443</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>peppertree_nginx_prod</td>
+<td>nginx:alpine</td>
+<td>80/443</td>
+</tr>
+</tbody></table>
+<h3>Network Ports</h3>
+<p><strong>External (Public):</strong></p>
+<ul>
+<li>80/tcp - HTTP (redirects to HTTPS)</li>
+<li>443/tcp - HTTPS (production)</li>
+<li>22/tcp - SSH (for deployment)</li>
+</ul>
+<p><strong>Staging Ports:</strong></p>
+<ul>
+<li>8080/tcp - HTTP staging</li>
+<li>8443/tcp - HTTPS staging</li>
+</ul>
+<p><strong>Internal (Docker network only):</strong></p>
+<ul>
+<li>5000 - Backend API</li>
+<li>3000 - Frontend</li>
+<li>5432 - PostgreSQL</li>
+<li>8080 - Keycloak</li>
+</ul>
+<hr>
+<h2>Security Requirements</h2>
+<h3>SSL/TLS</h3>
+<ul>
+<li><strong>Provider:</strong> Let&#39;s Encrypt (free)</li>
+<li><strong>Renewal:</strong> Automatic via certbot</li>
+<li><strong>Protocols:</strong> TLS 1.2, TLS 1.3</li>
+<li><strong>Ciphers:</strong> HIGH:!aNULL:!MD5</li>
+</ul>
+<h3>Firewall (UFW)</h3>
+<ul>
+<li><strong>Default:</strong> Deny all incoming</li>
+<li><strong>Allowed:</strong> SSH (22), HTTP (80), HTTPS (443)</li>
+<li><strong>Staging:</strong> 8080, 8443 (optional)</li>
+</ul>
+<h3>Authentication</h3>
+<ul>
+<li><strong>Admin:</strong> Keycloak OAuth2/OIDC</li>
+<li><strong>Staging:</strong> HTTP Basic Auth + IP Whitelist</li>
+<li><strong>Password Policy:</strong> Minimum 20 characters, bcrypt hashing</li>
+</ul>
+<h3>Automatic Updates</h3>
+<ul>
+<li><strong>System:</strong> Unattended security upgrades enabled</li>
+<li><strong>Docker:</strong> Monthly manual updates</li>
+<li><strong>Dependencies:</strong> Regular npm/pip audits</li>
+</ul>
+<hr>
+<h2>Browser Support</h2>
+<h3>Supported Browsers</h3>
+<table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Minimum Version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Chrome</td>
+<td>90+</td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td>88+</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>14+</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>90+</td>
+</tr>
+<tr>
+<td>Mobile Safari</td>
+<td>iOS 14+</td>
+</tr>
+<tr>
+<td>Chrome Mobile</td>
+<td>Android 8+</td>
+</tr>
+</tbody></table>
+<h3>Not Supported</h3>
+<ul>
+<li>Internet Explorer (any version)</li>
+<li>Opera Mini</li>
+<li>Legacy browsers without ES6 support</li>
+</ul>
+<hr>
+<h2>Database Requirements</h2>
+<h3>PostgreSQL Configuration</h3>
+<p><strong>Main Database:</strong></p>
+<ul>
+<li>Name: <code>peppertree</code></li>
+<li>User: <code>postgres</code></li>
+<li>Encoding: UTF-8</li>
+<li>Locale: en_US.UTF-8</li>
+<li>Timezone: UTC</li>
+</ul>
+<p><strong>Keycloak Database:</strong></p>
+<ul>
+<li>Name: <code>keycloak</code></li>
+<li>User: <code>keycloak</code></li>
+<li>Encoding: UTF-8</li>
+<li>Locale: en_US.UTF-8</li>
+</ul>
+<h3>Recommended PostgreSQL Settings (8GB RAM VPS)</h3>
+<pre><code class="language-ini"># Memory Configuration
+shared_buffers = 2GB
+effective_cache_size = 6GB
+maintenance_work_mem = 512MB
+work_mem = 16MB
+
+# Connection Settings
+max_connections = 100
+
+# Write-Ahead Log
+wal_buffers = 16MB
+checkpoint_completion_target = 0.9
+
+# Query Tuning
+random_page_cost = 1.1  # For SSD
+</code></pre>
+<hr>
+<h2>Performance Benchmarks</h2>
+<h3>Expected Performance (8GB VPS, Single Property)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API Response Time</td>
+<td>&lt;100ms</td>
+<td>Average, excluding network</td>
+</tr>
+<tr>
+<td>Page Load Time</td>
+<td>&lt;2s</td>
+<td>First contentful paint</td>
+</tr>
+<tr>
+<td>Database Queries</td>
+<td>&lt;50ms</td>
+<td>Simple CRUD operations</td>
+</tr>
+<tr>
+<td>Concurrent Users</td>
+<td>100-200</td>
+<td>Without performance degradation</td>
+</tr>
+<tr>
+<td>Memory Usage</td>
+<td>&lt;4GB</td>
+<td>Under normal load</td>
+</tr>
+<tr>
+<td>CPU Usage</td>
+<td>&lt;50%</td>
+<td>Under normal load</td>
+</tr>
+</tbody></table>
+<h3>Load Testing Results</h3>
+<p><strong>Test Scenario:</strong> 100 concurrent users, 10 requests/second</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Average Response</td>
+<td>85ms</td>
+</tr>
+<tr>
+<td>95th Percentile</td>
+<td>150ms</td>
+</tr>
+<tr>
+<td>99th Percentile</td>
+<td>250ms</td>
+</tr>
+<tr>
+<td>Error Rate</td>
+<td>&lt;0.1%</td>
+</tr>
+<tr>
+<td>Memory Peak</td>
+<td>3.2GB</td>
+</tr>
+<tr>
+<td>CPU Peak</td>
+<td>45%</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>CI/CD Requirements</h2>
+<h3>GitHub Actions</h3>
+<p><strong>Runner:</strong> ubuntu-latest (GitHub-hosted)</p>
+<p><strong>Required Secrets:</strong></p>
+<ul>
+<li>DOCKER_HUB_USERNAME</li>
+<li>DOCKER_HUB_TOKEN</li>
+<li>STAGING_HOST</li>
+<li>STAGING_USERNAME</li>
+<li>STAGING_SSH_KEY</li>
+<li>STAGING_SSH_PORT</li>
+<li>STAGING_AUTH_USER</li>
+<li>STAGING_AUTH_PASSWORD</li>
+<li>PRODUCTION_HOST</li>
+<li>PRODUCTION_USERNAME</li>
+<li>PRODUCTION_SSH_KEY</li>
+<li>PRODUCTION_SSH_PORT</li>
+<li>PRODUCTION_URL</li>
+<li>REACT_APP_API_URL</li>
+</ul>
+<h3>Deployment Requirements</h3>
+<p><strong>VPS Access:</strong></p>
+<ul>
+<li>SSH key-based authentication</li>
+<li>Deploy user with docker group membership</li>
+<li>Sudo access (for initial setup only)</li>
+</ul>
+<p><strong>Services:</strong></p>
+<ul>
+<li>Docker daemon running</li>
+<li>UFW firewall configured</li>
+<li>Certbot installed (for SSL)</li>
+</ul>
+<hr>
+<h2>Backup Requirements</h2>
+<h3>Backup Storage</h3>
+<p><strong>Local (VPS):</strong></p>
+<ul>
+<li>Location: <code>/opt/peppertree-backups</code></li>
+<li>Retention: 30 days</li>
+<li>Space Required: ~5-10GB</li>
+</ul>
+<p><strong>Off-Site (Cloud):</strong></p>
+<ul>
+<li>Provider: Any rclone-compatible (Google Drive, S3, Dropbox, etc.)</li>
+<li>Retention: 90 days</li>
+<li>Space Required: ~20-30GB</li>
+</ul>
+<h3>Backup Schedule</h3>
+<ul>
+<li><strong>Daily:</strong> Full database backup (2 AM)</li>
+<li><strong>Weekly:</strong> Integrity verification (Sunday 3 AM)</li>
+<li><strong>Monthly:</strong> Full system backup including configs</li>
+<li><strong>Quarterly:</strong> Disaster recovery drill</li>
+</ul>
+<hr>
+<h2>Monitoring Requirements</h2>
+<h3>Essential Metrics</h3>
+<p><strong>System Level:</strong></p>
+<ul>
+<li>CPU usage (target: &lt;70%)</li>
+<li>RAM usage (target: &lt;70% = 5.6GB)</li>
+<li>Disk usage (target: &lt;75%)</li>
+<li>Network I/O</li>
+<li>Swap usage</li>
+</ul>
+<p><strong>Application Level:</strong></p>
+<ul>
+<li>Container status (all running)</li>
+<li>API health endpoint (/api/health)</li>
+<li>Response times</li>
+<li>Error rates</li>
+<li>Database connections</li>
+</ul>
+<p><strong>Security:</strong></p>
+<ul>
+<li>Failed login attempts</li>
+<li>SSH access logs</li>
+<li>Firewall blocks</li>
+<li>fail2ban bans</li>
+</ul>
+<h3>Monitoring Tools</h3>
+<p><strong>Basic (Included):</strong></p>
+<ul>
+<li>peppertree-status (custom script)</li>
+<li>peppertree-healthcheck (custom script)</li>
+<li>htop (system monitoring)</li>
+<li>docker stats (container monitoring)</li>
+</ul>
+<p><strong>Advanced (Optional):</strong></p>
+<ul>
+<li>Prometheus + Grafana</li>
+<li>Datadog</li>
+<li>New Relic</li>
+<li>UptimeRobot (external)</li>
+</ul>
+<hr>
+<h2>Upgrade Path</h2>
+<h3>When to Upgrade VPS</h3>
+<p><strong>Triggers:</strong></p>
+<ul>
+<li>Consistent RAM usage &gt;70% (5.6GB)</li>
+<li>CPU load average &gt;1.5 for extended periods</li>
+<li>Hosting 7+ properties</li>
+<li>Response times degrading (&gt;200ms average)</li>
+<li>Disk space &gt;75% full</li>
+</ul>
+<p><strong>Recommended Upgrade:</strong></p>
+<ul>
+<li>From: 2 vCPU / 8 GB RAM</li>
+<li>To: 4 vCPU / 16 GB RAM</li>
+<li>Cost: ~$80-120/month (vs $50-60/month)</li>
+</ul>
+<h3>Version Upgrade Policy</h3>
+<p><strong>Operating System:</strong></p>
+<ul>
+<li>Major upgrade: Every LTS cycle (4 years)</li>
+<li>Security patches: Automatic (unattended-upgrades)</li>
+<li>Manual upgrades: Quarterly review</li>
+</ul>
+<p><strong>Docker Images:</strong></p>
+<ul>
+<li>Python: Stay on 3.11.x (update monthly)</li>
+<li>Node: Stay on 18.x LTS (update monthly)</li>
+<li>PostgreSQL: Stay on 15.x (update quarterly)</li>
+<li>Nginx: Update monthly (Alpine rolling)</li>
+<li>Keycloak: Update on major releases (test thoroughly)</li>
+</ul>
+<p><strong>Dependencies:</strong></p>
+<ul>
+<li>npm audit fix: Weekly</li>
+<li>pip updates: Monthly with testing</li>
+<li>Breaking changes: Plan 2-week testing window</li>
+</ul>
+<hr>
+<h2>Compatibility Matrix</h2>
+<h3>Tested Configurations</h3>
+<table>
+<thead>
+<tr>
+<th>Ubuntu</th>
+<th>Docker</th>
+<th>Python</th>
+<th>Node</th>
+<th>PostgreSQL</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>24.04 LTS</td>
+<td>24.0+</td>
+<td>3.11</td>
+<td>18</td>
+<td>15</td>
+<td>✅ Supported</td>
+</tr>
+<tr>
+<td>22.04 LTS</td>
+<td>24.0+</td>
+<td>3.11</td>
+<td>18</td>
+<td>15</td>
+<td>⚠️ Not tested</td>
+</tr>
+<tr>
+<td>20.04 LTS</td>
+<td>23.0+</td>
+<td>3.11</td>
+<td>18</td>
+<td>15</td>
+<td>❌ Not supported</td>
+</tr>
+</tbody></table>
+<h3>Migration Path</h3>
+<p><strong>From Ubuntu 22.04 to 24.04:</strong></p>
+<ol>
+<li>Backup all data</li>
+<li>Test application on 24.04 VPS (staging)</li>
+<li>Update documentation references</li>
+<li>Deploy to new 24.04 VPS</li>
+<li>Migrate DNS</li>
+<li>Verify and monitor</li>
+</ol>
+<p><strong>Estimated Downtime:</strong> 2-4 hours</p>
+<hr>
+<h2>Support and EOL Dates</h2>
+<table>
+<thead>
+<tr>
+<th>Software</th>
+<th>Current Version</th>
+<th>EOL Date</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ubuntu 24.04 LTS</td>
+<td>24.04.1</td>
+<td>April 2029</td>
+<td>None (5 years support)</td>
+</tr>
+<tr>
+<td>Python 3.11</td>
+<td>3.11.x</td>
+<td>October 2027</td>
+<td>Plan upgrade to 3.12+ in 2026</td>
+</tr>
+<tr>
+<td>Node 18 LTS</td>
+<td>18.x</td>
+<td>April 2025</td>
+<td>Upgrade to Node 20 LTS in Q1 2025</td>
+</tr>
+<tr>
+<td>PostgreSQL 15</td>
+<td>15.x</td>
+<td>November 2027</td>
+<td>Monitor for 16.x migration</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>24.x</td>
+<td>Rolling</td>
+<td>Keep updated monthly</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="./VPS_SETUP_GUIDE.html">VPS_SETUP_GUIDE.md</a> - VPS setup and hardware details</li>
+<li><a href="./VPS_SETUP_GUIDE.html">VPS_SETUP_GUIDE.md</a> - Installation guide</li>
+<li><a href="./DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a> - Deployment procedures</li>
+<li><a href="./HA_DR_PLAN.html">HA_DR_PLAN.md</a> - Disaster recovery</li>
+</ul>
+<hr>
+<p><strong>Maintained By:</strong> Technical Team<br><strong>Review Schedule:</strong> Quarterly<br><strong>Last Audit:</strong> 2025-11-21</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

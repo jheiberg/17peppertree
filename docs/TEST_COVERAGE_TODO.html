@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Coverage Improvement TODO List - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>🧪 Test Coverage Improvement TODO List</h1>
+<blockquote>
+<p>Systematic plan to improve test coverage from current state to 80%+ across all components</p>
+</blockquote>
+<hr>
+<h2>📊 Current Coverage Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Current Coverage</th>
+<th>Target Coverage</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Core User Features</strong></td>
+<td>85%+</td>
+<td>90%+</td>
+<td>✅ Good</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>19%</td>
+<td>85%+</td>
+<td>❌ Critical Gap</td>
+</tr>
+<tr>
+<td><strong>Admin Features</strong></td>
+<td>0%</td>
+<td>80%+</td>
+<td>❌ Critical Gap</td>
+</tr>
+<tr>
+<td><strong>API Services</strong></td>
+<td>0%</td>
+<td>85%+</td>
+<td>❌ Critical Gap</td>
+</tr>
+<tr>
+<td><strong>Components</strong></td>
+<td>70%</td>
+<td>85%+</td>
+<td>⚠️ Needs Improvement</td>
+</tr>
+</tbody></table>
+<p><strong>Summary:</strong> Good coverage for core user functionality (Contact, AvailabilityCalendar) but significant gaps in authentication, admin features, and infrastructure components.</p>
+<hr>
+<h2>🔴 High Priority Tasks</h2>
+<h3>1. 🔧 Fix Failing Tests</h3>
+<h4>Hero Component Tests</h4>
+<p><strong>Priority:</strong> CRITICAL | <strong>Estimated Time:</strong> 2-3 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Update <code>.hero</code> class expectations to match actual Tailwind classes</li>
+<li><input disabled="" type="checkbox"> Fix <code>.stars-large .fas.fa-star</code> selectors</li>
+<li><input disabled="" type="checkbox"> Update <code>.cta-button</code> to <code>.btn-primary</code></li>
+<li><input disabled="" type="checkbox"> Fix <code>.hero-overlay</code> and <code>.scroll-indicator</code> selectors</li>
+</ul>
+<p><strong>Impact:</strong> Fixes 8 failing tests, enables CI/CD pipeline</p>
+<hr>
+<h4>Footer Component Tests</h4>
+<p><strong>Priority:</strong> CRITICAL | <strong>Estimated Time:</strong> 1-2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Update <code>.footer</code> class expectations to match Tailwind classes</li>
+<li><input disabled="" type="checkbox"> Fix <code>.footer-section</code> selectors</li>
+<li><input disabled="" type="checkbox"> Update container class expectations</li>
+</ul>
+<p><strong>Impact:</strong> Fixes 5 failing tests</p>
+<hr>
+<h4>Header Component Tests</h4>
+<p><strong>Priority:</strong> CRITICAL | <strong>Estimated Time:</strong> 2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Update <code>.hamburger</code> and <code>.bar</code> class selectors</li>
+<li><input disabled="" type="checkbox"> Fix responsive navigation tests</li>
+<li><input disabled="" type="checkbox"> Test mobile menu toggle scenarios</li>
+</ul>
+<p><strong>Impact:</strong> Fixes 4 failing tests, improves branch coverage from 57% to 75%+</p>
+<hr>
+<h3>2. 🔐 Authentication Coverage</h3>
+<p><strong>Current:</strong> 19.28% | <strong>Target:</strong> 85%+ | <strong>Priority:</strong> CRITICAL</p>
+<h4>AuthContext.js</h4>
+<p><strong>Estimated Time:</strong> 6-8 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Test Keycloak initialization</li>
+<li><input disabled="" type="checkbox"> Test login/logout flows</li>
+<li><input disabled="" type="checkbox"> Test token refresh functionality</li>
+<li><input disabled="" type="checkbox"> Test user state management</li>
+<li><input disabled="" type="checkbox"> Test error handling for auth failures</li>
+<li><input disabled="" type="checkbox"> Mock Keycloak adapter properly</li>
+<li><input disabled="" type="checkbox"> Test automatic token renewal</li>
+<li><input disabled="" type="checkbox"> Test session expiration handling</li>
+</ul>
+<p><strong>Impact:</strong> Core authentication logic secured</p>
+<hr>
+<h4>Auth Components (Currently 0% coverage)</h4>
+<p><strong>Estimated Time:</strong> 4-6 hours total</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Priority</th>
+<th>Time</th>
+<th>Tasks</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AuthCallback.js</strong></td>
+<td>HIGH</td>
+<td>1h</td>
+<td>Test auth callback handling, error states</td>
+</tr>
+<tr>
+<td><strong>LoginPage.js</strong></td>
+<td>HIGH</td>
+<td>1.5h</td>
+<td>Test rendering, login button, redirects</td>
+</tr>
+<tr>
+<td><strong>ProtectedRoute.js</strong></td>
+<td>CRITICAL</td>
+<td>2h</td>
+<td>Test route protection, redirects, loading states</td>
+</tr>
+<tr>
+<td><strong>UserProfile.js</strong></td>
+<td>MEDIUM</td>
+<td>1.5h</td>
+<td>Test profile display, logout, data loading</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3. 👨‍💼 Admin Features Coverage</h3>
+<p><strong>Current:</strong> 0% | <strong>Target:</strong> 80%+ | <strong>Priority:</strong> HIGH</p>
+<h4>Admin Components Test Matrix</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Priority</th>
+<th>Time</th>
+<th>Coverage Target</th>
+<th>Key Test Areas</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AdminDashboard.js</strong></td>
+<td>HIGH</td>
+<td>3h</td>
+<td>85%+</td>
+<td>Rendering, data fetching, error handling</td>
+</tr>
+<tr>
+<td><strong>BookingDetails.js</strong></td>
+<td>HIGH</td>
+<td>2.5h</td>
+<td>85%+</td>
+<td>Detail view, status updates, payment tracking</td>
+</tr>
+<tr>
+<td><strong>BookingList.js</strong></td>
+<td>HIGH</td>
+<td>3h</td>
+<td>80%+</td>
+<td>List rendering, filtering, sorting, pagination</td>
+</tr>
+<tr>
+<td><strong>DashboardStats.js</strong></td>
+<td>MEDIUM</td>
+<td>2h</td>
+<td>85%+</td>
+<td>Statistics calculations, data aggregation</td>
+</tr>
+</tbody></table>
+<h4>Detailed Tasks</h4>
+<p><strong>AdminDashboard.js:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test dashboard rendering with data</li>
+<li><input disabled="" type="checkbox"> Test loading states</li>
+<li><input disabled="" type="checkbox"> Test error handling</li>
+<li><input disabled="" type="checkbox"> Test stat card displays</li>
+<li><input disabled="" type="checkbox"> Test recent bookings list</li>
+</ul>
+<p><strong>BookingDetails.js:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test booking detail view</li>
+<li><input disabled="" type="checkbox"> Test status update actions</li>
+<li><input disabled="" type="checkbox"> Test payment status updates</li>
+<li><input disabled="" type="checkbox"> Test admin notes functionality</li>
+<li><input disabled="" type="checkbox"> Test email notification triggers</li>
+</ul>
+<p><strong>BookingList.js:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test list rendering with various data states</li>
+<li><input disabled="" type="checkbox"> Test filtering by status</li>
+<li><input disabled="" type="checkbox"> Test filtering by payment status</li>
+<li><input disabled="" type="checkbox"> Test sorting functionality</li>
+<li><input disabled="" type="checkbox"> Test pagination</li>
+<li><input disabled="" type="checkbox"> Test search functionality</li>
+</ul>
+<p><strong>DashboardStats.js:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test statistics calculations</li>
+<li><input disabled="" type="checkbox"> Test revenue aggregation</li>
+<li><input disabled="" type="checkbox"> Test booking count displays</li>
+<li><input disabled="" type="checkbox"> Test loading and error states</li>
+</ul>
+<hr>
+<h2>🟡 Medium Priority Tasks</h2>
+<h3>4. 🔌 API Services Coverage</h3>
+<p><strong>Current:</strong> 0% | <strong>Target:</strong> 85%+ | <strong>Priority:</strong> HIGH<br><strong>Estimated Time:</strong> 4-6 hours</p>
+<h4>apiService.js Test Coverage</h4>
+<p><strong>CRUD Operations Testing:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test GET requests (fetch bookings, availability)</li>
+<li><input disabled="" type="checkbox"> Test POST requests (create booking)</li>
+<li><input disabled="" type="checkbox"> Test PUT requests (update booking status)</li>
+<li><input disabled="" type="checkbox"> Test DELETE requests (soft delete booking)</li>
+<li><input disabled="" type="checkbox"> Test query parameter handling</li>
+</ul>
+<p><strong>Error Handling:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test network errors (offline, timeout)</li>
+<li><input disabled="" type="checkbox"> Test 4xx errors (400, 401, 403, 404)</li>
+<li><input disabled="" type="checkbox"> Test 5xx errors (500, 503)</li>
+<li><input disabled="" type="checkbox"> Test retry logic</li>
+<li><input disabled="" type="checkbox"> Test error message parsing</li>
+</ul>
+<p><strong>Authentication:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test authentication headers</li>
+<li><input disabled="" type="checkbox"> Test token refresh on 401</li>
+<li><input disabled="" type="checkbox"> Test token expiration handling</li>
+<li><input disabled="" type="checkbox"> Test requests without token (public endpoints)</li>
+</ul>
+<p><strong>Edge Cases:</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> Test timeout handling</li>
+<li><input disabled="" type="checkbox"> Test request cancellation</li>
+<li><input disabled="" type="checkbox"> Test concurrent requests</li>
+<li><input disabled="" type="checkbox"> Test request queuing</li>
+<li><input disabled="" type="checkbox"> Mock fetch responses properly</li>
+</ul>
+<p><strong>Impact:</strong> Ensures reliable API communication and error recovery</p>
+<hr>
+<h3>5. 📈 Improve Branch Coverage</h3>
+<h4>Header.js</h4>
+<p><strong>Current:</strong> 57.14% branches | <strong>Target:</strong> 80%+ | <strong>Estimated Time:</strong> 2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Test mobile menu toggle (open/close states)</li>
+<li><input disabled="" type="checkbox"> Test click outside to close menu</li>
+<li><input disabled="" type="checkbox"> Test navigation on different viewport sizes</li>
+<li><input disabled="" type="checkbox"> Test active route highlighting</li>
+<li><input disabled="" type="checkbox"> Test scroll behavior (if sticky header)</li>
+<li><input disabled="" type="checkbox"> Test navigation state changes</li>
+</ul>
+<p><strong>Impact:</strong> +23% branch coverage</p>
+<hr>
+<h4>Contact.js</h4>
+<p><strong>Current:</strong> 92.3% branches | <strong>Target:</strong> 95%+ | <strong>Estimated Time:</strong> 1.5 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Test edge cases in date validation (past dates, invalid formats)</li>
+<li><input disabled="" type="checkbox"> Test form submission error scenarios</li>
+<li><input disabled="" type="checkbox"> Test validation error displays</li>
+<li><input disabled="" type="checkbox"> Cover unused <code>formatDateForInput</code> function (lines 121-124)</li>
+<li><input disabled="" type="checkbox"> Test form reset after successful submission</li>
+</ul>
+<p><strong>Impact:</strong> Near-complete coverage of critical booking form</p>
+<hr>
+<h4>AvailabilityCalendar.js</h4>
+<p><strong>Current:</strong> 83.72% branches | <strong>Target:</strong> 90%+ | <strong>Estimated Time:</strong> 2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Test month navigation edge cases (year boundaries)</li>
+<li><input disabled="" type="checkbox"> Test date selection with various unavailable date scenarios</li>
+<li><input disabled="" type="checkbox"> Test weekend vs weekday styling</li>
+<li><input disabled="" type="checkbox"> Test past date handling</li>
+<li><input disabled="" type="checkbox"> Cover uncovered lines (52, 101-105, 166-168, 217)</li>
+<li><input disabled="" type="checkbox"> Test calendar refresh on data update</li>
+</ul>
+<p><strong>Impact:</strong> +7% branch coverage, ensures availability logic works correctly</p>
+<hr>
+<h2>🟢 Low Priority Tasks</h2>
+<h3>6. 🏗️ Test Infrastructure Improvements</h3>
+<p><strong>Priority:</strong> LOW-MEDIUM | <strong>Estimated Time:</strong> 6-8 hours</p>
+<h4>Update Testing Libraries</h4>
+<p><strong>Estimated Time:</strong> 2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Replace deprecated <code>ReactDOMTestUtils.act</code> with <code>React.act</code></li>
+<li><input disabled="" type="checkbox"> Update test patterns to modern React Testing Library practices</li>
+<li><input disabled="" type="checkbox"> Add proper act() wrapping for async state updates</li>
+<li><input disabled="" type="checkbox"> Update Jest configuration for better performance</li>
+<li><input disabled="" type="checkbox"> Add test coverage reporting to CI/CD</li>
+</ul>
+<p><strong>Impact:</strong> Modernizes test infrastructure, removes deprecation warnings</p>
+<hr>
+<h4>Add Integration Tests</h4>
+<p><strong>Estimated Time:</strong> 3-4 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Test complete booking flow end-to-end<ul>
+<li>User selects dates → fills form → submits → sees confirmation</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Test admin workflow scenarios<ul>
+<li>Admin logs in → views bookings → approves/rejects → updates payment</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Test authentication integration with components<ul>
+<li>Unauthenticated access → redirect to login → authenticate → access protected route</li>
+</ul>
+</li>
+</ul>
+<p><strong>Impact:</strong> Catches integration bugs that unit tests miss</p>
+<hr>
+<h4>Performance and Error Boundary Tests</h4>
+<p><strong>Estimated Time:</strong> 2 hours</p>
+<ul>
+<li><input disabled="" type="checkbox"> Add tests for error boundaries<ul>
+<li>Test component error catching</li>
+<li>Test error fallback UI</li>
+<li>Test error logging</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Test loading states and performance scenarios<ul>
+<li>Test skeleton loaders</li>
+<li>Test data fetching states</li>
+<li>Test large dataset rendering</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Add accessibility testing<ul>
+<li>Test keyboard navigation</li>
+<li>Test screen reader announcements</li>
+<li>Test ARIA labels</li>
+</ul>
+</li>
+</ul>
+<p><strong>Impact:</strong> Improves resilience and accessibility</p>
+<hr>
+<h2>🎯 Target Coverage Goals</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Current</th>
+<th>Target</th>
+<th>Δ</th>
+<th>Priority</th>
+<th>Time</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AuthContext.js</strong></td>
+<td>19.28%</td>
+<td>85%+</td>
+<td>+66%</td>
+<td>🔴 CRITICAL</td>
+<td>6-8h</td>
+<td>❌ Not Started</td>
+</tr>
+<tr>
+<td><strong>Admin Components</strong></td>
+<td>0%</td>
+<td>80%+</td>
+<td>+80%</td>
+<td>🔴 HIGH</td>
+<td>10-11h</td>
+<td>❌ Not Started</td>
+</tr>
+<tr>
+<td><strong>apiService.js</strong></td>
+<td>0%</td>
+<td>85%+</td>
+<td>+85%</td>
+<td>🔴 HIGH</td>
+<td>4-6h</td>
+<td>❌ Not Started</td>
+</tr>
+<tr>
+<td><strong>Header.js</strong></td>
+<td>57.14%</td>
+<td>80%+</td>
+<td>+23%</td>
+<td>🟡 MEDIUM</td>
+<td>2h</td>
+<td>⚠️ In Progress</td>
+</tr>
+<tr>
+<td><strong>Contact.js</strong></td>
+<td>92.3%</td>
+<td>95%+</td>
+<td>+3%</td>
+<td>🟢 LOW</td>
+<td>1.5h</td>
+<td>⚠️ Near Complete</td>
+</tr>
+<tr>
+<td><strong>AvailabilityCalendar.js</strong></td>
+<td>83.72%</td>
+<td>90%+</td>
+<td>+7%</td>
+<td>🟡 MEDIUM</td>
+<td>2h</td>
+<td>⚠️ In Progress</td>
+</tr>
+<tr>
+<td><strong>Test Infrastructure</strong></td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>🟡 MEDIUM</td>
+<td>6-8h</td>
+<td>❌ Not Started</td>
+</tr>
+</tbody></table>
+<h3>Overall Project Goals</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Current</th>
+<th>Target</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Overall Coverage</strong></td>
+<td>~60%</td>
+<td>80%+</td>
+<td>❌ Needs Work</td>
+</tr>
+<tr>
+<td><strong>Critical Path Coverage</strong></td>
+<td>~40%</td>
+<td>95%+</td>
+<td>❌ Urgent</td>
+</tr>
+<tr>
+<td><strong>Test Reliability</strong></td>
+<td>75%</td>
+<td>100%</td>
+<td>⚠️ Fix Failing</td>
+</tr>
+<tr>
+<td><strong>Total Test Effort</strong></td>
+<td>N/A</td>
+<td>35-44 hours</td>
+<td>📊 Estimated</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>📋 Implementation Strategy</h2>
+<h3>Testing Approach</h3>
+<h4>Phase 1: Stabilization (Week 1)</h4>
+<p>🎯 <strong>Goal:</strong> Get all existing tests passing</p>
+<ol>
+<li>✅ Fix failing Hero component tests (3h)</li>
+<li>✅ Fix failing Footer component tests (2h)</li>
+<li>✅ Fix failing Header component tests (2h)</li>
+<li>✅ Update deprecated test utilities (2h)</li>
+</ol>
+<p><strong>Total Time:</strong> ~9 hours | <strong>Outcome:</strong> Green CI/CD pipeline</p>
+<hr>
+<h4>Phase 2: Critical Coverage (Weeks 2-3)</h4>
+<p>🎯 <strong>Goal:</strong> Cover authentication and admin features</p>
+<ol>
+<li>🔐 AuthContext comprehensive tests (8h)</li>
+<li>🔐 Auth component tests (6h)</li>
+<li>👨‍💼 Admin Dashboard tests (3h)</li>
+<li>👨‍💼 Booking management tests (5.5h)</li>
+<li>🔌 API service tests (6h)</li>
+</ol>
+<p><strong>Total Time:</strong> ~28.5 hours | <strong>Outcome:</strong> 75%+ overall coverage</p>
+<hr>
+<h4>Phase 3: Optimization (Week 4)</h4>
+<p>🎯 <strong>Goal:</strong> Improve branch coverage and add integration tests</p>
+<ol>
+<li>📈 Improve Header.js coverage (2h)</li>
+<li>📈 Improve Contact.js coverage (1.5h)</li>
+<li>📈 Improve Calendar coverage (2h)</li>
+<li>🏗️ Add integration tests (4h)</li>
+<li>🏗️ Add error boundary tests (2h)</li>
+</ol>
+<p><strong>Total Time:</strong> ~11.5 hours | <strong>Outcome:</strong> 85%+ coverage, robust test suite</p>
+<hr>
+<h3>🛠️ Mock Setup Requirements</h3>
+<pre><code class="language-javascript">// Authentication Mocks
+import { mockKeycloakAdapter } from &#39;./__mocks__/keycloak&#39;;
+import { mockKeycloakInit, mockKeycloakLogin } from &#39;./__mocks__/keycloakFunctions&#39;;
+
+// API Mocks
+import { mockFetch, mockFetchSuccess, mockFetchError } from &#39;./__mocks__/fetch&#39;;
+import { mockApiResponse } from &#39;./__mocks__/apiResponses&#39;;
+
+// Storage Mocks
+import { mockLocalStorage, mockSessionStorage } from &#39;./__mocks__/storage&#39;;
+
+// Date &amp; Time Mocks
+import { mockDate, setSystemDate } from &#39;./__mocks__/date&#39;;
+import MockDate from &#39;mockdate&#39;;
+
+// File Upload Mocks (if applicable)
+import { mockFileUpload, createMockFile } from &#39;./__mocks__/fileUpload&#39;;
+</code></pre>
+<h3>Required Mock Files to Create</h3>
+<pre><code>src/
+  __mocks__/
+    ├── keycloak.js              # Keycloak adapter mock
+    ├── keycloakFunctions.js     # Keycloak function mocks
+    ├── fetch.js                 # Fetch API mock
+    ├── apiResponses.js          # Mock API response data
+    ├── storage.js               # localStorage/sessionStorage mocks
+    ├── date.js                  # Date/time mocks
+    └── fileUpload.js            # File upload mocks
+</code></pre>
+<hr>
+<h2>✅ Success Criteria</h2>
+<h3>Definition of Done</h3>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>All tests passing</strong> - Zero failing tests in CI/CD</li>
+<li><input disabled="" type="checkbox"> <strong>Overall coverage above 80%</strong> - Verified with coverage report</li>
+<li><input disabled="" type="checkbox"> <strong>Critical paths at 95%+</strong> - Authentication, booking, payment flows</li>
+<li><input disabled="" type="checkbox"> <strong>No critical functionality untested</strong> - All user-facing features covered</li>
+<li><input disabled="" type="checkbox"> <strong>Authentication flows fully covered</strong> - Login, logout, token refresh, errors</li>
+<li><input disabled="" type="checkbox"> <strong>Admin features adequately tested</strong> - Dashboard, bookings, stats</li>
+<li><input disabled="" type="checkbox"> <strong>API integration tested</strong> - All endpoints, error handling, retries</li>
+<li><input disabled="" type="checkbox"> <strong>Integration tests added</strong> - End-to-end user workflows</li>
+<li><input disabled="" type="checkbox"> <strong>Performance baselines set</strong> - Load time, render time benchmarks</li>
+<li><input disabled="" type="checkbox"> <strong>Documentation updated</strong> - Test docs reflect current coverage</li>
+</ul>
+<hr>
+<h2>🗓️ Execution Timeline</h2>
+<h3>Week 1: Stabilization</h3>
+<p><strong>Mon-Tue:</strong> Fix failing tests<br><strong>Wed-Thu:</strong> Update test infrastructure<br><strong>Fri:</strong> Code review and documentation</p>
+<h3>Week 2-3: Critical Coverage</h3>
+<p><strong>Week 2:</strong> Authentication tests (AuthContext + components)<br><strong>Week 3:</strong> Admin features + API service tests<br><strong>Reviews:</strong> Mid-sprint review on Friday Week 2</p>
+<h3>Week 4: Optimization</h3>
+<p><strong>Mon-Wed:</strong> Branch coverage improvements<br><strong>Thu-Fri:</strong> Integration tests and final review<br><strong>Deployment:</strong> Merge to main, update coverage badges</p>
+<hr>
+<h2>📊 Tracking Progress</h2>
+<h3>How to Track</h3>
+<ol>
+<li><p><strong>Run coverage report:</strong></p>
+<pre><code class="language-bash">npm run test:coverage
+</code></pre>
+</li>
+<li><p><strong>Generate coverage badge:</strong></p>
+<pre><code class="language-bash">npm run coverage:badge
+</code></pre>
+</li>
+<li><p><strong>View coverage dashboard:</strong></p>
+<pre><code class="language-bash">npx http-server coverage/lcov-report
+</code></pre>
+</li>
+<li><p><strong>Track in GitHub Issues:</strong></p>
+<ul>
+<li>Create issue for each major task</li>
+<li>Use labels: <code>testing</code>, <code>high-priority</code>, <code>coverage</code></li>
+<li>Update progress in issue comments</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>🎯 Priority Order for Execution</h2>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Task</th>
+<th>Reason</th>
+<th>Time</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1</strong></td>
+<td>Fix failing tests</td>
+<td>Unblocks CI/CD</td>
+<td>9h</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>AuthContext tests</td>
+<td>Security critical</td>
+<td>8h</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Auth component tests</td>
+<td>User access</td>
+<td>6h</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Admin component tests</td>
+<td>Business operations</td>
+<td>11h</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>API service tests</td>
+<td>Infrastructure</td>
+<td>6h</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>Branch coverage</td>
+<td>Optimization</td>
+<td>5.5h</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td>Infrastructure</td>
+<td>Maintenance</td>
+<td>8h</td>
+<td>MEDIUM</td>
+</tr>
+</tbody></table>
+<p><strong>Total Estimated Effort:</strong> 53.5 hours (~7-8 working days for one developer)</p>
+<hr>
+<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-11-24<br><strong>Next Review:</strong> After Phase 1 completion<br><strong>Owner:</strong> Development Team</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

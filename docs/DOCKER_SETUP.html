@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Setup Guide - 17 @ Peppertree - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" class="active">🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>Docker Setup Guide - 17 @ Peppertree</h1>
+<h2>Available Dockerfiles</h2>
+<h3>1. <code>Dockerfile</code> (Development Frontend)</h3>
+<ul>
+<li><strong>Purpose</strong>: React development server</li>
+<li><strong>Port</strong>: 3000</li>
+<li><strong>Features</strong>: Hot reload, development tools</li>
+<li><strong>Usage</strong>: <code>docker build -t peppertree-frontend-dev .</code></li>
+</ul>
+<h3>2. <code>Dockerfile.frontend</code> (Production Frontend)</h3>
+<ul>
+<li><strong>Purpose</strong>: Production-optimized React build with nginx</li>
+<li><strong>Port</strong>: 80</li>
+<li><strong>Features</strong>: Optimized build, nginx serving, gzip compression</li>
+<li><strong>Usage</strong>: <code>docker build -t peppertree-frontend-prod -f Dockerfile.frontend .</code></li>
+</ul>
+<h3>3. <code>backend/Dockerfile</code> (Backend API)</h3>
+<ul>
+<li><strong>Purpose</strong>: Flask/Python backend API</li>
+<li><strong>Port</strong>: 5000</li>
+<li><strong>Features</strong>: PostgreSQL integration, email services</li>
+<li><strong>Usage</strong>: <code>docker build -t peppertree-backend ./backend</code></li>
+</ul>
+<h2>Quick Start Commands</h2>
+<h3>Development Mode (Individual Services)</h3>
+<h4>Frontend Development Server:</h4>
+<pre><code class="language-bash"># Build and run React dev server
+docker build -t peppertree-frontend .
+docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules peppertree-frontend
+</code></pre>
+<h4>Backend API:</h4>
+<pre><code class="language-bash"># Build and run backend (requires database)
+cd backend
+docker build -t peppertree-backend .
+docker run -p 5000:5000 -e DATABASE_URL=postgresql://user:pass@host:5432/db peppertree-backend
+</code></pre>
+<h3>Full Stack with Docker Compose</h3>
+<h4>Development Environment:</h4>
+<pre><code class="language-bash"># Start all services (frontend, backend, database)
+docker-compose up
+
+# Start specific services
+docker-compose up frontend backend db
+
+# Run in background
+docker-compose up -d
+</code></pre>
+<h4>Production Environment:</h4>
+<pre><code class="language-bash"># Start with nginx proxy
+docker-compose --profile production up
+
+# Or build production frontend
+docker build -t peppertree-prod -f Dockerfile.frontend .
+docker run -p 80:80 peppertree-prod
+</code></pre>
+<h2>Service Endpoints</h2>
+<p>When running with docker-compose:</p>
+<ul>
+<li><strong>Frontend</strong>: <a href="http://localhost:3000">http://localhost:3000</a> (development) or <a href="http://localhost:80">http://localhost:80</a> (production)</li>
+<li><strong>Backend API</strong>: <a href="http://localhost:5000">http://localhost:5000</a></li>
+<li><strong>Database</strong>: localhost:5432</li>
+<li><strong>Nginx Proxy</strong>: <a href="http://localhost:80">http://localhost:80</a> (when using production profile)</li>
+</ul>
+<h2>Environment Variables</h2>
+<p>Create a <code>.env</code> file in the root directory:</p>
+<pre><code class="language-env"># Email Configuration
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_DEFAULT_SENDER=your-email@gmail.com
+OWNER_EMAIL=owner@example.com
+
+# Database (when not using docker-compose)
+DATABASE_URL=postgresql://postgres:password@localhost:5432/peppertree
+
+# Security
+SECRET_KEY=your-super-secure-secret-key-change-in-production
+</code></pre>
+<h2>Troubleshooting</h2>
+<h3>Build Issues</h3>
+<pre><code class="language-bash"># Clear Docker cache and rebuild
+docker system prune -a
+docker-compose build --no-cache
+
+# Check logs
+docker-compose logs frontend
+docker-compose logs backend
+</code></pre>
+<h3>Port Conflicts</h3>
+<pre><code class="language-bash"># Check what&#39;s using ports
+lsof -i :3000
+lsof -i :5000
+
+# Change ports in docker-compose.yml if needed
+</code></pre>
+<h3>Database Connection Issues</h3>
+<pre><code class="language-bash"># Check database status
+docker-compose exec db pg_isready -U postgres
+
+# Reset database
+docker-compose down -v
+docker-compose up db
+</code></pre>
+<h2>File Structure</h2>
+<pre><code>17@peppertree/
+├── Dockerfile                 # Frontend development
+├── Dockerfile.frontend        # Frontend production
+├── config/
+│   ├── nginx-frontend.conf    # Frontend nginx config
+│   ├── nginx.conf             # Development nginx config
+│   ├── nginx.production.conf  # Production nginx config
+│   └── nginx.staging.conf     # Staging nginx config
+├── docker-compose.yml         # Full stack orchestration
+├── .dockerignore             # Build optimization
+├── backend/
+│   ├── Dockerfile            # Backend API
+│   ├── requirements.txt      # Python dependencies
+│   └── .dockerignore         # Backend-specific ignores
+└── src/                      # React source code
+</code></pre>
+<h2>Production Deployment</h2>
+<p>For production deployment:</p>
+<ol>
+<li><strong>Use production Dockerfile</strong>: <code>Dockerfile.frontend</code></li>
+<li><strong>Set proper environment variables</strong></li>
+<li><strong>Use HTTPS</strong>: Configure SSL in nginx</li>
+<li><strong>Database</strong>: Use managed PostgreSQL service</li>
+<li><strong>Email</strong>: Configure proper SMTP settings</li>
+<li><strong>Monitoring</strong>: Add health checks and logging</li>
+</ol>
+<pre><code class="language-bash"># Production build example
+docker build -t peppertree-prod -f Dockerfile.frontend .
+docker run -d -p 80:80 --name peppertree peppertree-prod
+</code></pre>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iCal Calendar Synchronization - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" class="active">📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>iCal Calendar Synchronization</h1>
+<h2>Overview</h2>
+<p>The 17 @ Peppertree booking system includes full iCal/ICS calendar synchronization functionality, allowing seamless integration with major booking platforms like Airbnb, Booking.com, VRBO, LekkeSlaap, and SafariNow.</p>
+<h2>Features</h2>
+<h3>Export (Outbound Sync)</h3>
+<ul>
+<li><strong>Real-time feed</strong> - Automatically exports confirmed and approved bookings</li>
+<li><strong>Standard iCal format</strong> - Compatible with all major booking platforms</li>
+<li><strong>Automatic updates</strong> - Feed refreshes every time it&#39;s accessed</li>
+<li><strong>Detailed information</strong> - Includes guest details, dates, and booking information</li>
+<li><strong>Secure</strong> - Only exports confirmed/approved bookings, not pending ones</li>
+</ul>
+<h3>Import (Inbound Sync)</h3>
+<ul>
+<li><strong>Multi-platform support</strong> - Import from Airbnb, Booking.com, VRBO, and others</li>
+<li><strong>Duplicate detection</strong> - Automatically skips existing bookings</li>
+<li><strong>Platform tagging</strong> - Marks imported bookings with their source</li>
+<li><strong>Manual control</strong> - Import on-demand when needed</li>
+</ul>
+<h2>API Endpoints</h2>
+<h3>Export Endpoint</h3>
+<pre><code>GET /api/ical/bookings.ics
+</code></pre>
+<p><strong>Response:</strong> iCal/ICS file containing all confirmed and approved bookings</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">curl http://localhost:5000/api/ical/bookings.ics &gt; bookings.ics
+</code></pre>
+<h3>Import Endpoint</h3>
+<pre><code>POST /api/ical/import
+Content-Type: application/json
+</code></pre>
+<p><strong>Request Body:</strong></p>
+<pre><code class="language-json">{
+  &quot;ical_url&quot;: &quot;https://www.airbnb.com/calendar/ical/...&quot;,
+  &quot;platform&quot;: &quot;airbnb&quot;
+}
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;message&quot;: &quot;iCal import completed&quot;,
+  &quot;imported&quot;: 5,
+  &quot;skipped&quot;: 2
+}
+</code></pre>
+<h3>Info Endpoint</h3>
+<pre><code>GET /api/ical/info
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;export_url&quot;: &quot;http://localhost:5000/api/ical/bookings.ics&quot;,
+  &quot;instructions&quot;: {
+    &quot;airbnb&quot;: &quot;Go to Calendar &gt; Availability Settings &gt; Import Calendar &gt; Paste the export URL&quot;,
+    &quot;booking_com&quot;: &quot;Go to Calendar &gt; Import/Export &gt; Import Calendar &gt; Paste the export URL&quot;,
+    &quot;vrbo&quot;: &quot;Go to Calendar &gt; Sync Calendar &gt; Import Calendar &gt; Paste the export URL&quot;,
+    &quot;general&quot;: &quot;Copy the export URL and paste it into the calendar import section of any booking platform&quot;
+  },
+  &quot;features&quot;: [...]
+}
+</code></pre>
+<h2>Using the Admin Interface</h2>
+<h3>Accessing Calendar Sync</h3>
+<ol>
+<li>Log in to the admin dashboard at <code>/admin</code></li>
+<li>Click <strong>&quot;Calendar Sync&quot;</strong> in the navigation menu</li>
+<li>You&#39;ll see two sections: Export and Import</li>
+</ol>
+<h3>Exporting Your Bookings</h3>
+<ol>
+<li>In the <strong>Export Your Bookings</strong> section, you&#39;ll see your unique iCal feed URL</li>
+<li>Click the <strong>&quot;Copy URL&quot;</strong> button</li>
+<li>Go to your booking platform (Airbnb, Booking.com, etc.)</li>
+<li>Find their calendar import/sync settings</li>
+<li>Paste your feed URL</li>
+<li>The platform will automatically sync your bookings</li>
+</ol>
+<p><strong>Your export URL format:</strong></p>
+<pre><code>http://your-domain.com/api/ical/bookings.ics
+</code></pre>
+<h3>Importing External Bookings</h3>
+<ol>
+<li><p>Get the iCal feed URL from your booking platform:</p>
+<ul>
+<li><strong>Airbnb:</strong> Calendar → Availability Settings → Export Calendar</li>
+<li><strong>Booking.com:</strong> Calendar → Import/Export → Export Calendar</li>
+<li><strong>VRBO:</strong> Calendar → Sync Calendar → Export Calendar</li>
+</ul>
+</li>
+<li><p>In the <strong>Import External Bookings</strong> section:</p>
+<ul>
+<li>Select the platform from the dropdown</li>
+<li>Paste the iCal feed URL</li>
+<li>Click <strong>&quot;Import Bookings&quot;</strong></li>
+</ul>
+</li>
+<li><p>The system will:</p>
+<ul>
+<li>Fetch the external calendar</li>
+<li>Import all events as bookings</li>
+<li>Skip duplicates automatically</li>
+<li>Tag bookings with the source platform</li>
+</ul>
+</li>
+</ol>
+<h2>Platform-Specific Setup Guides</h2>
+<h3>Airbnb</h3>
+<p><strong>Export to Airbnb:</strong></p>
+<ol>
+<li>Log in to Airbnb</li>
+<li>Go to Calendar → Availability Settings</li>
+<li>Scroll to &quot;Sync calendar&quot;</li>
+<li>Click &quot;Import Calendar&quot;</li>
+<li>Paste your export URL: <code>http://your-domain.com/api/ical/bookings.ics</code></li>
+<li>Name it &quot;17 @ Peppertree&quot;</li>
+<li>Click &quot;Import calendar&quot;</li>
+</ol>
+<p><strong>Import from Airbnb:</strong></p>
+<ol>
+<li>In Airbnb, go to Calendar → Availability Settings</li>
+<li>Click &quot;Export Calendar&quot;</li>
+<li>Copy the calendar link</li>
+<li>In your admin panel, go to Calendar Sync → Import</li>
+<li>Select &quot;Airbnb&quot; and paste the URL</li>
+<li>Click &quot;Import Bookings&quot;</li>
+</ol>
+<h3>Booking.com</h3>
+<p><strong>Export to Booking.com:</strong></p>
+<ol>
+<li>Log in to Booking.com Extranet</li>
+<li>Go to Calendar → Import/Export</li>
+<li>Click &quot;Import Calendar&quot;</li>
+<li>Paste your export URL</li>
+<li>Set refresh frequency (recommended: Daily)</li>
+<li>Click &quot;Import&quot;</li>
+</ol>
+<p><strong>Import from Booking.com:</strong></p>
+<ol>
+<li>In Extranet, go to Calendar → Import/Export</li>
+<li>Click &quot;Export Calendar&quot;</li>
+<li>Copy the iCal link</li>
+<li>Import via your admin panel</li>
+</ol>
+<h3>VRBO/HomeAway</h3>
+<p><strong>Export to VRBO:</strong></p>
+<ol>
+<li>Log in to VRBO</li>
+<li>Go to Calendar → Sync Calendar</li>
+<li>Click &quot;Import Calendar&quot;</li>
+<li>Paste your export URL</li>
+<li>Click &quot;Subscribe&quot;</li>
+</ol>
+<p><strong>Import from VRBO:</strong></p>
+<ol>
+<li>Go to Calendar → Sync Calendar</li>
+<li>Click &quot;Export Calendar&quot;</li>
+<li>Copy the iCal URL</li>
+<li>Import via your admin panel</li>
+</ol>
+<h3>LekkeSlaap.co.za</h3>
+<p><strong>Export to LekkeSlaap:</strong></p>
+<ol>
+<li>Contact LekkeSlaap support for iCal import feature</li>
+<li>Provide your export URL</li>
+<li>They will configure it on their end</li>
+</ol>
+<p><strong>Import from LekkeSlaap:</strong></p>
+<ol>
+<li>Request iCal export URL from LekkeSlaap support</li>
+<li>Import via your admin panel</li>
+</ol>
+<h3>SafariNow.co.za</h3>
+<p><strong>Export to SafariNow:</strong></p>
+<ol>
+<li>Contact SafariNow support for calendar sync</li>
+<li>Provide your export URL</li>
+<li>They will set up the integration</li>
+</ol>
+<p><strong>Import from SafariNow:</strong></p>
+<ol>
+<li>Request iCal feed from SafariNow support</li>
+<li>Import via your admin panel</li>
+</ol>
+<h2>Testing Without Live Bookings</h2>
+<h3>Method 1: Google Calendar (Recommended)</h3>
+<ol>
+<li>Open <a href="https://calendar.google.com">Google Calendar</a></li>
+<li>Click ⚙️ Settings</li>
+<li>Click &quot;Add calendar&quot; → &quot;From URL&quot;</li>
+<li>Paste: <code>http://localhost:5000/api/ical/bookings.ics</code></li>
+<li>Click &quot;Add calendar&quot;</li>
+<li>Your bookings will appear in Google Calendar</li>
+</ol>
+<h3>Method 2: Download and Inspect</h3>
+<pre><code class="language-bash"># Download your feed
+curl http://localhost:5000/api/ical/bookings.ics &gt; my-bookings.ics
+
+# View the contents
+cat my-bookings.ics
+
+# Open in any calendar application
+# - Outlook: File → Open → Import
+# - Apple Calendar: File → Import
+# - Thunderbird: Events and Tasks → Import
+</code></pre>
+<h3>Method 3: Automated Testing Script</h3>
+<p>Run the provided test script:</p>
+<pre><code class="language-bash">./test-ical-sync.sh
+</code></pre>
+<p>This will:</p>
+<ul>
+<li>Export your bookings</li>
+<li>Validate the iCal format</li>
+<li>Create test import data</li>
+<li>Verify the import functionality</li>
+<li>Show results</li>
+</ul>
+<h3>Method 4: Use Test iCal Feeds</h3>
+<p>Test the import feature with public iCal feeds:</p>
+<pre><code># South African holidays
+https://www.officeholidays.com/ics/south-africa
+
+# Google Calendar public feed
+https://calendar.google.com/calendar/ical/en.south_africa%23holiday%40group.v.calendar.google.com/public/basic.ics
+</code></pre>
+<p>Import these in your admin panel to test the import functionality.</p>
+<h2>iCal Feed Format</h2>
+<h3>Sample Export</h3>
+<pre><code class="language-ical">BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//17 @ Peppertree//Booking Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:17 @ Peppertree Bookings
+X-WR-TIMEZONE:Africa/Johannesburg
+X-WR-CALDESC:Confirmed and approved bookings for 17 @ Peppertree
+
+BEGIN:VEVENT
+SUMMARY:Booking: John Doe
+DTSTART;VALUE=DATE:20251215
+DTEND;VALUE=DATE:20251220
+DTSTAMP:20251124T091422Z
+UID:booking-25@17peppertree.co.za
+CLASS:PRIVATE
+CREATED:20251124T091422Z
+DESCRIPTION:Guest: John Doe\nEmail: john@example.com\nPhone: 1234567890\nGuests: 2\nStatus: confirmed\nBooking ID: 25
+ORGANIZER:bookings@17peppertree.co.za
+STATUS:CONFIRMED
+LAST-MODIFIED:20251124T091422Z
+END:VEVENT
+
+END:VCALENDAR
+</code></pre>
+<h3>Field Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>iCal Field</th>
+<th>Booking Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SUMMARY</td>
+<td>guest_name</td>
+<td>&quot;Booking: {guest_name}&quot;</td>
+</tr>
+<tr>
+<td>DTSTART</td>
+<td>checkin_date</td>
+<td>Check-in date (all-day event)</td>
+</tr>
+<tr>
+<td>DTEND</td>
+<td>checkout_date</td>
+<td>Check-out date</td>
+</tr>
+<tr>
+<td>UID</td>
+<td>booking_id</td>
+<td>Unique identifier: &quot;booking-{id}@17peppertree.co.za&quot;</td>
+</tr>
+<tr>
+<td>DESCRIPTION</td>
+<td>Multiple fields</td>
+<td>Guest details, email, phone, etc.</td>
+</tr>
+<tr>
+<td>CREATED</td>
+<td>created_at</td>
+<td>Booking creation timestamp</td>
+</tr>
+<tr>
+<td>LAST-MODIFIED</td>
+<td>updated_at</td>
+<td>Last update timestamp</td>
+</tr>
+<tr>
+<td>STATUS</td>
+<td>-</td>
+<td>Always &quot;CONFIRMED&quot; for exports</td>
+</tr>
+</tbody></table>
+<h2>Best Practices</h2>
+<h3>For Export (Your Bookings → Other Platforms)</h3>
+<ol>
+<li><strong>Update regularly</strong> - The feed updates in real-time, but platforms refresh every 6-24 hours</li>
+<li><strong>Use HTTPS in production</strong> - Ensure your domain has SSL certificate</li>
+<li><strong>Monitor conflicts</strong> - Check for double bookings across platforms</li>
+<li><strong>Keep URL secure</strong> - Treat your feed URL as sensitive (it exposes booking dates)</li>
+</ol>
+<h3>For Import (Other Platforms → Your System)</h3>
+<ol>
+<li><strong>Import frequently</strong> - Run imports daily or when you get external bookings</li>
+<li><strong>Check for duplicates</strong> - The system skips duplicates, but verify manually</li>
+<li><strong>Tag clearly</strong> - Use the platform field to identify booking sources</li>
+<li><strong>Verify dates</strong> - Confirm imported bookings have correct check-in/out dates</li>
+</ol>
+<h3>General</h3>
+<ol>
+<li><strong>Test first</strong> - Use Google Calendar to test before connecting to live platforms</li>
+<li><strong>One source of truth</strong> - Decide if your system or an external platform is primary</li>
+<li><strong>Manual verification</strong> - Always verify critical bookings manually</li>
+<li><strong>Backup your data</strong> - Export your calendar regularly as backup</li>
+<li><strong>Document your setup</strong> - Keep track of which platforms are synced</li>
+</ol>
+<h2>Troubleshooting</h2>
+<h3>Export Issues</h3>
+<p><strong>Problem:</strong> Platform says &quot;Invalid iCal URL&quot;</p>
+<ul>
+<li><strong>Solution:</strong> Ensure the URL is accessible from the internet (not localhost)</li>
+<li><strong>Solution:</strong> Check that your backend is running and the endpoint responds</li>
+</ul>
+<p><strong>Problem:</strong> Bookings not showing on external platform</p>
+<ul>
+<li><strong>Solution:</strong> Wait 24 hours for the platform to refresh</li>
+<li><strong>Solution:</strong> Verify bookings are marked as &quot;confirmed&quot; or &quot;approved&quot; in your system</li>
+<li><strong>Solution:</strong> Check the platform&#39;s import logs for errors</li>
+</ul>
+<p><strong>Problem:</strong> Old bookings still showing</p>
+<ul>
+<li><strong>Solution:</strong> Most platforms cache feeds; wait for refresh cycle</li>
+<li><strong>Solution:</strong> Remove and re-add the calendar feed</li>
+</ul>
+<h3>Import Issues</h3>
+<p><strong>Problem:</strong> Import fails with &quot;Failed to fetch&quot;</p>
+<ul>
+<li><strong>Solution:</strong> Verify the external iCal URL is correct and accessible</li>
+<li><strong>Solution:</strong> Check that the URL starts with http:// or https://</li>
+<li><strong>Solution:</strong> Some platforms require authentication - check their docs</li>
+</ul>
+<p><strong>Problem:</strong> Duplicate bookings created</p>
+<ul>
+<li><strong>Solution:</strong> The system should skip duplicates automatically</li>
+<li><strong>Solution:</strong> Check if booking dates are slightly different</li>
+<li><strong>Solution:</strong> Delete duplicates manually from the admin panel</li>
+</ul>
+<p><strong>Problem:</strong> Imported bookings have wrong dates</p>
+<ul>
+<li><strong>Solution:</strong> Check timezone settings on both platforms</li>
+<li><strong>Solution:</strong> Verify the external feed uses correct date format</li>
+<li><strong>Solution:</strong> Contact the platform support</li>
+</ul>
+<h2>Security Considerations</h2>
+<h3>Export URL Security</h3>
+<ul>
+<li>The export URL is <strong>publicly accessible</strong> and doesn&#39;t require authentication</li>
+<li>It only exposes booking dates and guest names (not sensitive financial data)</li>
+<li>Consider implementing authentication if needed for production</li>
+<li>Use HTTPS in production to prevent URL interception</li>
+</ul>
+<h3>Import Security</h3>
+<ul>
+<li>Only import from trusted platforms</li>
+<li>Verify iCal URLs before importing</li>
+<li>Monitor imported bookings for suspicious activity</li>
+<li>The import endpoint doesn&#39;t require authentication (add if needed)</li>
+</ul>
+<h2>Technical Details</h2>
+<h3>Dependencies</h3>
+<ul>
+<li><strong>Python:</strong> <code>icalendar==5.0.11</code></li>
+<li><strong>Flask:</strong> For API endpoints</li>
+<li><strong>SQLAlchemy:</strong> For database queries</li>
+</ul>
+<h3>Database Schema</h3>
+<p>Imported bookings are stored in the <code>booking_requests</code> table with:</p>
+<ul>
+<li><code>guest_name</code>: Format: &quot;{platform}: {summary}&quot;</li>
+<li><code>email</code>: Format: &quot;imported@{platform}.com&quot;</li>
+<li><code>phone</code>: &quot;N/A&quot;</li>
+<li><code>special_requests</code>: Contains original UID and platform info</li>
+<li><code>status</code>: &quot;confirmed&quot;</li>
+<li><code>payment_status</code>: &quot;paid&quot;</li>
+</ul>
+<h3>Code Structure</h3>
+<pre><code>backend/
+├── ical_routes.py          # iCal API endpoints
+├── app.py                  # Registers iCal blueprint
+└── requirements.txt        # Python dependencies
+
+src/
+└── components/
+    └── Admin/
+        └── CalendarSync.js # Admin UI component
+</code></pre>
+<h2>Future Enhancements</h2>
+<p>Potential improvements for future versions:</p>
+<ol>
+<li><strong>Automatic periodic imports</strong> - Cron job to sync external calendars daily</li>
+<li><strong>Two-way sync</strong> - Update external platforms when bookings change</li>
+<li><strong>Conflict detection</strong> - Alert when bookings overlap across platforms</li>
+<li><strong>Analytics</strong> - Track which platforms generate most bookings</li>
+<li><strong>Webhook support</strong> - Real-time notifications instead of polling</li>
+<li><strong>Authentication</strong> - Secure iCal feeds with tokens</li>
+<li><strong>Custom fields</strong> - Map additional booking fields</li>
+<li><strong>Timezone handling</strong> - Better support for international bookings</li>
+</ol>
+<h2>Production &amp; Staging Setup</h2>
+<h3>Overview</h3>
+<p>The iCal sync feature works identically in development, staging, and production environments. The main difference is the <strong>export URL</strong> which must be publicly accessible for external platforms to fetch your bookings.</p>
+<h3>Development Setup</h3>
+<p>Already configured! Your export URL:</p>
+<pre><code>http://localhost:5000/api/ical/bookings.ics
+</code></pre>
+<p><strong>Note:</strong> This only works locally and cannot be used with external platforms.</p>
+<h3>Staging Setup</h3>
+<h4>1. Update Backend Configuration</h4>
+<p>No code changes needed! The iCal routes are already deployed when you build the backend container.</p>
+<h4>2. Configure Staging Domain</h4>
+<p>Update your staging environment variables:</p>
+<pre><code class="language-bash"># In your staging .env or environment config
+REACT_APP_API_URL=https://staging.17peppertree.co.za/api
+</code></pre>
+<h4>3. Deploy to Staging</h4>
+<pre><code class="language-bash"># Using docker-compose.staging.yml
+docker compose -f docker-compose.staging.yml up -d --build
+
+# Verify the endpoint is accessible
+curl https://staging.17peppertree.co.za/api/ical/info
+</code></pre>
+<h4>4. Staging Export URL</h4>
+<p>Your staging iCal feed URL will be:</p>
+<pre><code>https://staging.17peppertree.co.za/api/ical/bookings.ics
+</code></pre>
+<h4>5. Test with External Platform</h4>
+<ol>
+<li>Use a test Airbnb/Booking.com account</li>
+<li>Import your staging feed URL</li>
+<li>Create test bookings in your system</li>
+<li>Verify they appear on the external platform (may take 24 hours)</li>
+</ol>
+<h3>Production Setup</h3>
+<h4>1. SSL Certificate Required</h4>
+<p><strong>IMPORTANT:</strong> External booking platforms require HTTPS. Ensure your production domain has a valid SSL certificate.</p>
+<pre><code class="language-nginx"># In config/nginx.conf (production)
+server {
+    listen 443 ssl http2;
+    server_name 17peppertree.co.za www.17peppertree.co.za;
+    
+    ssl_certificate /etc/letsencrypt/live/17peppertree.co.za/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/17peppertree.co.za/privkey.pem;
+    
+    # iCal endpoint
+    location /api/ical/ {
+        proxy_pass http://backend:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Cache headers for iCal feeds
+        add_header Cache-Control &quot;no-cache, must-revalidate&quot;;
+        add_header Pragma &quot;no-cache&quot;;
+        expires 0;
+    }
+}
+</code></pre>
+<h4>2. Environment Variables</h4>
+<p>Update production environment:</p>
+<pre><code class="language-bash"># production.env or .env.production
+REACT_APP_API_URL=https://17peppertree.co.za/api
+FLASK_ENV=production
+DATABASE_URL=postgresql://user:pass@production-db:5432/peppertree
+</code></pre>
+<h4>3. Deploy to Production</h4>
+<pre><code class="language-bash"># Using production docker-compose
+docker compose -f docker-compose.production.yml up -d --build
+
+# Verify deployment
+curl https://17peppertree.co.za/api/health
+curl https://17peppertree.co.za/api/ical/info
+</code></pre>
+<h4>4. Production Export URL</h4>
+<p>Your production iCal feed URL:</p>
+<pre><code>https://17peppertree.co.za/api/ical/bookings.ics
+</code></pre>
+<h4>5. Configure External Platforms</h4>
+<p>Now you can add this URL to your live booking platforms:</p>
+<p><strong>Airbnb:</strong></p>
+<ol>
+<li>Log in to your host account</li>
+<li>Go to Calendar → Availability Settings</li>
+<li>Import Calendar → Paste production URL</li>
+<li>Set sync frequency to &quot;Daily&quot;</li>
+</ol>
+<p><strong>Booking.com:</strong></p>
+<ol>
+<li>Log in to Extranet</li>
+<li>Calendar → Import/Export</li>
+<li>Import Calendar → Paste production URL</li>
+<li>Enable automatic sync</li>
+</ol>
+<p><strong>VRBO:</strong></p>
+<ol>
+<li>Property Dashboard → Calendar</li>
+<li>Sync Calendar → Import</li>
+<li>Paste production URL</li>
+</ol>
+<h4>6. Monitor the Feed</h4>
+<p>Set up monitoring to ensure the feed is always accessible:</p>
+<pre><code class="language-bash"># Add to cron (check every hour)
+0 * * * * curl -f https://17peppertree.co.za/api/ical/bookings.ics &gt; /dev/null || mail -s &quot;iCal Feed Down&quot; admin@17peppertree.co.za
+</code></pre>
+<p>Or use a monitoring service like:</p>
+<ul>
+<li>UptimeRobot</li>
+<li>Pingdom</li>
+<li>StatusCake</li>
+<li>Datadog</li>
+</ul>
+<h3>Environment-Specific URLs Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Export URL</th>
+<th>Import Endpoint</th>
+<th>Admin UI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Development</td>
+<td><code>http://localhost:5000/api/ical/bookings.ics</code></td>
+<td><code>http://localhost:5000/api/ical/import</code></td>
+<td><code>http://localhost:3000/admin</code></td>
+</tr>
+<tr>
+<td>Staging</td>
+<td><code>https://staging.17peppertree.co.za/api/ical/bookings.ics</code></td>
+<td><code>https://staging.17peppertree.co.za/api/ical/import</code></td>
+<td><code>https://staging.17peppertree.co.za/admin</code></td>
+</tr>
+<tr>
+<td>Production</td>
+<td><code>https://17peppertree.co.za/api/ical/bookings.ics</code></td>
+<td><code>https://17peppertree.co.za/api/ical/import</code></td>
+<td><code>https://17peppertree.co.za/admin</code></td>
+</tr>
+</tbody></table>
+<h3>Security Considerations for Production</h3>
+<h4>1. Rate Limiting</h4>
+<p>Add rate limiting to prevent abuse:</p>
+<pre><code class="language-nginx"># In nginx.conf
+limit_req_zone $binary_remote_addr zone=ical_limit:10m rate=10r/m;
+
+location /api/ical/ {
+    limit_req zone=ical_limit burst=5;
+    # ... other config
+}
+</code></pre>
+<h4>2. Access Logs</h4>
+<p>Enable detailed logging for iCal endpoints:</p>
+<pre><code class="language-python"># In ical_routes.py, add at the top of each endpoint:
+logger.info(f&quot;iCal export requested from {request.remote_addr}&quot;)
+</code></pre>
+<p>Monitor these logs for suspicious activity:</p>
+<pre><code class="language-bash"># Check who&#39;s accessing your feed
+docker compose logs backend | grep &quot;iCal export&quot;
+</code></pre>
+<h4>3. Optional: Authentication</h4>
+<p>If you want to add authentication to the export URL (though not required for most platforms):</p>
+<pre><code class="language-python"># In ical_routes.py
+@ical_bp.route(&#39;/bookings.ics&#39;, methods=[&#39;GET&#39;])
+def export_bookings():
+    # Optional token authentication
+    token = request.args.get(&#39;token&#39;)
+    expected_token = os.getenv(&#39;ICAL_EXPORT_TOKEN&#39;)
+    
+    if expected_token and token != expected_token:
+        return jsonify({&#39;error&#39;: &#39;Unauthorized&#39;}), 401
+    
+    # ... rest of export logic
+</code></pre>
+<p>Then your URL becomes:</p>
+<pre><code>https://17peppertree.co.za/api/ical/bookings.ics?token=YOUR_SECRET_TOKEN
+</code></pre>
+<h4>4. CORS Configuration</h4>
+<p>Ensure CORS is properly configured for production:</p>
+<pre><code class="language-python"># In app.py
+cors_origins = [
+    &quot;https://17peppertree.co.za&quot;,
+    &quot;https://www.17peppertree.co.za&quot;,
+    &quot;https://staging.17peppertree.co.za&quot;
+]
+
+CORS(app, origins=cors_origins, ...)
+</code></pre>
+<h3>Deployment Checklist</h3>
+<p>Before going live with iCal sync on production:</p>
+<ul>
+<li><input disabled="" type="checkbox"> SSL certificate installed and valid</li>
+<li><input disabled="" type="checkbox"> Domain DNS configured correctly</li>
+<li><input disabled="" type="checkbox"> Backend deployed and accessible via HTTPS</li>
+<li><input disabled="" type="checkbox"> <code>/api/ical/bookings.ics</code> returns valid iCal data</li>
+<li><input disabled="" type="checkbox"> <code>/api/ical/info</code> endpoint responds correctly</li>
+<li><input disabled="" type="checkbox"> Admin UI &quot;Calendar Sync&quot; section loads</li>
+<li><input disabled="" type="checkbox"> Test import with a sample iCal URL</li>
+<li><input disabled="" type="checkbox"> Export URL tested with Google Calendar</li>
+<li><input disabled="" type="checkbox"> Rate limiting configured</li>
+<li><input disabled="" type="checkbox"> Monitoring/alerts set up</li>
+<li><input disabled="" type="checkbox"> Logs being captured</li>
+<li><input disabled="" type="checkbox"> Backup strategy in place</li>
+<li><input disabled="" type="checkbox"> Documentation updated with production URLs</li>
+</ul>
+<h3>Rollback Plan</h3>
+<p>If issues occur after deploying to production:</p>
+<ol>
+<li><p><strong>Revert backend deployment:</strong></p>
+<pre><code class="language-bash">docker compose -f docker-compose.production.yml down
+docker compose -f docker-compose.production.yml up -d --no-build
+</code></pre>
+</li>
+<li><p><strong>Remove from external platforms:</strong></p>
+<ul>
+<li>Log in to each platform</li>
+<li>Remove the iCal import URL</li>
+<li>This prevents platforms from trying to sync</li>
+</ul>
+</li>
+<li><p><strong>Check logs for errors:</strong></p>
+<pre><code class="language-bash">docker compose -f docker-compose.production.yml logs backend --tail=100
+</code></pre>
+</li>
+<li><p><strong>Fix and redeploy:</strong></p>
+<ul>
+<li>Address the issue</li>
+<li>Test in staging first</li>
+<li>Deploy to production when stable</li>
+</ul>
+</li>
+</ol>
+<h3>Performance Optimization</h3>
+<p>For high-traffic production environments:</p>
+<h4>1. Caching</h4>
+<p>Add Redis caching for the iCal feed:</p>
+<pre><code class="language-python"># In ical_routes.py
+from flask_caching import Cache
+
+cache = Cache(config={
+    &#39;CACHE_TYPE&#39;: &#39;redis&#39;,
+    &#39;CACHE_REDIS_URL&#39;: os.getenv(&#39;REDIS_URL&#39;, &#39;redis://localhost:6379/0&#39;)
+})
+
+@ical_bp.route(&#39;/bookings.ics&#39;, methods=[&#39;GET&#39;])
+@cache.cached(timeout=300)  # Cache for 5 minutes
+def export_bookings():
+    # ... existing code
+</code></pre>
+<h4>2. Database Indexing</h4>
+<p>Ensure proper indexes for iCal queries:</p>
+<pre><code class="language-sql">-- Add index for status filtering
+CREATE INDEX idx_booking_status ON booking_requests(status) 
+WHERE status IN (&#39;confirmed&#39;, &#39;approved&#39;);
+
+-- Add index for date queries
+CREATE INDEX idx_booking_dates ON booking_requests(checkin_date, checkout_date);
+</code></pre>
+<h4>3. Connection Pooling</h4>
+<p>Optimize database connections:</p>
+<pre><code class="language-python"># In app.py
+app.config[&#39;SQLALCHEMY_POOL_SIZE&#39;] = 10
+app.config[&#39;SQLALCHEMY_POOL_RECYCLE&#39;] = 3600
+app.config[&#39;SQLALCHEMY_MAX_OVERFLOW&#39;] = 20
+</code></pre>
+<h3>Troubleshooting Production Issues</h3>
+<p><strong>Problem:</strong> External platforms show &quot;Invalid URL&quot; error</p>
+<ul>
+<li><strong>Check:</strong> Is your domain accessible via HTTPS?</li>
+<li><strong>Test:</strong> <code>curl -I https://17peppertree.co.za/api/ical/bookings.ics</code></li>
+<li><strong>Verify:</strong> SSL certificate is valid and not expired</li>
+</ul>
+<p><strong>Problem:</strong> Feed returns 500 error</p>
+<ul>
+<li><strong>Check logs:</strong> <code>docker compose logs backend --tail=100</code></li>
+<li><strong>Verify:</strong> Database connection is working</li>
+<li><strong>Test:</strong> Access <code>/api/health</code> endpoint</li>
+</ul>
+<p><strong>Problem:</strong> Bookings not updating on external platforms</p>
+<ul>
+<li><strong>Solution:</strong> Most platforms refresh every 24 hours</li>
+<li><strong>Check:</strong> Platform&#39;s sync logs for errors</li>
+<li><strong>Verify:</strong> Your feed URL is still correct in their settings</li>
+</ul>
+<p><strong>Problem:</strong> Too many requests (Rate limit exceeded)</p>
+<ul>
+<li><strong>Solution:</strong> Increase rate limit in nginx config</li>
+<li><strong>Check:</strong> Who/what is accessing your feed</li>
+<li><strong>Monitor:</strong> Set up alerts for unusual traffic</li>
+</ul>
+<h3>Support</h3>
+<p>For production deployment issues:</p>
+<ul>
+<li>Check the troubleshooting section above</li>
+<li>Review <a href="DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a></li>
+<li>Review <a href="STAGING.html">STAGING.md</a></li>
+<li>Contact support: <a href="mailto:bookings@17peppertree.co.za">bookings@17peppertree.co.za</a></li>
+</ul>
+<h2>Changelog</h2>
+<h3>Version 1.0 (2025-11-24)</h3>
+<ul>
+<li>Initial release</li>
+<li>Export functionality for confirmed/approved bookings</li>
+<li>Import functionality for external iCal feeds</li>
+<li>Admin UI for managing calendar sync</li>
+<li>Support for Airbnb, Booking.com, VRBO, LekkeSlaap, SafariNow</li>
+<li>Testing script included</li>
+<li>Production and staging deployment documentation</li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> 2025-11-24<br><strong>Version:</strong> 1.0<br><strong>Author:</strong> 17 @ Peppertree Development Team</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

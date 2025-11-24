@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staging Environment Guide - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>Staging Environment Guide</h1>
+<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-11-21<br><strong>Script:</strong> <code>/scripts/setup-staging-auth.sh</code></p>
+<hr>
+<h2>Overview</h2>
+<p>This comprehensive guide explains how to set up and access a <strong>secure staging environment</strong> that is hidden from public view. Test changes before deploying to production without exposing work-in-progress to website visitors.</p>
+<p><strong>Recommended Approach:</strong> HTTP Basic Auth + IP Whitelist (implemented by setup script)</p>
+<hr>
+<h2>Table of Contents</h2>
+<ol>
+<li><a href="#quick-setup-5-minutes">Quick Setup (5 Minutes)</a></li>
+<li><a href="#what-the-script-does">What the Script Does</a></li>
+<li><a href="#post-setup-configuration">Post-Setup Configuration</a></li>
+<li><a href="#access-methods-overview">Access Methods Overview</a></li>
+<li><a href="#alternative-setup-methods">Alternative Setup Methods</a></li>
+<li><a href="#managing-staging-users">Managing Users</a></li>
+<li><a href="#security-features">Security Features</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ol>
+<hr>
+<h2>Quick Setup (5 Minutes)</h2>
+<h3>Prerequisites</h3>
+<ul>
+<li>VPS setup completed (<code>vps-secure-setup.sh</code> already run)</li>
+<li>Root or sudo access</li>
+<li>Staging subdomain DNS record (or will create after setup)</li>
+</ul>
+<h3>Step 1: Run the Staging Setup Script</h3>
+<pre><code class="language-bash"># Basic usage (will prompt for all values)
+sudo bash scripts/setup-staging-auth.sh
+
+# With parameters (faster)
+sudo bash scripts/setup-staging-auth.sh staging.17peppertree.co.za 102.165.34.56
+
+# Parameters:
+# 1. Staging domain (subdomain you&#39;ll use)
+# 2. Office/home IP to whitelist (optional)
+</code></pre>
+<h3>Step 2: Follow the Interactive Prompts</h3>
+<p>The script will ask you:</p>
+<ol>
+<li><p><strong>First user credentials</strong></p>
+<pre><code>Enter username: admin
+New password: [enter secure password]
+Re-type password: [confirm password]
+</code></pre>
+</li>
+<li><p><strong>Additional users</strong> (optional)</p>
+<pre><code>Add another user? (y/n) y
+Enter username: developer
+</code></pre>
+</li>
+<li><p><strong>IP whitelist</strong></p>
+<pre><code>Your current IP address is: 102.165.34.56
+Add this IP to whitelist? (y/n) y
+
+Add another IP to whitelist? (y/n) y
+Enter IP address: 41.12.34.89
+</code></pre>
+</li>
+</ol>
+<h3>Step 3: Configure DNS</h3>
+<p>Add an A record to your DNS:</p>
+<pre><code>Type: A
+Name: staging
+Value: your-vps-ip
+TTL: 300 (5 minutes)
+</code></pre>
+<p><strong>Example:</strong></p>
+<ul>
+<li>If your main domain is <code>17peppertree.co.za</code></li>
+<li>And VPS IP is <code>154.12.34.56</code></li>
+<li>Create: <code>staging.17peppertree.co.za</code> → <code>154.12.34.56</code></li>
+</ul>
+<h3>Step 4: Test HTTP Access (No SSL Yet)</h3>
+<pre><code class="language-bash"># Test from your browser or command line
+curl -u admin:yourpassword http://staging.17peppertree.co.za:8080
+
+# Or visit in browser (will prompt for password)
+http://staging.17peppertree.co.za:8080
+</code></pre>
+<h3>Step 5: Generate SSL Certificate</h3>
+<pre><code class="language-bash"># Stop any services using port 80/443
+docker stop peppertree_nginx_prod 2&gt;/dev/null || true
+
+# Generate certificate
+sudo certbot certonly --standalone -d staging.17peppertree.co.za
+
+# Restart production services
+docker start peppertree_nginx_prod 2&gt;/dev/null || true
+</code></pre>
+<h3>Step 6: Deploy Staging</h3>
+<pre><code class="language-bash">cd /opt/peppertree-staging
+
+# Build and start staging environment
+docker compose -f docker-compose.staging.yml up -d --build
+
+# Monitor deployment
+docker compose -f docker-compose.staging.yml logs -f
+</code></pre>
+<h3>Step 7: Access Staging (HTTPS)</h3>
+<p>Navigate to: <code>https://staging.17peppertree.co.za</code></p>
+<p>You&#39;ll see:</p>
+<ol>
+<li>✅ Browser password prompt</li>
+<li>✅ Enter username/password</li>
+<li>✅ Staging site loads</li>
+</ol>
+<hr>
+<h2>What the Script Does</h2>
+<h3>1. Installs Prerequisites</h3>
+<ul>
+<li><code>apache2-utils</code> (for htpasswd command)</li>
+</ul>
+<h3>2. Creates Password File</h3>
+<ul>
+<li>Location: <code>/etc/nginx/.htpasswd-staging</code></li>
+<li>Bcrypt encrypted passwords</li>
+<li>Multiple users supported</li>
+</ul>
+<h3>3. Configures IP Whitelist</h3>
+<ul>
+<li>Detects your current IP</li>
+<li>Allows multiple IPs</li>
+<li>Optional (can skip for password-only)</li>
+</ul>
+<h3>4. Generates Nginx Config</h3>
+<ul>
+<li>Full production-ready configuration</li>
+<li>Two-layer security (IP + password)</li>
+<li>Prevents search engine indexing</li>
+<li>WebSocket support</li>
+<li>HTTP → HTTPS redirect</li>
+</ul>
+<h3>5. Creates Management Tools</h3>
+<ul>
+<li><code>staging-users</code> command for user management</li>
+<li>Docker compose integration notes</li>
+<li>Firewall rules (ports 8080, 8443)</li>
+</ul>
+<hr>
+<h2>Post-Setup Configuration</h2>
+<h3>Update Docker Compose for SSL</h3>
+<p>Edit <code>/opt/peppertree-staging/docker-compose.staging.yml</code>:</p>
+<pre><code class="language-yaml">services:
+  nginx:
+    image: nginx:alpine
+    container_name: peppertree_nginx_staging
+    ports:
+      - &quot;8443:443&quot;  # HTTPS
+      - &quot;8080:8080&quot; # HTTP
+    volumes:
+      - ./nginx.staging-auth.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/live/staging.17peppertree.co.za:/etc/letsencrypt/live/staging.17peppertree.co.za:ro
+      - /etc/nginx/.htpasswd-staging:/etc/nginx/.htpasswd-staging:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+      - keycloak
+    networks:
+      - peppertree_network
+    restart: unless-stopped
+</code></pre>
+<hr>
+<h2>Managing Staging Users</h2>
+<p>The script creates a convenient command: <code>staging-users</code></p>
+<h3>Add a User</h3>
+<pre><code class="language-bash">staging-users add newuser
+# Enter password when prompted
+# Restart nginx: docker restart peppertree_nginx_staging
+</code></pre>
+<h3>Remove a User</h3>
+<pre><code class="language-bash">staging-users remove olduser
+docker restart peppertree_nginx_staging
+</code></pre>
+<h3>Change Password</h3>
+<pre><code class="language-bash">staging-users password admin
+docker restart peppertree_nginx_staging
+</code></pre>
+<h3>List All Users</h3>
+<pre><code class="language-bash">staging-users list
+</code></pre>
+<hr>
+<h2>Access Methods Overview</h2>
+<p>You have <strong>5 options</strong> for keeping staging private:</p>
+<h3>Method 1: Subdomain with HTTP Basic Auth ⭐ <strong>RECOMMENDED</strong></h3>
+<ul>
+<li><strong>URL:</strong> <code>https://staging.17peppertree.co.za</code></li>
+<li><strong>Security:</strong> Password-protected</li>
+<li><strong>Effort:</strong> Low (automated by script)</li>
+<li><strong>Best for:</strong> Most use cases</li>
+</ul>
+<h3>Method 2: Non-Standard Port</h3>
+<ul>
+<li><strong>URL:</strong> <code>http://your-vps-ip:8080</code></li>
+<li><strong>Security:</strong> Obscurity (port not publicly advertised)</li>
+<li><strong>Effort:</strong> Very Low</li>
+<li><strong>Best for:</strong> Quick testing, internal team</li>
+</ul>
+<h3>Method 3: IP Whitelist Only</h3>
+<ul>
+<li><strong>URL:</strong> <code>https://staging.17peppertree.co.za</code></li>
+<li><strong>Security:</strong> Only specific IPs can access</li>
+<li><strong>Effort:</strong> Medium</li>
+<li><strong>Best for:</strong> Fixed office/home IP addresses</li>
+</ul>
+<h3>Method 4: VPN Access</h3>
+<ul>
+<li><strong>URL:</strong> <code>http://internal-ip:8080</code></li>
+<li><strong>Security:</strong> Requires VPN connection</li>
+<li><strong>Effort:</strong> High</li>
+<li><strong>Best for:</strong> Maximum security, distributed teams</li>
+</ul>
+<h3>Method 5: Host File + No DNS</h3>
+<ul>
+<li><strong>URL:</strong> <code>https://staging.peppertree.local</code></li>
+<li><strong>Security:</strong> No public DNS record</li>
+<li><strong>Effort:</strong> Medium</li>
+<li><strong>Best for:</strong> Developer testing only</li>
+</ul>
+<hr>
+<h2>Alternative Setup Methods</h2>
+<h3>Method 2: Non-Standard Port (Manual Setup)</h3>
+<p>If you prefer simple port-based access without passwords:</p>
+<p><strong>Docker Compose Configuration:</strong></p>
+<pre><code class="language-yaml">services:
+  nginx:
+    ports:
+      - &quot;8080:80&quot;  # Staging on port 8080
+</code></pre>
+<p><strong>Firewall:</strong></p>
+<pre><code class="language-bash">sudo ufw allow 8080/tcp comment &#39;Staging HTTP&#39;
+</code></pre>
+<p><strong>Access:</strong></p>
+<pre><code>http://your-vps-ip:8080
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>No password management</li>
+<li>Quick setup</li>
+<li>Easy for internal teams</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Security through obscurity only</li>
+<li>Anyone with IP can access</li>
+<li>Port scanners will find it</li>
+</ul>
+<hr>
+<h3>Method 3: IP Whitelist Only (Manual)</h3>
+<p>Restrict access by IP addresses only (no password):</p>
+<p><strong>Nginx Configuration:</strong></p>
+<pre><code class="language-nginx">server {
+    listen 8080;
+    server_name staging.17peppertree.co.za;
+
+    # Allow specific IPs
+    allow 102.165.34.56;  # Office
+    allow 41.12.34.89;    # Home
+    allow 127.0.0.1;      # Localhost
+    deny all;             # Block everyone else
+
+    location / {
+        proxy_pass http://frontend:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>No password required</li>
+<li>Fast (IP check at network level)</li>
+<li>Good for fixed IPs</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Requires static IPs</li>
+<li>Hard to manage remote workers</li>
+<li>IP changes require config update</li>
+</ul>
+<hr>
+<h3>Method 4: VPN Access (Advanced)</h3>
+<p>Set up a VPN server and access staging through internal network:</p>
+<p><strong>Options:</strong></p>
+<ul>
+<li>OpenVPN</li>
+<li>WireGuard (recommended - modern, fast)</li>
+<li>Tailscale (easiest)</li>
+</ul>
+<p><strong>Example with Tailscale:</strong></p>
+<pre><code class="language-bash"># Install Tailscale on VPS
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+
+# Install on your device
+# Visit: https://tailscale.com/download
+
+# Access staging via Tailscale IP
+http://100.x.x.x:8080
+</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Maximum security</li>
+<li>No public exposure</li>
+<li>Encrypted tunnel</li>
+<li>Works from anywhere</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Requires VPN client on all devices</li>
+<li>More complex setup</li>
+<li>Additional service to manage</li>
+</ul>
+<hr>
+<h3>Method 5: Host File + No DNS (Developer Only)</h3>
+<p>For local development/testing without public DNS:</p>
+<p><strong>On VPS:</strong></p>
+<pre><code class="language-bash"># Bind staging to localhost only
+docker-compose.staging.yml:
+  nginx:
+    ports:
+      - &quot;127.0.0.1:8080:80&quot;  # Only accessible from VPS itself
+</code></pre>
+<p><strong>On Your Computer:</strong></p>
+<ol>
+<li><p>Edit hosts file:</p>
+<ul>
+<li><strong>Linux/Mac:</strong> <code>/etc/hosts</code></li>
+<li><strong>Windows:</strong> <code>C:\Windows\System32\drivers\etc\hosts</code></li>
+</ul>
+</li>
+<li><p>Add entry:</p>
+<pre><code>your-vps-ip  staging.peppertree.local
+</code></pre>
+</li>
+<li><p>SSH Tunnel:</p>
+<pre><code class="language-bash">ssh -L 8080:localhost:8080 user@your-vps-ip
+</code></pre>
+</li>
+<li><p>Access:</p>
+<pre><code>http://staging.peppertree.local:8080
+</code></pre>
+</li>
+</ol>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>No public access at all</li>
+<li>No DNS required</li>
+<li>Free SSL with self-signed cert</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Requires SSH tunnel</li>
+<li>Each developer must configure</li>
+<li>Not suitable for non-technical users</li>
+</ul>
+<hr>
+<h2>Security Features</h2>
+<h3>Layer 1: IP Whitelist</h3>
+<ul>
+<li>Only specified IPs can access</li>
+<li>Blocks brute force from random IPs</li>
+<li>Fast rejection (before password check)</li>
+</ul>
+<h3>Layer 2: HTTP Basic Auth</h3>
+<ul>
+<li>Password required after IP check</li>
+<li>Bcrypt encrypted passwords</li>
+<li>Browser remembers credentials per session</li>
+</ul>
+<h3>Layer 3: Search Engine Protection</h3>
+<ul>
+<li><code>X-Robots-Tag: noindex, nofollow</code></li>
+<li><code>/robots.txt</code> returns disallow all</li>
+<li>No public discovery</li>
+</ul>
+<h3>Additional Security</h3>
+<ul>
+<li>HTTPS with Let&#39;s Encrypt</li>
+<li>Security headers (XSS, frame options, etc.)</li>
+<li>Localhost (127.0.0.1) always allowed for SSH tunnels</li>
+</ul>
+<hr>
+<h2>Access Patterns</h2>
+<h3>Direct Access (HTTPS)</h3>
+<pre><code>https://staging.17peppertree.co.za
+</code></pre>
+<ul>
+<li>Requires: IP whitelisted + password</li>
+<li>Most common usage</li>
+</ul>
+<h3>HTTP Port (Testing)</h3>
+<pre><code>http://staging.17peppertree.co.za:8080
+</code></pre>
+<ul>
+<li>Use before SSL configured</li>
+<li>Still password protected</li>
+</ul>
+<h3>SSH Tunnel (Remote Access)</h3>
+<pre><code class="language-bash"># Create tunnel
+ssh -L 8080:localhost:8080 deploy@vps-ip
+
+# Access via tunnel
+http://localhost:8080
+</code></pre>
+<ul>
+<li>Bypass IP whitelist</li>
+<li>Access from anywhere</li>
+<li>SSH key required</li>
+</ul>
+<h3>API Testing</h3>
+<pre><code class="language-bash"># With authentication
+curl -u admin:password https://staging.17peppertree.co.za/api/health
+
+# Response
+{&quot;status&quot;: &quot;healthy&quot;}
+</code></pre>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Can&#39;t Access Staging (403 Forbidden)</h3>
+<p><strong>Check IP Whitelist:</strong></p>
+<pre><code class="language-bash"># View your current IP
+curl ifconfig.me
+
+# Check if it&#39;s in whitelist
+cat /etc/nginx/staging-ip-whitelist.conf
+
+# Add your IP
+staging-users addip $(curl -s ifconfig.me)
+docker restart peppertree_nginx_staging
+</code></pre>
+<h3>Wrong Password</h3>
+<pre><code class="language-bash"># Reset password
+staging-users password username
+docker restart peppertree_nginx_staging
+</code></pre>
+<h3>DNS Not Resolving</h3>
+<pre><code class="language-bash"># Check DNS propagation
+nslookup staging.17peppertree.co.za
+
+# Check from different DNS server
+nslookup staging.17peppertree.co.za 8.8.8.8
+</code></pre>
+<p><strong>If not propagated:</strong></p>
+<ul>
+<li>Wait 5-15 minutes</li>
+<li>Clear DNS cache: <code>sudo systemd-resolve --flush-caches</code></li>
+<li>Use IP directly: <code>http://vps-ip:8080</code></li>
+</ul>
+<h3>SSL Certificate Issues</h3>
+<pre><code class="language-bash"># Check certificate
+sudo certbot certificates
+
+# Renew if expired
+sudo certbot renew
+
+# Test renewal
+sudo certbot renew --dry-run
+</code></pre>
+<h3>Container Won&#39;t Start</h3>
+<pre><code class="language-bash"># Check logs
+docker logs peppertree_nginx_staging
+
+# Check port conflicts
+sudo netstat -tulpn | grep -E &#39;:8080|:8443&#39;
+
+# Restart
+docker restart peppertree_nginx_staging
+</code></pre>
+<hr>
+<h2>Deployment Workflow</h2>
+<h3>Typical Development Cycle</h3>
+<ol>
+<li><strong>Develop locally</strong> with <code>docker compose up</code></li>
+<li><strong>Commit to develop branch</strong></li>
+<li><strong>Push to GitHub</strong> → Auto-deploys to staging</li>
+<li><strong>Test on staging:</strong> <code>https://staging.17peppertree.co.za</code></li>
+<li><strong>If good, merge to main</strong> → Auto-deploys to production</li>
+</ol>
+<h3>Manual Staging Deployment</h3>
+<pre><code class="language-bash"># SSH to VPS
+ssh deploy@vps-ip
+
+# Navigate to staging
+cd /opt/peppertree-staging
+
+# Pull latest changes
+git pull origin develop
+
+# Rebuild and deploy
+docker compose -f docker-compose.staging.yml up -d --build
+
+# Monitor
+docker compose -f docker-compose.staging.yml logs -f
+</code></pre>
+<h3>Quick Staging Tests</h3>
+<pre><code class="language-bash"># Health check
+curl -u admin:pass https://staging.17peppertree.co.za/api/health
+
+# Test booking creation
+curl -u admin:pass -X POST https://staging.17peppertree.co.za/api/booking \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;name&quot;:&quot;Test&quot;,&quot;email&quot;:&quot;test@test.com&quot;,...}&#39;
+
+# Check database
+docker exec -it peppertree_db_staging psql -U postgres -d peppertree \
+  -c &quot;SELECT * FROM booking_requests ORDER BY created_at DESC LIMIT 5;&quot;
+</code></pre>
+<hr>
+<h2>Best Practices</h2>
+<h3>Security</h3>
+<ol>
+<li>✅ Use strong passwords (20+ characters)</li>
+<li>✅ Enable IP whitelist for known IPs</li>
+<li>✅ Use HTTPS always (Let&#39;s Encrypt is free)</li>
+<li>✅ Disable search engine indexing</li>
+<li>✅ Rotate passwords regularly</li>
+</ol>
+<h3>Access Management</h3>
+<ol>
+<li>✅ Give each developer their own credentials</li>
+<li>✅ Remove users when they leave team</li>
+<li>✅ Log access in nginx logs</li>
+<li>✅ Monitor for suspicious activity</li>
+<li>✅ Use SSH tunnels for remote access</li>
+</ol>
+<h3>Testing</h3>
+<ol>
+<li>✅ Test all changes on staging first</li>
+<li>✅ Run automated tests before deploying to production</li>
+<li>✅ Verify database migrations</li>
+<li>✅ Check email notifications</li>
+<li>✅ Test on mobile devices</li>
+</ol>
+<h3>Maintenance</h3>
+<ol>
+<li>✅ Keep SSL certificates renewed (auto-renew with certbot)</li>
+<li>✅ Update Docker images regularly</li>
+<li>✅ Review logs weekly</li>
+<li>✅ Back up staging database monthly</li>
+<li>✅ Clean up old test data</li>
+</ol>
+<hr>
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="./VPS_SETUP_GUIDE.html">VPS_SETUP_GUIDE.md</a> - Initial VPS setup</li>
+<li><a href="./DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a> - CI/CD and deployments</li>
+<li><a href="./DEVELOPMENT_GUIDE.html">DEVELOPMENT_GUIDE.md</a> - Local development</li>
+<li><a href="./AUTHENTICATION.html">AUTHENTICATION.md</a> - Keycloak setup</li>
+</ul>
+<hr>
+<p><strong>Script Location:</strong> <code>/scripts/setup-staging-auth.sh</code><br><strong>Support:</strong> For issues, check <code>/var/log/nginx/staging-*.log</code></p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>

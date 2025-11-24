@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testing Your Backend API with Apidog - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>Testing Your Backend API with Apidog</h1>
+<p>Based on your Flask backend with Keycloak OAuth2 authentication, here are the main API endpoints and how to test them in Apidog:</p>
+<h2><strong>Base URL Configuration</strong></h2>
+<ul>
+<li><strong>Local Development</strong>: <code>http://localhost:5000</code></li>
+<li><strong>Docker Development</strong>: <code>http://localhost:5001</code></li>
+<li><strong>Docker Staging</strong>: <code>http://192.168.1.102:5001</code></li>
+</ul>
+<h2><strong>Public API Endpoints</strong></h2>
+<h3>1. <strong>Health Check</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/health</code></li>
+<li><strong>Expected Response</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;healthy&quot;,
+  &quot;message&quot;: &quot;Peppertree API is running&quot;
+}
+</code></pre>
+<h3>2. <strong>Create Booking</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>POST</code></li>
+<li><strong>URL</strong>: <code>/api/booking</code></li>
+<li><strong>Headers</strong>: <code>Content-Type: application/json</code></li>
+<li><strong>Request Body</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;checkin&quot;: &quot;2024-12-15&quot;,
+  &quot;checkout&quot;: &quot;2024-12-17&quot;,
+  &quot;guests&quot;: 2,
+  &quot;name&quot;: &quot;John Doe&quot;,
+  &quot;email&quot;: &quot;john.doe@example.com&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;,
+  &quot;message&quot;: &quot;Looking forward to a peaceful getaway&quot;
+}
+</code></pre>
+<ul>
+<li><strong>Expected Response</strong> (201):</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;message&quot;: &quot;Booking request submitted successfully&quot;,
+  &quot;booking_id&quot;: 1
+}
+</code></pre>
+<h3>3. <strong>Get All Bookings</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/bookings</code></li>
+<li><strong>Expected Response</strong>: Array of booking objects</li>
+</ul>
+<h3>4. <strong>Get Specific Booking</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/booking/{booking_id}</code></li>
+<li><strong>Example</strong>: <code>/api/booking/1</code></li>
+</ul>
+<h3>5. <strong>Update Booking Status</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>PUT</code></li>
+<li><strong>URL</strong>: <code>/api/booking/{booking_id}/status</code></li>
+<li><strong>Headers</strong>: <code>Content-Type: application/json</code></li>
+<li><strong>Request Body</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;confirmed&quot;
+}
+</code></pre>
+<h3>6. <strong>Get Availability</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/availability?year=2024&amp;month=12</code></li>
+<li><strong>Query Parameters</strong>:<ul>
+<li><code>year</code> (required): Integer</li>
+<li><code>month</code> (required): Integer (1-12)</li>
+</ul>
+</li>
+</ul>
+<h2><strong>Admin API Endpoints</strong> (Require User Authentication)</h2>
+<h3>7. <strong>Admin - Get All Bookings</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/admin/bookings</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {user_token}</code></li>
+<li><strong>Query Parameters</strong> (optional):<ul>
+<li><code>status</code>: pending/approved/rejected/cancelled</li>
+<li><code>payment_status</code>: pending/paid/partial/refunded</li>
+<li><code>start_date</code>: ISO date string</li>
+<li><code>end_date</code>: ISO date string</li>
+<li><code>page</code>: Integer (default: 1)</li>
+<li><code>per_page</code>: Integer (default: 20)</li>
+</ul>
+</li>
+</ul>
+<h3>8. <strong>Admin - Get Booking Details</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/admin/booking/{booking_id}</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {user_token}</code></li>
+</ul>
+<h3>9. <strong>Admin - Update Booking Status</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>PUT</code></li>
+<li><strong>URL</strong>: <code>/api/admin/booking/{booking_id}/status</code></li>
+<li><strong>Headers</strong>:<ul>
+<li><code>Authorization: Bearer {user_token}</code></li>
+<li><code>Content-Type: application/json</code></li>
+</ul>
+</li>
+<li><strong>Request Body</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;approved&quot;,
+  &quot;admin_notes&quot;: &quot;Booking confirmed for premium suite&quot;,
+  &quot;notify_guest&quot;: true
+}
+</code></pre>
+<h3>10. <strong>Admin - Update Payment Status</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>PUT</code></li>
+<li><strong>URL</strong>: <code>/api/admin/booking/{booking_id}/payment</code></li>
+<li><strong>Headers</strong>:<ul>
+<li><code>Authorization: Bearer {user_token}</code></li>
+<li><code>Content-Type: application/json</code></li>
+</ul>
+</li>
+<li><strong>Request Body</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;payment_status&quot;: &quot;paid&quot;,
+  &quot;payment_amount&quot;: 250.00,
+  &quot;payment_reference&quot;: &quot;TXN123456&quot;,
+  &quot;payment_method&quot;: &quot;credit_card&quot;
+}
+</code></pre>
+<h3>11. <strong>Admin - Dashboard Stats</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/admin/dashboard/stats</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {user_token}</code></li>
+</ul>
+<h2><strong>Secure API Endpoints</strong> (Require Client Credentials or User Authentication)</h2>
+<h3>12. <strong>Secure - Health Check</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/secure/health</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {client_token_or_user_token}</code></li>
+<li><strong>Expected Response</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;healthy&quot;,
+  &quot;message&quot;: &quot;Secure Peppertree API is running&quot;,
+  &quot;auth_type&quot;: &quot;client&quot;,
+  &quot;client_id&quot;: &quot;peppertree-backend-api&quot;
+}
+</code></pre>
+<h3>13. <strong>Secure - Dashboard Stats</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/secure/dashboard/stats</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {client_token_or_user_token}</code></li>
+<li><strong>Expected Response</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;auth_type&quot;: &quot;client&quot;,
+  &quot;client_id&quot;: &quot;peppertree-backend-api&quot;,
+  &quot;user_id&quot;: null,
+  &quot;timestamp&quot;: &quot;2025-09-30T09:17:18.686250&quot;,
+  &quot;stats&quot;: {
+    &quot;total_bookings&quot;: 0,
+    &quot;pending_bookings&quot;: 0,
+    &quot;approved_bookings&quot;: 0,
+    &quot;paid_bookings&quot;: 0,
+    &quot;pending_payments&quot;: 0,
+    &quot;total_revenue&quot;: 0.0
+  },
+  &quot;recent_bookings&quot;: []
+}
+</code></pre>
+<h3>14. <strong>Secure - Get All Bookings</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/secure/bookings</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {client_token_or_user_token}</code></li>
+<li><strong>Query Parameters</strong> (optional):<ul>
+<li><code>status</code>: pending/approved/rejected/cancelled</li>
+<li><code>payment_status</code>: pending/paid/partial/refunded</li>
+<li><code>start_date</code>: ISO date string</li>
+<li><code>end_date</code>: ISO date string</li>
+<li><code>page</code>: Integer (default: 1)</li>
+<li><code>per_page</code>: Integer (default: 20)</li>
+</ul>
+</li>
+<li><strong>Expected Response</strong>:</li>
+</ul>
+<pre><code class="language-json">{
+  &quot;auth_type&quot;: &quot;client&quot;,
+  &quot;client_id&quot;: &quot;peppertree-backend-api&quot;,
+  &quot;user_id&quot;: null,
+  &quot;bookings&quot;: [],
+  &quot;current_page&quot;: 1,
+  &quot;per_page&quot;: 20,
+  &quot;total&quot;: 0,
+  &quot;pages&quot;: 0
+}
+</code></pre>
+<h3>15. <strong>Secure - Get Booking Details</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>/api/secure/booking/{booking_id}</code></li>
+<li><strong>Headers</strong>: <code>Authorization: Bearer {client_token_or_user_token}</code></li>
+</ul>
+<h3>16. <strong>Secure - Create Booking</strong></h3>
+<ul>
+<li><strong>Method</strong>: <code>POST</code></li>
+<li><strong>URL</strong>: <code>/api/secure/booking</code></li>
+<li><strong>Headers</strong>:<ul>
+<li><code>Authorization: Bearer {client_token_or_user_token}</code></li>
+<li><code>Content-Type: application/json</code></li>
+</ul>
+</li>
+<li><strong>Request Body</strong>: Same as public booking creation</li>
+</ul>
+<h2><strong>Authentication Setup</strong></h2>
+<h3>Keycloak OAuth2 Configuration</h3>
+<ul>
+<li><strong>Keycloak URL</strong>: <code>http://192.168.1.102:8081</code> (staging)</li>
+<li><strong>Realm</strong>: <code>peppertree</code></li>
+<li><strong>Public Client</strong>: <code>peppertree-admin</code> (for user authentication)</li>
+<li><strong>Confidential Client</strong>: <code>peppertree-backend-api</code> (for client credentials)</li>
+</ul>
+<h3>Getting Client Credentials Token</h3>
+<pre><code class="language-bash">curl -X POST &quot;http://192.168.1.102:8081/realms/peppertree/protocol/openid-connect/token&quot; \
+  -H &quot;Content-Type: application/x-www-form-urlencoded&quot; \
+  -d &quot;grant_type=client_credentials&quot; \
+  -d &quot;client_id=peppertree-backend-api&quot; \
+  -d &quot;client_secret={your_client_secret}&quot;
+</code></pre>
+<h3>Getting User Token (Authorization Code Flow)</h3>
+<ol>
+<li>Redirect to authorization URL:</li>
+</ol>
+<pre><code>http://192.168.1.102:8081/realms/peppertree/protocol/openid-connect/auth?client_id=peppertree-admin&amp;redirect_uri={your_redirect}&amp;response_type=code&amp;scope=openid profile email
+</code></pre>
+<ol start="2">
+<li>Exchange code for token:</li>
+</ol>
+<pre><code class="language-bash">curl -X POST &quot;http://192.168.1.102:8081/realms/peppertree/protocol/openid-connect/token&quot; \
+  -H &quot;Content-Type: application/x-www-form-urlencoded&quot; \
+  -d &quot;grant_type=authorization_code&quot; \
+  -d &quot;code={authorization_code}&quot; \
+  -d &quot;client_id=peppertree-admin&quot; \
+  -d &quot;redirect_uri={your_redirect}&quot;
+</code></pre>
+<h2><strong>Testing Strategy in Apidog</strong></h2>
+<h3>1. <strong>Create Environment Variables</strong>:</h3>
+<ul>
+<li><code>base_url</code>: <code>http://localhost:5001</code> (or your environment URL)</li>
+<li><code>keycloak_url</code>: <code>http://192.168.1.102:8081</code></li>
+<li><code>token_url</code>: <code>http://192.168.1.102:8081/realms/peppertree/protocol/openid-connect/token</code></li>
+<li><code>client_id</code>: <code>peppertree-backend-api</code></li>
+<li><code>client_secret</code>: <code>{your_client_secret}</code></li>
+<li><code>user_token</code>: <code>{your_jwt_user_token}</code></li>
+<li><code>client_token</code>: <code>{your_jwt_client_token}</code></li>
+</ul>
+<h3>2. <strong>Test Cases to Create</strong>:</h3>
+<ul>
+<li>Valid booking creation (public API)</li>
+<li>Invalid data validation (missing fields, wrong dates, etc.)</li>
+<li>Booking status updates</li>
+<li>Availability queries</li>
+<li>Admin authentication flows</li>
+<li><strong>Client credentials authentication</strong></li>
+<li><strong>Secure API endpoint access</strong></li>
+<li><strong>Mixed authentication (user vs client tokens)</strong></li>
+</ul>
+<h3>3. <strong>Error Testing</strong>:</h3>
+<ul>
+<li>Missing required fields (400 errors)</li>
+<li>Invalid date formats</li>
+<li>Past check-in dates</li>
+<li>Invalid guest counts (must be 1-2)</li>
+<li>Authentication failures for admin endpoints</li>
+<li><strong>Invalid tokens for secure endpoints</strong></li>
+<li><strong>Expired token scenarios</strong></li>
+<li><strong>Wrong token type for endpoint</strong></li>
+</ul>
+<h3>4. <strong>Data Validation Rules</strong>:</h3>
+<ul>
+<li>Dates must be in <code>YYYY-MM-DD</code> format</li>
+<li>Check-out must be after check-in</li>
+<li>Check-in cannot be in the past</li>
+<li>Guests must be between 1-2</li>
+<li>Valid statuses: <code>pending</code>, <code>confirmed</code>, <code>rejected</code>, <code>cancelled</code>, <code>completed</code></li>
+</ul>
+<h2><strong>Setting Up Your First Test in Apidog</strong></h2>
+<h3>Prerequisites</h3>
+<ol>
+<li><strong>Start your backend</strong>: <code>docker compose -f docker-compose.staging.yml up -d</code></li>
+<li><strong>Verify services are running</strong>:<ul>
+<li>Backend: <code>http://192.168.1.102:5001/api/health</code></li>
+<li>Keycloak: <code>http://192.168.1.102:8081</code></li>
+</ul>
+</li>
+</ol>
+<h3>Test Sequence</h3>
+<ol>
+<li><strong>Test health endpoint first</strong>: <code>GET {{base_url}}/api/health</code></li>
+<li><strong>Get client credentials token</strong>: Use Keycloak token endpoint</li>
+<li><strong>Test secure health endpoint</strong>: <code>GET {{base_url}}/api/secure/health</code> with Bearer token</li>
+<li><strong>Create a booking</strong>: Use the POST <code>/api/booking</code> endpoint with valid data</li>
+<li><strong>Test secure dashboard</strong>: <code>GET {{base_url}}/api/secure/dashboard/stats</code> with Bearer token</li>
+<li><strong>Verify secure bookings</strong>: <code>GET {{base_url}}/api/secure/bookings</code> with Bearer token</li>
+</ol>
+<h2><strong>Example Test Scenarios</strong></h2>
+<h3>Get Client Credentials Token</h3>
+<pre><code class="language-bash">POST {{keycloak_url}}/realms/peppertree/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&amp;client_id={{client_id}}&amp;client_secret={{client_secret}}
+</code></pre>
+<p><strong>Expected</strong>: 200 status with access_token</p>
+<h3>Test Secure Endpoint with Client Token</h3>
+<pre><code class="language-bash">GET {{base_url}}/api/secure/dashboard/stats
+Authorization: Bearer {{client_token}}
+</code></pre>
+<p><strong>Expected</strong>: 200 status with <code>auth_type: &quot;client&quot;</code></p>
+<h3>Test Secure Endpoint with User Token</h3>
+<pre><code class="language-bash">GET {{base_url}}/api/secure/dashboard/stats
+Authorization: Bearer {{user_token}}
+</code></pre>
+<p><strong>Expected</strong>: 200 status with <code>auth_type: &quot;user&quot;</code></p>
+<h3>Valid Booking Test</h3>
+<pre><code class="language-json">POST {{base_url}}/api/booking
+Content-Type: application/json
+
+{
+  &quot;checkin&quot;: &quot;2024-12-15&quot;,
+  &quot;checkout&quot;: &quot;2024-12-17&quot;,
+  &quot;guests&quot;: 2,
+  &quot;name&quot;: &quot;John Doe&quot;,
+  &quot;email&quot;: &quot;john.doe@example.com&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;,
+  &quot;message&quot;: &quot;Looking forward to a peaceful getaway&quot;
+}
+</code></pre>
+<p><strong>Expected</strong>: 201 status with booking_id</p>
+<h3>Invalid Date Format Test</h3>
+<pre><code class="language-json">POST {{base_url}}/api/booking
+Content-Type: application/json
+
+{
+  &quot;checkin&quot;: &quot;15-12-2024&quot;,
+  &quot;checkout&quot;: &quot;17-12-2024&quot;,
+  &quot;guests&quot;: 2,
+  &quot;name&quot;: &quot;Bob Smith&quot;,
+  &quot;email&quot;: &quot;bob.smith@example.com&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;
+}
+</code></pre>
+<p><strong>Expected</strong>: 400 status with error message</p>
+<h3>Missing Required Field Test</h3>
+<pre><code class="language-json">POST {{base_url}}/api/booking
+Content-Type: application/json
+
+{
+  &quot;checkin&quot;: &quot;2024-12-15&quot;,
+  &quot;checkout&quot;: &quot;2024-12-17&quot;,
+  &quot;guests&quot;: 2,
+  &quot;name&quot;: &quot;Jane Doe&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;
+}
+</code></pre>
+<p><strong>Expected</strong>: 400 status with &quot;Missing required field: email&quot;</p>
+<h3>Invalid Guest Count Test</h3>
+<pre><code class="language-json">POST {{base_url}}/api/booking
+Content-Type: application/json
+
+{
+  &quot;checkin&quot;: &quot;2024-12-15&quot;,
+  &quot;checkout&quot;: &quot;2024-12-17&quot;,
+  &quot;guests&quot;: 3,
+  &quot;name&quot;: &quot;Large Family&quot;,
+  &quot;email&quot;: &quot;family@example.com&quot;,
+  &quot;phone&quot;: &quot;+1234567890&quot;
+}
+</code></pre>
+<p><strong>Expected</strong>: 400 status with guest count error</p>
+<h3>Unauthorized Secure API Test</h3>
+<pre><code class="language-bash">GET {{base_url}}/api/secure/dashboard/stats
+# No Authorization header
+</code></pre>
+<p><strong>Expected</strong>: 401 status with &quot;No valid authorization token provided&quot;</p>
+<h3>Invalid Token Test</h3>
+<pre><code class="language-bash">GET {{base_url}}/api/secure/dashboard/stats
+Authorization: Bearer invalid_token_here
+</code></pre>
+<p><strong>Expected</strong>: 401 status with &quot;Invalid or expired token&quot;</p>
+<h2><strong>Advanced Testing Scenarios</strong></h2>
+<h3>Token Expiration Testing</h3>
+<ol>
+<li>Get a client credentials token</li>
+<li>Wait for token expiration (300 seconds for client credentials)</li>
+<li>Test secure endpoint with expired token</li>
+<li><strong>Expected</strong>: 401 status with expiration error</li>
+</ol>
+<h3>Mixed Authentication Testing</h3>
+<ol>
+<li>Test secure endpoint with user token → Should work with <code>auth_type: &quot;user&quot;</code></li>
+<li>Test secure endpoint with client token → Should work with <code>auth_type: &quot;client&quot;</code></li>
+<li>Test admin endpoint with client token → Should fail (admin endpoints require user tokens)</li>
+</ol>
+<h3>Service Account Detection</h3>
+<ol>
+<li>Get client credentials token</li>
+<li>Decode JWT payload (base64 decode the middle part)</li>
+<li>Verify <code>preferred_username</code> starts with <code>service-account-</code></li>
+<li>Test that secure API correctly identifies it as client authentication</li>
+</ol>
+<p>This comprehensive guide covers all public, admin, and secure API endpoints with proper OAuth2 authentication testing scenarios.</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', 'README.html');
+      }
+    });
+  </script>
+</body>
+</html>
