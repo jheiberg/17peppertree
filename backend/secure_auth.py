@@ -113,7 +113,8 @@ class SecureAuth:
             allowed_issuers = [
                 f"http://keycloak:8080/realms/{self.realm}",
                 f"http://localhost:8080/realms/{self.realm}",
-                f"http://192.168.1.102:8080/realms/{self.realm}",
+                f"http://192.168.1.222:8080/realms/{self.realm}",
+                f"http://127.0.0.1:8080/realms/{self.realm}",
             ]
             
             if token_issuer not in allowed_issuers:

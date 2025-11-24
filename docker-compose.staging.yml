@@ -27,12 +27,13 @@ services:
       KC_DB_URL_DATABASE: keycloak
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
-      KC_HOSTNAME: 192.168.1.102
-      KC_HOSTNAME_PORT: 8081
+      KC_HOSTNAME: staging.17peppertree.co.za
+      KC_HOSTNAME_PORT: 443
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_HTTP_PORT: 8080
+      KC_PROXY: edge
       KC_HEALTH_ENABLED: true
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -90,12 +91,12 @@ services:
       - OWNER_EMAIL=${OWNER_EMAIL}
       - FLASK_ENV=staging
       # Keycloak OAuth2 settings
-      - KEYCLOAK_SERVER_URL=http://192.168.1.102:8081
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
       - KEYCLOAK_CLIENT_ID=peppertree-admin
       # No client secret needed for public client
       # - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET_STAGING}
       - KEYCLOAK_REALM=peppertree
-      - KEYCLOAK_REDIRECT_URI=${KEYCLOAK_REDIRECT_URI_STAGING}
+      - KEYCLOAK_REDIRECT_URI=https://staging.17peppertree.co.za/auth/callback
       # Backend API client credentials for secure endpoints
       - KEYCLOAK_BACKEND_CLIENT_ID=${KEYCLOAK_BACKEND_CLIENT_ID}
       - KEYCLOAK_BACKEND_CLIENT_SECRET=${KEYCLOAK_BACKEND_CLIENT_SECRET}
@@ -130,11 +131,11 @@ services:
       - peppertree_network
     restart: unless-stopped
     environment:
-      - REACT_APP_API_URL=http://192.168.1.102:5001/api
-      - REACT_APP_KEYCLOAK_URL=http://192.168.1.102:8081
+      - REACT_APP_API_URL=https://staging.17peppertree.co.za/api
+      - REACT_APP_KEYCLOAK_URL=https://staging.17peppertree.co.za/auth
       - REACT_APP_KEYCLOAK_REALM=peppertree
       - REACT_APP_KEYCLOAK_CLIENT_ID=peppertree-admin
-      - REACT_APP_KEYCLOAK_REDIRECT_URI=http://192.168.1.102:3001/auth/callback
+      - REACT_APP_KEYCLOAK_REDIRECT_URI=https://staging.17peppertree.co.za/auth/callback
 
   # Nginx Reverse Proxy for 17peppertree.co.za
   nginx:
@@ -142,12 +143,15 @@ services:
     container_name: peppertree_nginx_staging
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./config/nginx.staging.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
       - ./logs/nginx-staging:/var/log/nginx
     depends_on:
       - frontend
       - backend
+      - keycloak
     networks:
       - peppertree_network
     restart: unless-stopped

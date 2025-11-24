@@ -8,7 +8,8 @@ const KEYCLOAK_CONFIG = {
   url: process.env.REACT_APP_KEYCLOAK_URL || 'http://localhost:8080',
   realm: process.env.REACT_APP_KEYCLOAK_REALM || 'peppertree',
   clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || 'peppertree-admin',
-  redirectUri: process.env.REACT_APP_KEYCLOAK_REDIRECT_URI || `${window.location.origin}/auth/callback`
+  // Always use current origin for redirect to ensure localStorage consistency
+  redirectUri: `${window.location.origin}/auth/callback`
 };
 
 // Debug configuration
