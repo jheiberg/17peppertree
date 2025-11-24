@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+// Version: 2.0 - Updated at $(date +%s)
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../../services/apiService';
+import { useSecureApi } from '../../services/secureApiService';
 
 const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
   const api = useApi();
+  const secureApi = useSecureApi();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,41 +22,70 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
     payment_method: ''
   });
 
-  useEffect(() => {
-    fetchBookingDetails();
-  }, [bookingId]);
-
-  const fetchBookingDetails = async () => {
+  const fetchBookingDetails = useCallback(async () => {
+    if (!bookingId) return;
+    
+    console.log('BookingDetails: Using secureApi.getSecureBooking for booking', bookingId);
+    
     try {
       setLoading(true);
       setError(null);
-      const data = await api.get(`/admin/booking/${bookingId}`);
-      setBooking(data);
+      const response = await secureApi.getSecureBooking(bookingId);
+      console.log('Raw API response:', response);
+      // The secure API wraps the booking in a 'booking' property
+      const bookingData = response.booking || response;
+      console.log('Booking data after extraction:', bookingData);
+      console.log('Booking fields:', {
+        guest_name: bookingData.guest_name,
+        email: bookingData.email,
+        phone: bookingData.phone,
+        checkin_date: bookingData.checkin_date,
+        checkout_date: bookingData.checkout_date,
+        guests: bookingData.guests
+      });
+      setBooking(bookingData);
       setStatusForm({
-        status: data.status,
-        admin_notes: data.admin_notes || '',
+        status: bookingData.status,
+        admin_notes: bookingData.admin_notes || '',
         notify_guest: true
       });
       setPaymentForm({
-        payment_status: data.payment_status || 'pending',
-        payment_amount: data.payment_amount || '',
-        payment_reference: data.payment_reference || '',
-        payment_method: data.payment_method || ''
+        payment_status: bookingData.payment_status || 'pending',
+        payment_amount: bookingData.payment_amount || '',
+        payment_reference: bookingData.payment_reference || '',
+        payment_method: bookingData.payment_method || ''
       });
-      setError(null);
     } catch (err) {
       console.error('Failed to fetch booking details:', err);
-      setError('Failed to load booking details');
+      console.error('Error details:', {
+        message: err.message,
+        stack: err.stack,
+        response: err.response
+      });
+      if (err.message && err.message.includes('401')) {
+        setError('Authentication failed. Please refresh the page and log in again.');
+      } else {
+        setError(`Failed to load booking details: ${err.message || 'Unknown error'}`);
+      }
+      setBooking(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, [bookingId, secureApi]);
+
+  useEffect(() => {
+    if (bookingId) {
+      fetchBookingDetails();
+    }
+  }, [bookingId, fetchBookingDetails]);
 
   const handleStatusUpdate = async (e) => {
     e.preventDefault();
+    console.log('handleStatusUpdate called - using secureApi');
     try {
       setUpdating(true);
-      await api.put(`/admin/booking/${bookingId}/status`, statusForm);
+      console.log('Calling secureApi.put with:', `/booking/${bookingId}/status`, statusForm);
+      await secureApi.put(`/booking/${bookingId}/status`, statusForm);
       alert('Booking status updated successfully');
       fetchBookingDetails();
       onUpdate();
@@ -69,7 +101,7 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
     e.preventDefault();
     try {
       setUpdating(true);
-      await api.put(`/admin/booking/${bookingId}/payment`, paymentForm);
+      await secureApi.put(`/booking/${bookingId}/payment`, paymentForm);
       alert('Payment information updated successfully');
       fetchBookingDetails();
       onUpdate();
@@ -86,9 +118,11 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
       return;
     }
 
+    console.log('handleDelete called - using secureApi.delete');
     try {
       setUpdating(true);
-      await api.delete(`/admin/booking/${bookingId}`);
+      console.log('Calling secureApi.delete with:', `/booking/${bookingId}`);
+      await secureApi.delete(`/booking/${bookingId}`);
       alert('Booking deleted successfully');
       onBack();
       onUpdate();
@@ -163,11 +197,11 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Email:</span>
-              <span className="text-gray-900">{booking.guest_email}</span>
+              <span className="text-gray-900">{booking.email || booking.guest_email}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Phone:</span>
-              <span className="text-gray-900">{booking.guest_phone}</span>
+              <span className="text-gray-900">{booking.phone || booking.guest_phone}</span>
             </div>
           </div>
         </div>
@@ -177,11 +211,11 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Check-in:</span>
-              <span className="text-gray-900">{formatDate(booking.check_in)}</span>
+              <span className="text-gray-900">{formatDate(booking.checkin_date || booking.check_in)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Check-out:</span>
-              <span className="text-gray-900">{formatDate(booking.check_out)}</span>
+              <span className="text-gray-900">{formatDate(booking.checkout_date || booking.check_out)}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Number of Guests:</span>
@@ -349,5 +383,6 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
     </div>
   );
 };
+
 
 export default BookingDetails;

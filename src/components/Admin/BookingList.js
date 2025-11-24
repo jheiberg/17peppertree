@@ -3,7 +3,7 @@ import { useApi } from '../../services/apiService';
 import { useSecureApi } from '../../services/secureApiService';
 
 const BookingList = ({ onSelectBooking, onBack }) => {
-  const api = useApi();
+  const api = useApi(); // Keep for backwards compatibility if needed
   const secureApi = useSecureApi();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,7 @@ const BookingList = ({ onSelectBooking, onBack }) => {
 
   const updateBookingStatus = async (bookingId, status) => {
     try {
-      await api.put(`/admin/bookings/${bookingId}/status`, { status });
+      await secureApi.put(`/booking/${bookingId}/status`, { status });
       // Refresh bookings after status update
       fetchBookings();
     } catch (err) {
@@ -152,7 +152,7 @@ const BookingList = ({ onSelectBooking, onBack }) => {
       case 'name':
         return (a.guest_name || a.guestName || '').localeCompare(b.guest_name || b.guestName || '');
       case 'checkin':
-        return new Date(a.check_in || a.checkIn || '') - new Date(b.check_in || b.checkIn || '');
+        return new Date(a.checkin_date || a.check_in || a.checkIn || '') - new Date(b.checkin_date || b.check_in || b.checkIn || '');
       case 'date':
       default:
         return new Date(b.created_at || b.createdAt || '') - new Date(a.created_at || a.createdAt || '');
@@ -176,7 +176,7 @@ const BookingList = ({ onSelectBooking, onBack }) => {
       </div>
 
       <div className="bg-white rounded-xl shadow-brown p-6 border border-secondary/20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <input
               type="text"
@@ -203,24 +203,24 @@ const BookingList = ({ onSelectBooking, onBack }) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Sort by:</label>
             <select
               value={sortBy}
               onChange={handleSortChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
+              <option value="" disabled>Sort by...</option>
               <option value="date">Created Date</option>
               <option value="name">Guest Name</option>
               <option value="checkin">Check-in Date</option>
             </select>
           </div>
-          <div className="flex items-end">
+          <div>
             <button
               onClick={handleClearFilters}
               className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200"
             >
               <i className="fas fa-times mr-2"></i>
-              Clear
+              Clear Filters
             </button>
           </div>
         </div>
@@ -285,7 +285,7 @@ const BookingList = ({ onSelectBooking, onBack }) => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <p className="text-sm text-gray-500">Check-in - Check-out</p>
-                    <p className="font-medium">{formatDateRange(booking.check_in || booking.checkIn, booking.check_out || booking.checkOut)}</p>
+                    <p className="font-medium">{formatDateRange(booking.checkin_date || booking.check_in || booking.checkIn, booking.checkout_date || booking.check_out || booking.checkOut)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Guests</p>

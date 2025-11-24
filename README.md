@@ -20,6 +20,7 @@ A full-stack web application for the 17 @ Peppertree guest accommodation in Vred
 - **CORS support** for frontend integration
 - **OAuth2 authentication** with Keycloak integration
 - **Admin API endpoints** for booking and payment management
+- **iCal/ICS calendar sync** for integration with Airbnb, Booking.com, VRBO, etc.
 
 ### Infrastructure (Docker)
 - **Multi-container setup** with Docker Compose
@@ -36,6 +37,7 @@ A full-stack web application for the 17 @ Peppertree guest accommodation in Vred
 - **Dashboard with statistics** and recent activity
 - **Email notifications** to guests on status changes
 - **Role-based access control** for property management
+- **Calendar synchronization** - Export/import iCal feeds for multi-platform booking management
 
 ## 🚀 Quick Start
 
@@ -84,6 +86,17 @@ For Gmail, use an App Password (not your regular password).
 
 The admin portal provides secure management of bookings and payments. **See [ADMIN_SETUP.md](docs/ADMIN_SETUP.md) for detailed instructions.**
 
+### 📅 Calendar Synchronization
+
+Sync your bookings across multiple platforms (Airbnb, Booking.com, VRBO, LekkeSlaap, etc.):
+
+- **Export your bookings** - Get an iCal feed URL to import into other platforms
+- **Import external bookings** - Import calendars from other platforms to prevent double bookings
+- **Real-time updates** - Bookings sync automatically
+- **Multi-platform support** - Works with all major booking platforms
+
+**See [ICAL_SYNC.md](docs/ICAL_SYNC.md) for detailed setup and testing instructions.**
+
 ### Quick Setup
 ```bash
 # 1. Start services with Keycloak
@@ -126,6 +139,11 @@ The PostgreSQL database is automatically initialized with:
 
 ### Admin API (Protected)
 - `GET /api/admin/bookings` - List all bookings with filtering
+
+### iCal Sync API
+- `GET /api/ical/bookings.ics` - Export iCal feed of confirmed/approved bookings
+- `POST /api/ical/import` - Import bookings from external iCal feed
+- `GET /api/ical/info` - Get sync information and platform instructions
 - `GET /api/admin/booking/{id}` - Get detailed booking information
 - `PUT /api/admin/booking/{id}/status` - Update booking status with notifications
 - `PUT /api/admin/booking/{id}/payment` - Update payment information
@@ -242,6 +260,22 @@ Health checks are configured for:
 - **Backend**: HTTP GET to `/api/health`
 - **Database**: PostgreSQL connection check
 - **Nginx**: Built-in health endpoint
+
+## 🧪 Testing
+
+### Calendar Sync Testing
+Run the automated iCal sync test:
+```bash
+./test-ical-sync.sh
+```
+
+This tests:
+- Export functionality
+- iCal format validation
+- Import functionality
+- Database integration
+
+**See [ICAL_SYNC.md](docs/ICAL_SYNC.md) for manual testing with Google Calendar and other platforms.**
 
 ## 🐛 Troubleshooting
 

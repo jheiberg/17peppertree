@@ -286,3 +286,129 @@ def get_client_info():
         'token_info': secure_client.get_token_info(),
         'timestamp': datetime.now(timezone.utc).isoformat()
     })
+@secure_api_bp.route('/booking/<int:booking_id>/status', methods=['PUT'])
+@user_or_client_required
+def update_secure_booking_status(booking_id):
+    """Update booking status via secure API"""
+    try:
+        booking = db.session.get(BookingRequest, booking_id)
+        
+        if not booking:
+            return jsonify({'error': 'Booking not found'}), 404
+        
+        data = request.get_json()
+        new_status = data.get('status')
+        admin_notes = data.get('admin_notes')
+        notify_guest = data.get('notify_guest', True)
+        
+        # Validate status
+        valid_statuses = ['pending', 'approved', 'confirmed', 'rejected', 'cancelled', 'completed']
+        if new_status not in valid_statuses:
+            return jsonify({'error': f'Invalid status. Must be one of: {", ".join(valid_statuses)}'}), 400
+        
+        # Update booking
+        old_status = booking.status
+        booking.status = new_status
+        if admin_notes:
+            booking.admin_notes = admin_notes
+        booking.updated_at = datetime.now(timezone.utc)
+        
+        db.session.commit()
+        
+        # Send notification email if requested
+        if notify_guest and old_status != new_status:
+            try:
+                from flask_mail import Mail
+                mail = Mail(current_app)
+                email_service = EmailNotification(mail)
+                email_service.send_status_update_email(booking)
+                logger.info(f"Status update email sent for booking {booking_id}")
+            except Exception as e:
+                logger.error(f"Failed to send status email: {e}")
+        
+        return jsonify({
+            'message': 'Booking status updated successfully',
+            'booking_id': booking.id,
+            'status': booking.status
+        })
+    
+    except Exception as e:
+        logger.error(f"Failed to update booking status: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to update booking status'}), 500
+
+@secure_api_bp.route('/booking/<int:booking_id>/payment', methods=['PUT'])
+@user_or_client_required
+def update_secure_booking_payment(booking_id):
+    """Update payment information via secure API"""
+    try:
+        booking = db.session.get(BookingRequest, booking_id)
+        
+        if not booking:
+            return jsonify({'error': 'Booking not found'}), 404
+        
+        data = request.get_json()
+        payment_status = data.get('payment_status')
+        payment_amount = data.get('payment_amount')
+        payment_reference = data.get('payment_reference')
+        payment_method = data.get('payment_method')
+        
+        # Validate payment status
+        valid_payment_statuses = ['pending', 'paid', 'partial', 'refunded', 'cancelled']
+        if payment_status and payment_status not in valid_payment_statuses:
+            return jsonify({'error': f'Invalid payment status'}), 400
+        
+        # Update payment information
+        if payment_status:
+            booking.payment_status = payment_status
+        if payment_amount is not None:
+            booking.payment_amount = payment_amount
+        if payment_reference:
+            booking.payment_reference = payment_reference
+        if payment_method:
+            booking.payment_method = payment_method
+        
+        # Set payment date if marking as paid
+        if payment_status == 'paid' and not booking.payment_date:
+            booking.payment_date = datetime.now(timezone.utc)
+        
+        booking.updated_at = datetime.now(timezone.utc)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Payment information updated successfully',
+            'booking_id': booking.id,
+            'payment_status': booking.payment_status
+        })
+    
+    except Exception as e:
+        logger.error(f"Failed to update payment: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to update payment information'}), 500
+
+@secure_api_bp.route('/booking/<int:booking_id>', methods=['DELETE'])
+@user_or_client_required
+def delete_secure_booking(booking_id):
+    """Delete a booking via secure API (soft delete)"""
+    try:
+        booking = db.session.get(BookingRequest, booking_id)
+        
+        if not booking:
+            return jsonify({'error': 'Booking not found'}), 404
+        
+        # Soft delete by setting status to deleted
+        booking.status = 'deleted'
+        booking.deleted_at = datetime.now(timezone.utc)
+        booking.updated_at = datetime.now(timezone.utc)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Booking deleted successfully',
+            'booking_id': booking.id
+        })
+    
+    except Exception as e:
+        logger.error(f"Failed to delete booking: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Failed to delete booking'}), 500

@@ -124,7 +124,7 @@ Please review and respond to this booking request.
             property_info = self._get_property_info()
             subject = f"Booking Update - {property_info['name']} (ID: {booking.id})"
             
-            if booking.status == 'confirmed':
+            if booking.status in ['confirmed', 'approved']:
                 status_message = "CONFIRMED! We're excited to welcome you."
                 additional_info = f"""Please note the following for your stay:
 - Check-in time: 2:00 PM - 7:00 PM
@@ -133,9 +133,18 @@ Please review and respond to this booking request.
 - Contact: {property_info['phone']}
 
 We look forward to hosting you!"""
-            else:
+            elif booking.status == 'rejected':
                 status_message = "We regret to inform you that your booking request could not be confirmed."
                 additional_info = "Please feel free to contact us for alternative dates or if you have any questions."
+            elif booking.status == 'cancelled':
+                status_message = "Your booking has been cancelled."
+                additional_info = "If this was not requested by you, please contact us immediately."
+            elif booking.status == 'completed':
+                status_message = "Thank you for staying with us!"
+                additional_info = "We hope you enjoyed your stay. We would love to welcome you back in the future!"
+            else:
+                status_message = f"Your booking status has been updated to: {booking.status.upper()}"
+                additional_info = "If you have any questions, please contact us."
             
             body = f"""Dear {booking.guest_name},
 

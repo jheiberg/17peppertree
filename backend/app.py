@@ -9,6 +9,7 @@ from email_notifications import EmailNotification
 from database import DatabaseManager, BookingRequest, db
 from auth import init_auth_routes
 from admin_routes import admin_bp
+from ical_routes import ical_bp
 
 # Load environment variables from .env file in backend directory
 env_path = Path(__file__).parent / '.env'
@@ -64,6 +65,9 @@ app.register_blueprint(admin_bp)
 # Register secure API blueprint
 from secure_api_routes import secure_api_bp
 app.register_blueprint(secure_api_bp)
+
+# Register iCal blueprint
+app.register_blueprint(ical_bp)
 
 # API Routes
 @app.route('/api/health', methods=['GET'])
@@ -208,9 +212,9 @@ def get_availability():
         else:
             end_date = datetime(year, month + 1, 1).date() - timedelta(days=1)
         
-        # Query for confirmed bookings that overlap with the requested month
+        # Query for confirmed/approved bookings that overlap with the requested month
         confirmed_bookings = BookingRequest.query.filter(
-            BookingRequest.status == 'confirmed',
+            BookingRequest.status.in_(['confirmed', 'approved']),
             BookingRequest.checkin_date <= end_date,
             BookingRequest.checkout_date >= start_date
         ).all()
@@ -224,7 +228,9 @@ def get_availability():
             end_booking_date = min(booking.checkout_date, end_date + timedelta(days=1))
             
             while current_date < end_booking_date:
-                unavailable_dates.add(current_date.isoformat())
+                # Format date as YYYY/MM/DD to match calendar format
+                date_str = current_date.strftime('%Y/%m/%d')
+                unavailable_dates.add(date_str)
                 current_date += timedelta(days=1)
         
         return jsonify({

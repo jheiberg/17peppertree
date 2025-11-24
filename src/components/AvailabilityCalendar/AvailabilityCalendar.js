@@ -14,8 +14,10 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
       );
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched unavailable dates:', data.unavailable_dates);
         const unavailableSet = new Set(data.unavailable_dates);
         setUnavailableDates(unavailableSet);
+        console.log('Unavailable dates Set:', unavailableSet);
       }
     } catch (error) {
       console.error('Error fetching availability:', error);
@@ -66,10 +68,14 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
   };
 
   const getDateStatus = (dateStr) => {
+    // Check unavailable first - it should override selection
+    if (isDateUnavailable(dateStr)) {
+      console.log(`Date ${dateStr} is UNAVAILABLE`);
+      return 'unavailable';
+    }
     if (isCheckInDate(dateStr)) return 'checkin';
     if (isCheckOutDate(dateStr)) return 'checkout';
     if (isDateInRange(dateStr)) return 'in-range';
-    if (isDateUnavailable(dateStr)) return 'unavailable';
     return 'available';
   };
 
@@ -133,9 +139,10 @@ const AvailabilityCalendar = ({ onDateSelect, selectedDates, minDate }) => {
       let title = 'Available - Click to select';
       let content = day;
 
-      if (disabled) {
+      if (disabled && status !== 'unavailable') {
+        // Only apply gray style to past dates, not unavailable (booked) dates
         dayClass += ' bg-gray-100 text-gray-400 cursor-not-allowed';
-        title = 'Past date or unavailable';
+        title = 'Past date';
       } else {
         switch (status) {
           case 'checkin':

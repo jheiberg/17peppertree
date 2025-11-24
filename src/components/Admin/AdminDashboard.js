@@ -1,11 +1,12 @@
+// Updated: 2025-11-24 11:26
 import React, { useState, useEffect } from 'react';
-import { act } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApi } from '../../services/apiService';
 import { useSecureApi } from '../../services/secureApiService';
 import BookingList from './BookingList';
 import BookingDetails from './BookingDetails';
 import DashboardStats from './DashboardStats';
+import CalendarSync from './CalendarSync';
 
 const AdminDashboard = () => {
   const { user, isAdmin, logout } = useAuth();
@@ -27,24 +28,16 @@ const AdminDashboard = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      act(() => {
-        setLoading(true);
-        setError(null);
-      });
+      setLoading(true);
+      setError(null);
       // Use secure API for dashboard stats
       const data = await secureApi.getSecureDashboardStats();
-      act(() => {
-        setStats(data);
-      });
+      setStats(data);
     } catch (err) {
       console.error('Failed to fetch dashboard stats:', err);
-      act(() => {
-        setError('Failed to load dashboard statistics');
-      });
+      setError('Failed to load dashboard statistics');
     } finally {
-      act(() => {
-        setLoading(false);
-      });
+      setLoading(false);
     }
   };
 
@@ -116,6 +109,21 @@ const AdminDashboard = () => {
                 <i className="fas fa-calendar-alt mr-2"></i>
                 Bookings
               </button>
+              <button
+                onClick={() => {
+                  setSelectedBooking(null);
+                  setCurrentView('calendar-sync');
+                  setError(null);
+                }}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  currentView === 'calendar-sync'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <i className="fas fa-sync mr-2"></i>
+                Calendar Sync
+              </button>
             </nav>
 
             {/* User menu */}
@@ -168,6 +176,21 @@ const AdminDashboard = () => {
             >
               <i className="fas fa-calendar-alt mr-2"></i>
               Bookings
+            </button>
+            <button
+              onClick={() => {
+                setSelectedBooking(null);
+                setCurrentView('calendar-sync');
+                setError(null);
+              }}
+              className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                currentView === 'calendar-sync'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <i className="fas fa-sync mr-2"></i>
+              Calendar Sync
             </button>
           </div>
         </div>
@@ -224,6 +247,12 @@ const AdminDashboard = () => {
                 bookingId={selectedBooking.id}
                 onBack={handleBackToList}
                 onUpdate={fetchDashboardStats}
+              />
+            )}
+
+            {currentView === 'calendar-sync' && (
+              <CalendarSync
+                onBack={handleBackToDashboard}
               />
             )}
           </>

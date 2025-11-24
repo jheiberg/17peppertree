@@ -139,12 +139,19 @@ const DashboardStats = ({ stats, onViewBookings }) => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {stats.recent_bookings.map(booking => (
+                  {stats.recent_bookings.map(booking => {
+                    console.log('DashboardStats booking:', booking);
+                    console.log('checkin_date value:', booking.checkin_date);
+                    const dateValue = booking.checkin_date || booking.check_in;
+                    console.log('Using date value:', dateValue);
+                    const dateObj = new Date(dateValue);
+                    console.log('Date object:', dateObj, 'isValid:', !isNaN(dateObj.getTime()));
+                    return (
                     <tr key={booking.id} className="hover:bg-gray-50 transition-colors duration-200">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{booking.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{booking.guest_name}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(booking.check_in).toLocaleDateString('en-ZA')}
+                        {dateValue ? new Date(dateValue).toLocaleDateString('en-ZA') : 'No date'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>
@@ -157,7 +164,8 @@ const DashboardStats = ({ stats, onViewBookings }) => {
                         </span>
                       </td>
                     </tr>
-                  ))}
+                  )}
+                  )}
                 </tbody>
               </table>
             </div>

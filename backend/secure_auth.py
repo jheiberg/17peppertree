@@ -99,23 +99,34 @@ class SecureAuth:
                 logger.error(f"Public key not found for kid: {kid}")
                 return None
 
-            # Verify and decode the token
-            expected_issuer = f"{self.server_url}/realms/{self.realm}"
-            decoded = jwt.decode(
+            # Decode token without strict issuer validation first
+            unverified_decoded = jwt.decode(
                 token,
                 key=public_keys[kid],
                 algorithms=['RS256'],
                 audience="account",
-                issuer=expected_issuer
+                options={"verify_signature": True, "verify_iss": False}
             )
+            
+            # Manually verify issuer - accept both localhost and internal keycloak URLs
+            token_issuer = unverified_decoded.get('iss', '')
+            allowed_issuers = [
+                f"http://keycloak:8080/realms/{self.realm}",
+                f"http://localhost:8080/realms/{self.realm}",
+                f"http://192.168.1.102:8080/realms/{self.realm}",
+            ]
+            
+            if token_issuer not in allowed_issuers:
+                logger.error(f"Invalid issuer: {token_issuer}. Expected one of: {allowed_issuers}")
+                return None
 
             # Verify this is a user token (not service account)
-            preferred_username = decoded.get('preferred_username', '')
+            preferred_username = unverified_decoded.get('preferred_username', '')
             if preferred_username.startswith('service-account-'):
                 logger.error(f"Service account token not allowed for user endpoints: {preferred_username}")
                 return None
 
-            return decoded
+            return unverified_decoded
 
         except jwt.ExpiredSignatureError:
             logger.error("Token has expired")
