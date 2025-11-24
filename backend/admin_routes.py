@@ -64,6 +64,7 @@ def get_all_bookings():
                 'payment_amount': float(booking.payment_amount) if booking.payment_amount else None,
                 'payment_date': booking.payment_date.isoformat() if booking.payment_date else None,
                 'payment_reference': booking.payment_reference,
+                'payment_method': booking.payment_method,
                 'admin_notes': booking.admin_notes,
                 'created_at': booking.created_at.isoformat(),
                 'updated_at': booking.updated_at.isoformat() if booking.updated_at else None
@@ -106,6 +107,7 @@ def get_booking_details(booking_id):
             'payment_amount': float(booking.payment_amount) if booking.payment_amount else None,
             'payment_date': booking.payment_date.isoformat() if booking.payment_date else None,
             'payment_reference': booking.payment_reference,
+            'payment_method': booking.payment_method,
             'admin_notes': booking.admin_notes,
             'created_at': booking.created_at.isoformat(),
             'updated_at': booking.updated_at.isoformat() if booking.updated_at else None
@@ -206,10 +208,10 @@ def update_payment_status(booking_id):
         if payment_amount is not None:
             booking.payment_amount = payment_amount
         
-        if payment_reference:
+        if payment_reference is not None:
             booking.payment_reference = payment_reference
         
-        if payment_method:
+        if payment_method is not None:
             booking.payment_method = payment_method
         
         # Set payment date if marking as paid

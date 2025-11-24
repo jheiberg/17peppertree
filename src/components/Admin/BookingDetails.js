@@ -21,6 +21,7 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
     payment_reference: '',
     payment_method: ''
   });
+  const [skipFormReset, setSkipFormReset] = useState(false);
 
   const fetchBookingDetails = useCallback(async () => {
     if (!bookingId) return;
@@ -49,12 +50,25 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
         admin_notes: bookingData.admin_notes || '',
         notify_guest: true
       });
-      setPaymentForm({
-        payment_status: bookingData.payment_status || 'pending',
-        payment_amount: bookingData.payment_amount || '',
-        payment_reference: bookingData.payment_reference || '',
-        payment_method: bookingData.payment_method || ''
-      });
+      
+      // Only reset payment form if we're not skipping (i.e., not just after an update)
+      if (!skipFormReset) {
+        console.log('Setting payment form with data:', {
+          payment_status: bookingData.payment_status,
+          payment_amount: bookingData.payment_amount,
+          payment_reference: bookingData.payment_reference,
+          payment_method: bookingData.payment_method
+        });
+        setPaymentForm({
+          payment_status: bookingData.payment_status || 'pending',
+          payment_amount: bookingData.payment_amount != null && bookingData.payment_amount !== '' ? parseFloat(bookingData.payment_amount).toFixed(2) : '',
+          payment_reference: bookingData.payment_reference || '',
+          payment_method: bookingData.payment_method || ''
+        });
+      } else {
+        console.log('Skipping payment form reset after update');
+        setSkipFormReset(false);
+      }
     } catch (err) {
       console.error('Failed to fetch booking details:', err);
       console.error('Error details:', {
@@ -101,13 +115,28 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
     e.preventDefault();
     try {
       setUpdating(true);
+      console.log('Updating payment with data:', paymentForm);
+      
+      // Set flag to skip form reset on next fetch
+      setSkipFormReset(true);
+      
       await secureApi.put(`/booking/${bookingId}/payment`, paymentForm);
+      
+      // Update the booking object with the new payment info without refetching
+      setBooking(prev => ({
+        ...prev,
+        payment_status: paymentForm.payment_status,
+        payment_amount: paymentForm.payment_amount,
+        payment_reference: paymentForm.payment_reference,
+        payment_method: paymentForm.payment_method
+      }));
+      
       alert('Payment information updated successfully');
-      fetchBookingDetails();
       onUpdate();
     } catch (err) {
       console.error('Failed to update payment:', err);
       alert('Failed to update payment information');
+      setSkipFormReset(false);
     } finally {
       setUpdating(false);
     }
@@ -144,6 +173,23 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
 
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString('en-ZA');
+  };
+
+  const formatCurrency = (amount) => {
+    if (!amount || amount === 0) {
+      return new Intl.NumberFormat('en-ZA', {
+        style: 'currency',
+        currency: 'ZAR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(0);
+    }
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
   };
 
   if (loading) {
@@ -220,6 +266,10 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
             <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-700">Number of Guests:</span>
               <span className="text-gray-900">{booking.guests}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="font-medium text-gray-700">Amount (ZAR):</span>
+              <span className="text-gray-900 font-semibold">{formatCurrency(booking.payment_amount)}</span>
             </div>
             <div className="py-2">
               <span className="font-medium text-gray-700 block mb-2">Special Requests:</span>
@@ -303,6 +353,12 @@ const BookingDetails = ({ bookingId, onBack, onUpdate }) => {
                 step="0.01"
                 value={paymentForm.payment_amount}
                 onChange={(e) => setPaymentForm({...paymentForm, payment_amount: e.target.value})}
+                onBlur={(e) => {
+                  const value = parseFloat(e.target.value);
+                  if (!isNaN(value)) {
+                    setPaymentForm({...paymentForm, payment_amount: value.toFixed(2)});
+                  }
+                }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="0.00"
               />
