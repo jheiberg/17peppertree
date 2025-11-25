@@ -33,6 +33,17 @@ global.fetch = jest.fn();
 describe('Contact Component', () => {
   beforeEach(() => {
     fetch.mockClear();
+    
+    // Default mock for rates API
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        rates: [
+          { amount: 850, guests: 1 },
+          { amount: 950, guests: 2 }
+        ]
+      })
+    });
   });
 
   describe('Rendering', () => {
@@ -42,12 +53,16 @@ describe('Contact Component', () => {
       expect(screen.getByText('Contact us to reserve your perfect getaway')).toBeInTheDocument();
     });
 
-    test('renders contact information', () => {
+    test('renders contact information', async () => {
       render(<Contact />);
       expect(screen.getByText('Phone')).toBeInTheDocument();
       expect(screen.getByText('063 630 7345')).toBeInTheDocument();
-      expect(screen.getByText('R850')).toBeInTheDocument();
-      expect(screen.getByText('per night for 2 guests')).toBeInTheDocument();
+      
+      // Wait for rates to load
+      await waitFor(() => {
+        expect(screen.getByText(/R850/)).toBeInTheDocument();
+      });
+      
       expect(screen.getByText('Rated 4.9/5 by 68 guests')).toBeInTheDocument();
     });
 

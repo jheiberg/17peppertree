@@ -18,7 +18,8 @@ const CalendarSync = ({ onBack }) => {
   const fetchIcalInfo = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/ical/info');
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/ical/info`);
       const data = await response.json();
       setIcalInfo(data);
     } catch (err) {
@@ -49,7 +50,8 @@ const CalendarSync = ({ onBack }) => {
       setImporting(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/ical/import', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/ical/import`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

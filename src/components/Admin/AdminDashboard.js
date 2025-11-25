@@ -1,4 +1,4 @@
-// Updated: 2025-11-24 11:26
+// Updated: 2025-11-25 12:31
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApi } from '../../services/apiService';
@@ -7,6 +7,7 @@ import BookingList from './BookingList';
 import BookingDetails from './BookingDetails';
 import DashboardStats from './DashboardStats';
 import CalendarSync from './CalendarSync';
+import RateManagement from './RateManagement';
 
 const AdminDashboard = () => {
   const { user, isAdmin, logout } = useAuth();
@@ -124,6 +125,21 @@ const AdminDashboard = () => {
                 <i className="fas fa-sync mr-2"></i>
                 Calendar Sync
               </button>
+              <button
+                onClick={() => {
+                  setSelectedBooking(null);
+                  setCurrentView('rates');
+                  setError(null);
+                }}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  currentView === 'rates'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <i className="fas fa-money-bill-wave mr-2"></i>
+                Rates
+              </button>
             </nav>
 
             {/* User menu */}
@@ -192,6 +208,21 @@ const AdminDashboard = () => {
               <i className="fas fa-sync mr-2"></i>
               Calendar Sync
             </button>
+            <button
+              onClick={() => {
+                setSelectedBooking(null);
+                setCurrentView('rates');
+                setError(null);
+              }}
+              className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                currentView === 'rates'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <i className="fas fa-money-bill-wave mr-2"></i>
+              Rates
+            </button>
           </div>
         </div>
       </header>
@@ -254,6 +285,10 @@ const AdminDashboard = () => {
               <CalendarSync
                 onBack={handleBackToDashboard}
               />
+            )}
+
+            {currentView === 'rates' && (
+              <RateManagement />
             )}
           </>
         )}

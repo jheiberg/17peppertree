@@ -97,3 +97,46 @@ class BookingRequest(db.Model):
             'payment_reference': self.payment_reference,
             'admin_notes': self.admin_notes
         }
+
+
+class Rate(db.Model):
+    """Database model for room rates and special pricing"""
+    __tablename__ = 'rates'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    rate_type = db.Column(db.String(50), nullable=False)  # 'base' or 'special'
+    guests = db.Column(db.Integer, nullable=False)  # 1 or 2
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    
+    # Date range for special rates (NULL for base rates)
+    start_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.Date, nullable=True)
+    
+    # Description for special rates
+    description = db.Column(db.String(255))
+    
+    # Active status
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # Audit fields
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    created_by = db.Column(db.String(120))
+    updated_by = db.Column(db.String(120))
+    
+    def to_dict(self):
+        """Convert rate to dictionary for JSON serialization"""
+        return {
+            'id': self.id,
+            'rate_type': self.rate_type,
+            'guests': self.guests,
+            'amount': float(self.amount),
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'description': self.description,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'created_by': self.created_by,
+            'updated_by': self.updated_by
+        }

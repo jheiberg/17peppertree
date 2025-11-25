@@ -216,3 +216,41 @@ def user_or_client_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def admin_required(f):
+    """Decorator to protect admin routes with flexible issuer validation"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check for Authorization header
+        auth_header = request.headers.get('Authorization')
+        
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'No valid authorization token provided'}), 401
+        
+        token = auth_header.split(' ')[1]
+        
+        # Verify the user token with flexible issuer
+        decoded = secure_auth.verify_user_token(token)
+        if not decoded:
+            return jsonify({'error': 'Invalid or expired token'}), 401
+        
+        # Check if user has admin role
+        realm_access = decoded.get('realm_access', {})
+        roles = realm_access.get('roles', [])
+        
+        if 'admin' not in roles and 'peppertree-admin' not in roles:
+            return jsonify({'error': 'Insufficient permissions'}), 403
+        
+        # Add user info to request context
+        request.user = {
+            'sub': decoded.get('sub'),
+            'email': decoded.get('email'),
+            'name': decoded.get('name'),
+            'preferred_username': decoded.get('preferred_username'),
+            'roles': roles
+        }
+        
+        return f(*args, **kwargs)
+    
+    return decorated_function

@@ -23,7 +23,9 @@ class SecureApiService {
       ...options,
     };
 
-    const url = `${this.secureBaseURL}${endpoint}`;
+    // Use baseURL if skipSecurePrefix is true, otherwise use secureBaseURL
+    const baseUrl = options.skipSecurePrefix ? this.baseURL : this.secureBaseURL;
+    const url = `${baseUrl}${endpoint}`;
 
     try {
       const response = await fetch(url, config);
@@ -140,6 +142,43 @@ class SecureApiService {
 
   async getClientInfo() {
     return this.get('/client/info');
+  }
+
+  // Rate management methods
+  async getRates(filters = {}) {
+    const queryParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        queryParams.append(key, value);
+      }
+    });
+    
+    const endpoint = queryParams.toString() ? `/admin/rates/?${queryParams}` : '/admin/rates/';
+    return this.get(endpoint, { skipSecurePrefix: true });
+  }
+
+  async getRate(rateId) {
+    return this.get(`/admin/rates/${rateId}`, { skipSecurePrefix: true });
+  }
+
+  async createRate(rateData) {
+    return this.post('/admin/rates/', rateData, { skipSecurePrefix: true });
+  }
+
+  async updateRate(rateId, rateData) {
+    return this.put(`/admin/rates/${rateId}`, rateData, { skipSecurePrefix: true });
+  }
+
+  async deleteRate(rateId) {
+    return this.delete(`/admin/rates/${rateId}`, { skipSecurePrefix: true });
+  }
+
+  async getBaseRates() {
+    return this.get('/admin/rates/base', { skipSecurePrefix: true });
+  }
+
+  async calculateRate(bookingData) {
+    return this.post('/admin/rates/calculate', bookingData, { skipSecurePrefix: true });
   }
 
   // File upload with authentication to secure endpoints

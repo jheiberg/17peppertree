@@ -67,7 +67,7 @@ export function LoginPage() {
           ) : (
             <div className="flex items-center justify-center gap-3">
               <i className="fas fa-sign-in-alt"></i>
-              Sign in with Keycloak
+              Sign in
             </div>
           )}
         </button>

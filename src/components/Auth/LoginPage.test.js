@@ -77,7 +77,7 @@ describe('LoginPage Component', () => {
       expect(screen.getByText('17 @ Peppertree')).toBeInTheDocument();
       expect(screen.getByText('Welcome')).toBeInTheDocument();
       expect(screen.getByText('Please sign in to access your account')).toBeInTheDocument();
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
       expect(screen.getByText('Return to main site')).toBeInTheDocument();
     });
 
@@ -101,7 +101,7 @@ describe('LoginPage Component', () => {
     test('renders login button with correct styling', () => {
       renderWithRouter();
 
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       expect(loginButton.closest('button')).toHaveClass(
         'w-full', 'bg-gradient-to-r', 'from-primary', 'to-accent', 'text-white'
       );
@@ -140,7 +140,7 @@ describe('LoginPage Component', () => {
       renderWithRouter();
 
       expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
-      expect(screen.queryByText('Sign in with Keycloak')).not.toBeInTheDocument();
+      expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
 
       const spinner = document.querySelector('.animate-spin');
       expect(spinner).toBeInTheDocument();
@@ -164,14 +164,14 @@ describe('LoginPage Component', () => {
       renderWithRouter();
 
       expect(screen.getByText('Checking authentication...')).toBeInTheDocument();
-      expect(screen.queryByText('Sign in with Keycloak')).not.toBeInTheDocument();
+      expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
     });
 
     test('renders main content when initialized and not loading', () => {
       renderWithRouter();
 
       expect(screen.queryByText('Checking authentication...')).not.toBeInTheDocument();
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
     });
   });
 
@@ -231,7 +231,7 @@ describe('LoginPage Component', () => {
       });
 
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
     });
 
     test('does not redirect when not initialized yet', async () => {
@@ -321,7 +321,7 @@ describe('LoginPage Component', () => {
       const user = userEvent.setup();
       renderWithRouter();
 
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       await user.click(loginButton);
 
       expect(mockLogin).toHaveBeenCalledTimes(1);
@@ -339,12 +339,12 @@ describe('LoginPage Component', () => {
 
       const { rerender } = renderWithRouter();
 
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       await user.click(loginButton);
 
       // Should show loading state
       expect(screen.getByText('Signing in...')).toBeInTheDocument();
-      expect(screen.queryByText('Sign in with Keycloak')).not.toBeInTheDocument();
+      expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
 
       const loadingSpinner = document.querySelector('.animate-spin');
       expect(loadingSpinner).toBeInTheDocument();
@@ -390,7 +390,7 @@ describe('LoginPage Component', () => {
 
       renderWithRouter();
 
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       await user.click(loginButton);
 
       await waitFor(() => {
@@ -398,10 +398,10 @@ describe('LoginPage Component', () => {
       });
 
       // Should reset to normal state
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
       expect(screen.queryByText('Signing in...')).not.toBeInTheDocument();
 
-      const button = screen.getByText('Sign in with Keycloak').closest('button');
+      const button = screen.getByText('Sign in').closest('button');
       expect(button).not.toBeDisabled();
     });
 
@@ -416,7 +416,7 @@ describe('LoginPage Component', () => {
 
       renderWithRouter();
 
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       await user.click(loginButton);
 
       const button = screen.getByText('Signing in...').closest('button');
@@ -437,10 +437,10 @@ describe('LoginPage Component', () => {
       // Start with unauthenticated state
       const { rerender } = renderWithRouter();
 
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
 
       // Click login
-      const loginButton = screen.getByText('Sign in with Keycloak');
+      const loginButton = screen.getByText('Sign in');
       await user.click(loginButton);
 
       // Should show loading
@@ -510,7 +510,7 @@ describe('LoginPage Component', () => {
       );
 
       expect(screen.queryByText('Checking authentication...')).not.toBeInTheDocument();
-      expect(screen.getByText('Sign in with Keycloak')).toBeInTheDocument();
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
     });
 
     test('sessionStorage integration with return URL', async () => {
@@ -545,7 +545,7 @@ describe('LoginPage Component', () => {
     test('button has correct accessibility attributes', () => {
       renderWithRouter();
 
-      const button = screen.getByText('Sign in with Keycloak').closest('button');
+      const button = screen.getByText('Sign in').closest('button');
       expect(button).toBeInTheDocument();
       expect(button).not.toBeDisabled();
     });
@@ -561,7 +561,7 @@ describe('LoginPage Component', () => {
 
       renderWithRouter();
 
-      await user.click(screen.getByText('Sign in with Keycloak'));
+      await user.click(screen.getByText('Sign in'));
 
       const button = screen.getByText('Signing in...').closest('button');
       expect(button).toBeDisabled();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AvailabilityCalendar from '../AvailabilityCalendar/AvailabilityCalendar';
 
 const Contact = () => {
@@ -11,6 +11,34 @@ const Contact = () => {
     phone: '',
     message: ''
   });
+
+  const [baseRates, setBaseRates] = useState({ 1: 850, 2: 950 });
+  const [ratesLoading, setRatesLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBaseRates();
+  }, []);
+
+  const fetchBaseRates = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/rates/base`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.rates && data.rates.length > 0) {
+          const ratesMap = {};
+          data.rates.forEach(rate => {
+            ratesMap[rate.guests] = rate.amount;
+          });
+          setBaseRates(ratesMap);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch base rates:', error);
+      // Keep default rates on error
+    } finally {
+      setRatesLoading(false);
+    }
+  };
 
   // Format date input to yyyy/mm/dd and validate
   const formatDateInput = (value) => {
@@ -237,10 +265,27 @@ const Contact = () => {
             </div>
             <div className="bg-white/10 backdrop-blur-custom p-8 rounded-2xl text-center">
               <h3 className="text-white text-lg font-display mb-4">Rates</h3>
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-5xl font-bold text-gold">R850</span>
-                <span className="text-cream">per night for 2 guests</span>
-              </div>
+              {ratesLoading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <div className="animate-pulse text-5xl font-bold text-gold">Loading...</div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-3">
+                  {baseRates[1] && (
+                    <div className="text-center">
+                      <span className="text-3xl font-bold text-gold">R{baseRates[1].toFixed(0)}</span>
+                      <span className="text-cream text-sm ml-2">1 guest</span>
+                    </div>
+                  )}
+                  {baseRates[2] && (
+                    <div className="text-center">
+                      <span className="text-3xl font-bold text-gold">R{baseRates[2].toFixed(0)}</span>
+                      <span className="text-cream text-sm ml-2">2 guests</span>
+                    </div>
+                  )}
+                  <span className="text-cream text-xs">per night</span>
+                </div>
+              )}
             </div>
             <div className="bg-white/10 backdrop-blur-custom p-8 rounded-2xl text-center">
               <div className="text-gold text-2xl mb-4">

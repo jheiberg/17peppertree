@@ -25,7 +25,7 @@ const Header = () => {
         </div>
         <ul className={`${
           isMenuOpen
-            ? 'fixed left-0 top-[70px] flex-col bg-primary/98 backdrop-blur-custom w-full text-center transition-all duration-300 py-8 shadow-lg rounded-b-2xl z-50'
+            ? 'fixed left-0 top-[70px] flex-col bg-primary w-full text-center transition-all duration-300 py-8 shadow-lg rounded-b-2xl z-[60]'
             : 'hidden lg:flex'
         } lg:flex list-none gap-8`}>
           <li className={isMenuOpen ? 'my-4 opacity-0 transform translate-y-5 animate-fade-in-up' : ''}>

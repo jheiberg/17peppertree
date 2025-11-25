@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
+import SpecialOffers from './components/SpecialOffers/SpecialOffers';
 import Accommodation from './components/Accommodation/Accommodation';
 import Amenities from './components/Amenities/Amenities';
 import Location from './components/Location/Location';
@@ -17,6 +18,7 @@ function HomePage() {
   return (
     <>
       <Header />
+      <SpecialOffers />
       <Hero />
       <Accommodation />
       <Amenities />

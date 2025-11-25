@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Hero from './Hero';
 
@@ -14,10 +14,25 @@ Object.defineProperty(document, 'getElementById', {
   writable: true
 });
 
+// Mock fetch for rate API
+global.fetch = jest.fn();
+
 describe('Hero Component', () => {
   beforeEach(() => {
     mockScrollIntoView.mockClear();
     mockGetElementById.mockClear();
+    fetch.mockClear();
+    
+    // Default mock for rates API
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        rates: [
+          { amount: 850, guests: 1 },
+          { amount: 950, guests: 2 }
+        ]
+      })
+    });
   });
 
   describe('Rendering', () => {
@@ -44,10 +59,13 @@ describe('Hero Component', () => {
       expect(screen.getByText('4.9/5 (68 reviews)')).toBeInTheDocument();
     });
 
-    test('renders price information', () => {
+    test('renders price information', async () => {
       render(<Hero />);
       
-      expect(screen.getByText('From R850')).toBeInTheDocument();
+      // Wait for rate to load
+      await waitFor(() => {
+        expect(screen.getByText(/From R850/)).toBeInTheDocument();
+      });
       expect(screen.getByText('per night')).toBeInTheDocument();
     });
 
@@ -182,12 +200,14 @@ describe('Hero Component', () => {
       expect(ratingText).toHaveClass('text-cream', 'font-medium');
     });
 
-    test('price section has correct structure', () => {
+    test('price section has correct structure', async () => {
       render(<Hero />);
 
-      const priceText = screen.getByText('From R850');
-      expect(priceText).toBeInTheDocument();
-      expect(priceText).toHaveClass('text-gold');
+      await waitFor(() => {
+        const priceText = screen.getByText(/From R850/);
+        expect(priceText).toBeInTheDocument();
+        expect(priceText).toHaveClass('text-gold');
+      });
 
       const pricePeriod = screen.getByText('per night');
       expect(pricePeriod).toBeInTheDocument();
@@ -207,14 +227,16 @@ describe('Hero Component', () => {
   });
 
   describe('Content Accuracy', () => {
-    test('displays correct property information', () => {
+    test('displays correct property information', async () => {
       render(<Hero />);
       
       // Verify all text content is accurate
       expect(screen.getByText('17 @ Peppertree')).toBeInTheDocument();
       expect(screen.getByText('Premium Self Catering Guest Room in Vredekloof, Brackenfell')).toBeInTheDocument();
       expect(screen.getByText('4.9/5 (68 reviews)')).toBeInTheDocument();
-      expect(screen.getByText('From R850')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/From R850/)).toBeInTheDocument();
+      });
       expect(screen.getByText('per night')).toBeInTheDocument();
     });
 

@@ -69,6 +69,10 @@ app.register_blueprint(secure_api_bp)
 # Register iCal blueprint
 app.register_blueprint(ical_bp)
 
+# Register rate management blueprint
+from rate_routes import rates_bp
+app.register_blueprint(rates_bp)
+
 # API Routes
 @app.route('/api/health', methods=['GET'])
 def health_check():
