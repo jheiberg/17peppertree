@@ -21,7 +21,10 @@ const Hero = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const fetchBaseRate = async () => {
+  const fetchBaseRate = async (retryCount = 0) => {
+    const maxRetries = 3;
+    const retryDelay = 2000; // 2 seconds between retries
+    
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/rates/base`);
       if (response.ok) {
@@ -30,12 +33,30 @@ const Hero = () => {
           // Get the minimum base rate (for 1 guest)
           const minRate = Math.min(...data.rates.map(r => r.amount));
           setBaseRate(minRate);
+          setLoading(false);
+          return;
         }
+      }
+      
+      // If no rates found or response not ok, retry
+      if (retryCount < maxRetries) {
+        console.log(`Retrying fetch base rate (${retryCount + 1}/${maxRetries})...`);
+        setTimeout(() => fetchBaseRate(retryCount + 1), retryDelay);
+      } else {
+        console.error('Failed to fetch base rate after maximum retries');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Failed to fetch base rate:', error);
-    } finally {
-      setLoading(false);
+      
+      // Retry on error
+      if (retryCount < maxRetries) {
+        console.log(`Retrying fetch base rate after error (${retryCount + 1}/${maxRetries})...`);
+        setTimeout(() => fetchBaseRate(retryCount + 1), retryDelay);
+      } else {
+        console.error('Failed to fetch base rate after maximum retries');
+        setLoading(false);
+      }
     }
   };
 
