@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Hero = () => {
-  const [baseRate, setBaseRate] = useState(850);
+  const [baseRate, setBaseRate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasBanner, setHasBanner] = useState(false);
 
@@ -34,7 +34,6 @@ const Hero = () => {
       }
     } catch (error) {
       console.error('Failed to fetch base rate:', error);
-      // Keep default rate on error
     } finally {
       setLoading(false);
     }
@@ -77,24 +76,26 @@ const Hero = () => {
           </div>
           <span className="text-cream font-medium">4.9/5 (68 reviews)</span>
         </div>
-        <div className="mb-8">
-          {loading ? (
-            <div className="animate-pulse">
-              <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
-                Loading...
-              </span>
-            </div>
-          ) : (
-            <>
-              <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
-                From R{baseRate.toFixed(0)}
-              </span>
-              <span className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
-                per night
-              </span>
-            </>
-          )}
-        </div>
+        {(loading || baseRate !== null) && (
+          <div className="mb-8">
+            {loading ? (
+              <div className="animate-pulse">
+                <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
+                  Loading...
+                </span>
+              </div>
+            ) : (
+              <>
+                <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
+                  From R{baseRate.toFixed(0)}
+                </span>
+                <span className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
+                  per night
+                </span>
+              </>
+            )}
+          </div>
+        )}
         <button
           onClick={scrollToContact}
           className="btn-primary"
