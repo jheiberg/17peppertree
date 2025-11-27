@@ -26,7 +26,6 @@ const Hero = () => {
 
   return (
     <section
-      id="home"
       className={`${heightClass} bg-cover bg-center bg-fixed flex items-center justify-center text-center text-white relative`}
       style={{
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./images/hero-background.png')`
@@ -52,12 +51,12 @@ const Hero = () => {
         </div>
         {!rateLoading && baseRate !== null && (
           <div className="mb-8">
-            <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
+            <div className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold">
               From R{baseRate.toFixed(0)}
-            </span>
-            <span className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
+            </div>
+            <div className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
               per night
-            </span>
+            </div>
           </div>
         )}
         {rateLoading && (

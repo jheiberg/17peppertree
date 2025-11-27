@@ -19,8 +19,10 @@ function HomePage() {
   return (
     <SpecialOffersProvider>
       <Header />
-      <SpecialOffers />
-      <Hero />
+      <div id="home">
+        <SpecialOffers />
+        <Hero />
+      </div>
       <Accommodation />
       <Amenities />
       <Location />

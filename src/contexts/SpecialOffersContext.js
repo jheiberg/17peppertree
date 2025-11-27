@@ -20,7 +20,10 @@ export const SpecialOffersProvider = ({ children }) => {
     fetchRates();
   }, []);
 
-  const fetchRates = async () => {
+  const fetchRates = async (retryCount = 0) => {
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second
+
     try {
       // Fetch both special rates and base rates in parallel
       const [specialResponse, baseResponse] = await Promise.all([
@@ -73,12 +76,32 @@ export const SpecialOffersProvider = ({ children }) => {
         }
       } else {
         console.log('SpecialOffersContext: API response not OK:', specialResponse.status);
+        
+        // If API error (not 404), retry
+        if (retryCount < maxRetries && specialResponse.status >= 500) {
+          console.log(`SpecialOffersContext: Retrying fetch (${retryCount + 1}/${maxRetries})...`);
+          setTimeout(() => fetchRates(retryCount + 1), retryDelay);
+          return;
+        }
+        
         setHasActiveSpecials(false);
+        setLoading(false);
       }
+      
+      // Success path
+      setLoading(false);
+      
     } catch (error) {
       console.error('SpecialOffersContext: Failed to fetch rates:', error);
+      
+      // Retry on network error
+      if (retryCount < maxRetries) {
+        console.log(`SpecialOffersContext: Retrying fetch after error (${retryCount + 1}/${maxRetries})...`);
+        setTimeout(() => fetchRates(retryCount + 1), retryDelay);
+        return;
+      }
+      
       setHasActiveSpecials(false);
-    } finally {
       setLoading(false);
     }
   };
