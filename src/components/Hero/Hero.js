@@ -1,64 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useSpecialOffers } from '../../contexts/SpecialOffersContext';
 
 const Hero = () => {
-  const [baseRate, setBaseRate] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [hasBanner, setHasBanner] = useState(false);
+  const { baseRates, hasActiveSpecials, loading } = useSpecialOffers();
 
-  useEffect(() => {
-    fetchBaseRate();
-    
-    // Check for banner after component mounts and on updates
-    const checkBanner = () => {
-      const banner = document.querySelector('section.bg-gradient-to-r');
-      setHasBanner(banner !== null);
-    };
-    
-    checkBanner();
-    // Recheck after a short delay to ensure SpecialOffers has rendered
-    const timer = setTimeout(checkBanner, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  // Get the minimum base rate (for 1 guest) from the baseRates map
+  const baseRate = baseRates[1] || null;
+  const rateLoading = loading;
 
-  const fetchBaseRate = async (retryCount = 0) => {
-    const maxRetries = 3;
-    const retryDelay = 2000; // 2 seconds between retries
-    
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/rates/base`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.rates && data.rates.length > 0) {
-          // Get the minimum base rate (for 1 guest)
-          const minRate = Math.min(...data.rates.map(r => r.amount));
-          setBaseRate(minRate);
-          setLoading(false);
-          return;
-        }
-      }
-      
-      // If no rates found or response not ok, retry
-      if (retryCount < maxRetries) {
-        console.log(`Retrying fetch base rate (${retryCount + 1}/${maxRetries})...`);
-        setTimeout(() => fetchBaseRate(retryCount + 1), retryDelay);
-      } else {
-        console.error('Failed to fetch base rate after maximum retries');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Failed to fetch base rate:', error);
-      
-      // Retry on error
-      if (retryCount < maxRetries) {
-        console.log(`Retrying fetch base rate after error (${retryCount + 1}/${maxRetries})...`);
-        setTimeout(() => fetchBaseRate(retryCount + 1), retryDelay);
-      } else {
-        console.error('Failed to fetch base rate after maximum retries');
-        setLoading(false);
-      }
-    }
-  };
 
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -67,9 +16,13 @@ const Hero = () => {
     }
   };
 
-  const heightClass = hasBanner 
-    ? "min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] md:min-h-[calc(100vh-180px)] md:max-h-[calc(100vh-180px)]"
-    : "h-screen";
+  // Wait for specials to finish loading before determining height
+  // This ensures we know definitively whether the banner will be shown
+  const heightClass = loading 
+    ? "h-screen" // Default to full screen while loading
+    : hasActiveSpecials 
+      ? "min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] md:min-h-[calc(100vh-180px)] md:max-h-[calc(100vh-180px)]"
+      : "h-screen";
 
   return (
     <section
@@ -97,24 +50,21 @@ const Hero = () => {
           </div>
           <span className="text-cream font-medium">4.9/5 (68 reviews)</span>
         </div>
-        {(loading || baseRate !== null) && (
+        {!rateLoading && baseRate !== null && (
           <div className="mb-8">
-            {loading ? (
-              <div className="animate-pulse">
-                <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
-                  Loading...
-                </span>
-              </div>
-            ) : (
-              <>
-                <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
-                  From R{baseRate.toFixed(0)}
-                </span>
-                <span className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
-                  per night
-                </span>
-              </>
-            )}
+            <span className="text-5xl lg:text-5xl md:text-4xl sm:text-3xl font-bold text-gold mr-2">
+              From R{baseRate.toFixed(0)}
+            </span>
+            <span className="text-xl lg:text-xl md:text-lg sm:text-base text-cream">
+              per night
+            </span>
+          </div>
+        )}
+        {rateLoading && (
+          <div className="mb-8 animate-pulse">
+            <span className="text-3xl lg:text-3xl md:text-2xl sm:text-xl font-bold text-gold/50">
+              Loading rates...
+            </span>
           </div>
         )}
         <button

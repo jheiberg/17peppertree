@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { SpecialOffersProvider } from './contexts/SpecialOffersContext';
 import Header from './components/Header/Header';
 import Hero from './components/Hero/Hero';
 import SpecialOffers from './components/SpecialOffers/SpecialOffers';
@@ -16,7 +17,7 @@ import AuthCallback from './components/Auth/AuthCallback';
 
 function HomePage() {
   return (
-    <>
+    <SpecialOffersProvider>
       <Header />
       <SpecialOffers />
       <Hero />
@@ -25,7 +26,7 @@ function HomePage() {
       <Location />
       <Contact />
       <Footer />
-    </>
+    </SpecialOffersProvider>
   );
 }
 

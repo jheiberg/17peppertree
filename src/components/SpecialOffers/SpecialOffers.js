@@ -1,52 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useSpecialOffers } from '../../contexts/SpecialOffersContext';
 
 const SpecialOffers = () => {
-  const [specialRates, setSpecialRates] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchSpecialRates();
-  }, []);
-
-  const fetchSpecialRates = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/rates/?type=special&active=true`
-      );
-      
-      console.log('SpecialOffers: Fetching rates...');
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('SpecialOffers: API response:', data);
-        
-        if (data.rates && data.rates.length > 0) {
-          // Show current and upcoming specials (not expired)
-          const currentDate = new Date();
-          currentDate.setHours(0, 0, 0, 0); // Start of today
-          
-          const activeSpecials = data.rates.filter(rate => {
-            const endDate = new Date(rate.end_date);
-            endDate.setHours(23, 59, 59, 999); // End of end date
-            const isValid = endDate >= currentDate;
-            console.log(`SpecialOffers: Rate "${rate.description}" - End: ${rate.end_date}, Valid: ${isValid}`);
-            return isValid; // Show if end date is today or in future
-          });
-          
-          console.log('SpecialOffers: Active specials count:', activeSpecials.length);
-          setSpecialRates(activeSpecials);
-        } else {
-          console.log('SpecialOffers: No rates in response');
-        }
-      } else {
-        console.log('SpecialOffers: API response not OK:', response.status);
-      }
-    } catch (error) {
-      console.error('SpecialOffers: Failed to fetch special rates:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { specialRates, baseRates, loading } = useSpecialOffers();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -68,9 +24,14 @@ const SpecialOffers = () => {
   };
 
   const calculateSavings = (specialAmount, guests) => {
-    // Get base rate for comparison
-    const baseRates = { 1: 850, 2: 950 };
-    const baseRate = baseRates[guests] || 850;
+    // Get actual base rate from database
+    const baseRate = baseRates[guests];
+    
+    // Only calculate savings if we have a base rate
+    if (!baseRate) {
+      return { savings: 0, percentage: 0 };
+    }
+    
     const savings = baseRate - specialAmount;
     const percentage = Math.round((savings / baseRate) * 100);
     return { savings, percentage };
@@ -109,7 +70,7 @@ const SpecialOffers = () => {
                   <div className="flex items-center justify-between md:gap-3">
                     <div className="text-center">
                       <div className="text-xl md:text-3xl font-bold">R{rate.amount.toFixed(0)}</div>
-                      <div className="text-[10px] md:text-xs opacity-90">{rate.guests}g</div>
+                      <div className="text-[10px] md:text-xs opacity-90">per {rate.guests} guest{rate.guests !== 1 ? 's' : ''}</div>
                     </div>
                     
                     <div className="flex-1 pl-2 md:border-l-2 md:border-white/50 md:pl-3">
