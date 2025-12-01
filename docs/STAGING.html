@@ -412,6 +412,11 @@ input[type="checkbox"] {
 </thead>
 <tbody>
 <tr>
+<td><strong>0</strong></td>
+<td>Clone repository to VPS</td>
+<td>Initial setup only</td>
+</tr>
+<tr>
 <td><strong>1</strong></td>
 <td>Run setup script on VPS</td>
 <td>Initial setup only</td>
@@ -510,7 +515,12 @@ input[type="checkbox"] {
 <hr>
 <h2>Table of Contents</h2>
 <ol>
-<li><a href="#one-time-manual-setup">🔵 One-Time Manual Setup</a></li>
+<li><a href="#one-time-manual-setup">🔵 One-Time Manual Setup</a>
+  <ul>
+    <li><a href="#step-0-clone-repository">Step 0: Clone Repository</a></li>
+    <li><a href="#step-1-run-setup-script">Step 1: Run Setup Script</a></li>
+  </ul>
+</li>
 <li><a href="#github-actions-automated">🟢 GitHub Actions (Automated)</a></li>
 <li><a href="#daily-workflow">Daily Workflow</a></li>
 <li><a href="#what-the-script-does">What the Script Does</a></li>
@@ -533,6 +543,43 @@ After this, GitHub Actions handles all deployments automatically.</p>
 <li>Root or sudo access</li>
 <li>Staging subdomain DNS record (or will create after setup)</li>
 </ul>
+
+<h3 id="step-0-clone-repository">Step 0: Clone Repository to Server</h3>
+
+<blockquote>
+<p><strong>⚠️ First Time Setup:</strong> You need to get the code onto the server before running the setup script!</p>
+</blockquote>
+
+<p><strong>SSH to your VPS:</strong></p>
+<pre><code class="language-bash">ssh root@YOUR-VPS-IP
+# Or: ssh your-username@YOUR-VPS-IP
+</code></pre>
+
+<p><strong>Create staging directory and clone repository:</strong></p>
+<pre><code class="language-bash"># Create directory for staging
+sudo mkdir -p /opt/peppertree-staging
+cd /opt/peppertree-staging
+
+# Clone repository (main branch for staging)
+sudo git clone -b main https://github.com/jheiberg/17peppertree.git .
+
+# Verify files are there
+ls -la
+# You should see: scripts/, docker-compose.staging.yml, etc.
+</code></pre>
+
+<p><strong>Or if you already have the repo locally:</strong></p>
+<pre><code class="language-bash"># On your local machine, copy to server
+rsync -avz --exclude 'node_modules' \
+  /home/jako/Development/17@peppertree/ \
+  root@YOUR-VPS-IP:/opt/peppertree-staging/
+
+# Then SSH to server
+ssh root@YOUR-VPS-IP
+cd /opt/peppertree-staging
+</code></pre>
+
+<hr>
 
 <h3>Understanding IP Addresses</h3>
 <p>You'll work with two types of IPs:</p>
@@ -564,7 +611,7 @@ After this, GitHub Actions handles all deployments automatically.</p>
 <li>VPS server IP: <code>154.12.34.56</code> (where staging is hosted)</li>
 <li>You whitelist YOUR public IP so you can access the VPS</li>
 </ul>
-<h3>Step 1: Run the Staging Setup Script</h3>
+<h3 id="step-1-run-setup-script">Step 1: Run the Staging Setup Script</h3>
 
 <blockquote>
 <p><strong>💡 Find your public IP:</strong> Visit <a href="https://whatismyipaddress.com" target="_blank">whatismyipaddress.com</a> or run <code>curl ifconfig.me</code></p>
