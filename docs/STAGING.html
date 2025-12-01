@@ -317,14 +317,11 @@ input[type="checkbox"] {
 </head>
 <body>
   <nav>
-    <a href="index.html" >🏠 Home</a>
-    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
-    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
-    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
-    <a href="AUTHENTICATION.html" >🔐 Auth</a>
-    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
-    <a href="ICAL_SYNC.html" >📅 Calendar</a>
-    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+    <a href="index.html">🏠 Home</a>
+    <a href="FEATURES.html">✨ Features</a>
+    <a href="DEVELOPMENT_GUIDE.html">💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html">🚀 Deployment</a>
+    <a href="ADMIN_SETUP.html">👨‍💼 Admin</a>
   </nav>
   
   <main>
@@ -347,7 +344,7 @@ input[type="checkbox"] {
 <li><a href="#troubleshooting">Troubleshooting</a></li>
 </ol>
 <hr>
-<h2>Quick Setup (5 Minutes)</h2>
+<h2 id="quick-setup-5-minutes">Quick Setup (5 Minutes)</h2>
 <h3>Prerequisites</h3>
 <ul>
 <li>VPS setup completed (<code>vps-secure-setup.sh</code> already run)</li>
@@ -436,7 +433,7 @@ docker compose -f docker-compose.staging.yml logs -f
 <li>✅ Staging site loads</li>
 </ol>
 <hr>
-<h2>What the Script Does</h2>
+<h2 id="what-the-script-does">What the Script Does</h2>
 <h3>1. Installs Prerequisites</h3>
 <ul>
 <li><code>apache2-utils</code> (for htpasswd command)</li>
@@ -468,7 +465,7 @@ docker compose -f docker-compose.staging.yml logs -f
 <li>Firewall rules (ports 8080, 8443)</li>
 </ul>
 <hr>
-<h2>Post-Setup Configuration</h2>
+<h2 id="post-setup-configuration">Post-Setup Configuration</h2>
 <h3>Update Docker Compose for SSL</h3>
 <p>Edit <code>/opt/peppertree-staging/docker-compose.staging.yml</code>:</p>
 <pre><code class="language-yaml">services:
@@ -492,7 +489,7 @@ docker compose -f docker-compose.staging.yml logs -f
     restart: unless-stopped
 </code></pre>
 <hr>
-<h2>Managing Staging Users</h2>
+<h2 id="managing-staging-users">Managing Staging Users</h2>
 <p>The script creates a convenient command: <code>staging-users</code></p>
 <h3>Add a User</h3>
 <pre><code class="language-bash">staging-users add newuser
@@ -511,7 +508,7 @@ docker restart peppertree_nginx_staging
 <pre><code class="language-bash">staging-users list
 </code></pre>
 <hr>
-<h2>Access Methods Overview</h2>
+<h2 id="access-methods-overview">Access Methods Overview</h2>
 <p>You have <strong>5 options</strong> for keeping staging private:</p>
 <h3>Method 1: Subdomain with HTTP Basic Auth ⭐ <strong>RECOMMENDED</strong></h3>
 <ul>
@@ -549,7 +546,7 @@ docker restart peppertree_nginx_staging
 <li><strong>Best for:</strong> Developer testing only</li>
 </ul>
 <hr>
-<h2>Alternative Setup Methods</h2>
+<h2 id="alternative-setup-methods">Alternative Setup Methods</h2>
 <h3>Method 2: Non-Standard Port (Manual Setup)</h3>
 <p>If you prefer simple port-based access without passwords:</p>
 <p><strong>Docker Compose Configuration:</strong></p>
@@ -686,7 +683,7 @@ docker-compose.staging.yml:
 <li>Not suitable for non-technical users</li>
 </ul>
 <hr>
-<h2>Security Features</h2>
+<h2 id="security-features">Security Features</h2>
 <h3>Layer 1: IP Whitelist</h3>
 <ul>
 <li>Only specified IPs can access</li>
@@ -747,7 +744,7 @@ curl -u admin:password https://staging.17peppertree.co.za/api/health
 {&quot;status&quot;: &quot;healthy&quot;}
 </code></pre>
 <hr>
-<h2>Troubleshooting</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <h3>Can&#39;t Access Staging (403 Forbidden)</h3>
 <p><strong>Check IP Whitelist:</strong></p>
 <pre><code class="language-bash"># View your current IP

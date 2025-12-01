@@ -120,7 +120,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
     container_name: peppertree_frontend_staging
     ports:
       - "3001:3000"

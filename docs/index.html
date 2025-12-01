@@ -318,214 +318,208 @@ input[type="checkbox"] {
 <body>
   <nav>
     <a href="index.html" class="active">🏠 Home</a>
-    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
-    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
-    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
-    <a href="AUTHENTICATION.html" >🔐 Auth</a>
-    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
-    <a href="ICAL_SYNC.html" >📅 Calendar</a>
-    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+    <a href="FEATURES.html">✨ Features</a>
+    <a href="DEVELOPMENT_GUIDE.html">💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html">🚀 Deployment</a>
+    <a href="ADMIN_SETUP.html">👨‍💼 Admin</a>
   </nav>
   
   <main>
-    <h1>📚 Documentation Index</h1>
+    <h1>📚 Documentation Hub</h1>
 <blockquote>
 <p><strong>17 @ Peppertree Hospitality Booking System</strong><br>Complete documentation for setup, deployment, and maintenance</p>
 </blockquote>
+
 <hr>
-<h2>🚀 Getting Started</h2>
-<p>Start here if you&#39;re new to the project:</p>
+
+<h2>🚀 Quick Start</h2>
+<p>New to the project? Start here:</p>
+
+<ol>
+<li><strong>Clone and setup</strong>
+<pre><code>git clone &lt;repo&gt;
+cd 17@peppertree
+cp .env.example .env</code></pre>
+</li>
+<li><strong>Start services</strong>
+<pre><code>docker-compose up --build</code></pre>
+</li>
+<li><strong>Access applications</strong>
+<ul>
+<li>Frontend: <a href="http://localhost:3000">http://localhost:3000</a></li>
+<li>Admin: <a href="http://localhost:3000/admin">http://localhost:3000/admin</a></li>
+<li>API: <a href="http://localhost:5000/api">http://localhost:5000/api</a></li>
+</ul>
+</li>
+</ol>
+
+<hr>
+
+<h2>📖 Core Documentation</h2>
 <table>
 <thead>
 <tr>
-<th>Document</th>
+<th style="width: 30%">Document</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
-<td><a href="README.html">README</a></td>
-<td>Main project documentation and quick start guide</td>
+<tbody>
+<tr>
+<td><a href="FEATURES.html">✨ <strong>Features</strong></a></td>
+<td>Complete feature guide: rates, special offers, calendar sync, admin portal, emails</td>
 </tr>
 <tr>
-<td><a href="DEVELOPMENT_GUIDE.html">DEVELOPMENT_GUIDE.md</a></td>
-<td>Local development setup and workflow</td>
+<td><a href="DEVELOPMENT_GUIDE.html">💻 <strong>Development</strong></a></td>
+<td>Local development setup, workflow, and debugging</td>
 </tr>
 <tr>
-<td><a href="DOCKER_SETUP.html">DOCKER_SETUP.md</a></td>
-<td>Docker configuration and container management</td>
+<td><a href="DEPLOYMENT_GUIDE.html">🚀 <strong>Deployment</strong></a></td>
+<td>Production and staging deployment instructions</td>
+</tr>
+<tr>
+<td><a href="ADMIN_SETUP.html">👨‍💼 <strong>Admin Setup</strong></a></td>
+<td>Admin portal configuration with Keycloak authentication</td>
 </tr>
 </tbody></table>
+
 <hr>
-<h2>⚙️ Features &amp; Setup</h2>
-<p>Configure and enable application features:</p>
+
+<h2>🔧 Technical Guides</h2>
 <table>
 <thead>
 <tr>
-<th>Document</th>
+<th style="width: 30%">Guide</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
-<td><a href="ADMIN_SETUP.html">ADMIN_SETUP.md</a></td>
-<td>Admin portal configuration with Keycloak</td>
+<tbody>
+<tr>
+<td><a href="DOCKER_SETUP.html">🐳 Docker Setup</a></td>
+<td>Container configuration and management</td>
 </tr>
 <tr>
-<td><a href="AUTHENTICATION.html">AUTHENTICATION.md</a></td>
-<td>OAuth2/OIDC authentication details</td>
+<td><a href="AUTHENTICATION.html">🔐 Authentication</a></td>
+<td>OAuth2/OIDC implementation details</td>
 </tr>
 <tr>
-<td><a href="ICAL_SYNC.html">ICAL_SYNC.md</a></td>
-<td><strong>NEW!</strong> Calendar synchronization with booking platforms</td>
-</tr>
-</tbody></table>
-<hr>
-<h2>🌐 Deployment</h2>
-<p>Deploy the application to staging and production:</p>
-<table>
-<thead>
-<tr>
-<th>Document</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a></td>
-<td>Production deployment and CI/CD instructions</td>
+<td><a href="ICAL_SYNC.html">📅 Calendar Sync</a></td>
+<td>iCal integration with Airbnb, Booking.com, etc.</td>
 </tr>
 <tr>
-<td><a href="STAGING.html">STAGING.md</a></td>
-<td>Staging environment setup and access control</td>
-</tr>
-<tr>
-<td><a href="VPS_SETUP_GUIDE.html">VPS_SETUP_GUIDE.md</a></td>
+<td><a href="VPS_SETUP_GUIDE.html">🖥️ VPS Setup</a></td>
 <td>VPS hosting configuration and hardening</td>
 </tr>
 <tr>
-<td><a href="SYSTEM_REQUIREMENTS.html">SYSTEM_REQUIREMENTS.md</a></td>
-<td>System specs, versions, and requirements</td>
+<td><a href="SYSTEM_REQUIREMENTS.html">⚙️ System Requirements</a></td>
+<td>Hardware, software, and dependency specifications</td>
 </tr>
 </tbody></table>
+
 <hr>
-<h2>🧪 Testing &amp; Quality</h2>
-<p>Ensure application quality and reliability:</p>
+
+<h2>🧪 Testing & Operations</h2>
 <table>
 <thead>
 <tr>
-<th>Document</th>
+<th style="width: 30%">Document</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
-<td><a href="APIDOG_TESTING_GUIDE.html">APIDOG_TESTING_GUIDE.md</a></td>
-<td>API testing with Apidog</td>
+<tbody>
+<tr>
+<td><a href="RESPONSIVE_TESTING.html">📱 Responsive Testing</a></td>
+<td>Mobile and responsive design testing procedures</td>
 </tr>
 <tr>
-<td><a href="RESPONSIVE_TESTING.html">RESPONSIVE_TESTING.md</a></td>
-<td>Mobile and responsive design testing</td>
+<td><a href="APIDOG_TESTING_GUIDE.html">🔌 API Testing</a></td>
+<td>API endpoint testing with Apidog</td>
 </tr>
 <tr>
-<td><a href="TEST_COVERAGE_TODO.html">TEST_COVERAGE_TODO.md</a></td>
-<td>Test coverage status and TODOs</td>
+<td><a href="STAGING.html">🎭 Staging Environment</a></td>
+<td>Staging setup and testing workflow</td>
+</tr>
+<tr>
+<td><a href="HA_DR_PLAN.html">🛡️ HA/DR Plan</a></td>
+<td>High availability and disaster recovery strategy</td>
+</tr>
+<tr>
+<td><a href="TEST_COVERAGE_TODO.html">✅ Test Coverage</a></td>
+<td>Test coverage status and improvement roadmap</td>
 </tr>
 </tbody></table>
 <hr>
-<h2>🛡️ Operations</h2>
-<p>Maintain and monitor your deployment:</p>
+
+<h2>🎯 Quick Reference</h2>
+
+<h3>📦 Technology Stack</h3>
+<ul>
+<li><strong>Frontend:</strong> React, Tailwind CSS</li>
+<li><strong>Backend:</strong> Flask (Python), PostgreSQL</li>
+<li><strong>Infrastructure:</strong> Docker, Nginx, Keycloak</li>
+<li><strong>Auth:</strong> OAuth2/OIDC with PKCE</li>
+</ul>
+
+<h3>🔗 Important URLs</h3>
 <table>
 <thead>
 <tr>
-<th>Document</th>
-<th>Description</th>
+<th>Service</th>
+<th>Development</th>
+<th>Production</th>
 </tr>
 </thead>
-<tbody><tr>
-<td><a href="HA_DR_PLAN.html">HA_DR_PLAN.md</a></td>
-<td>High availability and disaster recovery planning</td>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td><a href="http://localhost:3000">localhost:3000</a></td>
+<td>https://17peppertree.co.za</td>
 </tr>
-</tbody></table>
+<tr>
+<td>Admin</td>
+<td><a href="http://localhost:3000/admin">localhost:3000/admin</a></td>
+<td>https://17peppertree.co.za/admin</td>
+</tr>
+<tr>
+<td>API</td>
+<td><a href="http://localhost:5000/api">localhost:5000/api</a></td>
+<td>https://17peppertree.co.za/api</td>
+</tr>
+<tr>
+<td>Keycloak</td>
+<td><a href="http://localhost:8080">localhost:8080</a></td>
+<td>https://auth.17peppertree.co.za</td>
+</tr>
+</tbody>
+</table>
+
+<h3>⚡ Common Commands</h3>
+<pre><code># Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f backend
+
+# Database access
+docker exec -it peppertree_db psql -U postgres -d peppertree
+
+# Restart service
+docker-compose restart backend
+
+# Stop all services
+docker-compose down</code></pre>
 <hr>
-<h2>🔍 Quick Links by Topic</h2>
-<h3>🏠 Booking Management</h3>
+
+<h2>📞 Support & Contact</h2>
 <ul>
-<li>📝 <a href="README.html#quick-start">Creating bookings</a></li>
-<li>✅ <a href="ADMIN_SETUP.md#features">Admin approval workflow</a></li>
-<li>📧 <a href="README.html#-email-configuration">Email notifications</a></li>
+<li><strong>Property:</strong> 063 630 7345</li>
+<li><strong>Address:</strong> 17 Peperboom Crescent, Vredekloof, Brackenfell, 7560</li>
 </ul>
-<h3>📅 Calendar Integration</h3>
-<ul>
-<li>🔄 <a href="ICAL_SYNC.html">iCal export/import</a></li>
-<li>🏡 <a href="ICAL_SYNC.md#airbnb">Airbnb integration</a></li>
-<li>🏨 <a href="ICAL_SYNC.md#bookingcom">Booking.com integration</a></li>
-<li>🧪 <a href="ICAL_SYNC.md#testing-without-live-bookings">Testing calendar sync</a></li>
-</ul>
-<h3>🔐 Security &amp; Authentication</h3>
-<ul>
-<li>🔑 <a href="ADMIN_SETUP.md#2-configure-keycloak">Keycloak setup</a></li>
-<li>🛡️ <a href="AUTHENTICATION.md#authentication-flow">OAuth2 flow</a></li>
-<li>👤 <a href="ADMIN_SETUP.md#access-the-admin-portal">Admin access control</a></li>
-</ul>
-<h3>🚀 Deployment</h3>
-<ul>
-<li>💻 <a href="DEVELOPMENT_GUIDE.html">Development</a></li>
-<li>🧪 <a href="STAGING.html">Staging</a></li>
-<li>🌐 <a href="DEPLOYMENT_GUIDE.html">Production</a></li>
-<li>🖥️ <a href="VPS_SETUP_GUIDE.html">VPS hosting</a></li>
-</ul>
-<h3>🧪 Testing</h3>
-<ul>
-<li>🔌 <a href="APIDOG_TESTING_GUIDE.html">API testing</a></li>
-<li>📅 <a href="ICAL_SYNC.md#testing-without-live-bookings">Calendar sync testing</a></li>
-<li>📱 <a href="RESPONSIVE_TESTING.html">Responsive testing</a></li>
-</ul>
-<h3>🐛 Troubleshooting</h3>
-<ul>
-<li>🔧 <a href="README.html#-troubleshooting">Common issues</a></li>
-<li>📅 <a href="ICAL_SYNC.md#troubleshooting">Calendar sync issues</a></li>
-<li>🐳 <a href="DOCKER_SETUP.md#troubleshooting">Docker issues</a></li>
-</ul>
+
 <hr>
-<h2>📊 Documentation Status</h2>
-<table>
-<thead>
-<tr>
-<th>Category</th>
-<th>Documents</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Getting Started</td>
-<td>3</td>
-<td>✅ Complete</td>
-</tr>
-<tr>
-<td>Features &amp; Setup</td>
-<td>3</td>
-<td>✅ Complete</td>
-</tr>
-<tr>
-<td>Deployment</td>
-<td>4</td>
-<td>✅ Complete</td>
-</tr>
-<tr>
-<td>Testing</td>
-<td>3</td>
-<td>⚠️ In Progress</td>
-</tr>
-<tr>
-<td>Operations</td>
-<td>1</td>
-<td>✅ Complete</td>
-</tr>
-<tr>
-<td><strong>Total</strong></td>
-<td><strong>14</strong></td>
-<td><strong>93% Complete</strong></td>
-</tr>
-</tbody></table>
-<hr>
-<p><strong>Last Updated:</strong> 2025-11-24<br><strong>Version:</strong> 1.0<br><strong>Project:</strong> 17 @ Peppertree Hospitality Booking System</p>
+
+<p style="text-align: center; color: var(--text-muted);">
+<strong>Last Updated:</strong> 2025-12-01 | <strong>Version:</strong> 1.0 | Built with ❤️ for 17 @ Peppertree
+</p>
 
   </main>
   

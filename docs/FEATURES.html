@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features & Capabilities - 17 @ Peppertree</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">🏠 Home</a>
+    <a href="FEATURES.html" class="active">✨ Features</a>
+    <a href="DEVELOPMENT_GUIDE.html">💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html">🚀 Deployment</a>
+    <a href="ADMIN_SETUP.html">👨‍💼 Admin</a>
+  </nav>
+  
+  <main>
+    <h1>✨ Features & Capabilities</h1>
+    
+    <blockquote>
+      <p>Comprehensive feature documentation for the 17 @ Peppertree booking system</p>
+    </blockquote>
+
+    <h2>📋 Table of Contents</h2>
+    <ul>
+      <li><a href="#rate-management">Rate Management</a></li>
+      <li><a href="#special-offers">Special Offers Display</a></li>
+      <li><a href="#calendar-sync">Calendar Synchronization</a></li>
+      <li><a href="#admin-portal">Admin Portal</a></li>
+      <li><a href="#email-notifications">Email Notifications</a></li>
+    </ul>
+
+    <hr>
+
+    <h2 id="rate-management">💰 Rate Management</h2>
+    
+    <p>Flexible pricing system supporting base rates and special promotional pricing.</p>
+
+    <h3>Base Rates</h3>
+    <ul>
+      <li>Set default rates for 1 or 2 guests</li>
+      <li>Only one active base rate per guest count</li>
+      <li>Automatically displayed on public website</li>
+      <li>Default: R850 (1 guest), R950 (2 guests)</li>
+    </ul>
+
+    <h3>Special Rates</h3>
+    <ul>
+      <li>Create promotional pricing for specific date ranges</li>
+      <li>Override base rates during special periods</li>
+      <li>Perfect for holidays, seasons, or last-minute deals</li>
+      <li>Multiple specials can run simultaneously</li>
+    </ul>
+
+    <h3>API Endpoints</h3>
+    
+    <h4>Get Base Rates (Public)</h4>
+    <pre><code>GET /api/admin/rates/base</code></pre>
+    
+    <h4>Calculate Booking Cost (Public)</h4>
+    <pre><code>POST /api/admin/rates/calculate
+{
+  "checkin_date": "2025-12-01",
+  "checkout_date": "2025-12-05",
+  "guests": 2
+}</code></pre>
+
+    <h4>Manage Rates (Admin)</h4>
+    <pre><code>POST   /api/admin/rates/        # Create rate
+PUT    /api/admin/rates/{id}   # Update rate
+DELETE /api/admin/rates/{id}   # Deactivate rate
+GET    /api/admin/rates/       # List all rates</code></pre>
+
+    <h3>Database Schema</h3>
+    <pre><code>CREATE TABLE rates (
+  id SERIAL PRIMARY KEY,
+  rate_type VARCHAR(50) NOT NULL,  -- 'base' or 'special'
+  guests INTEGER NOT NULL,          -- 1 or 2
+  amount NUMERIC(10, 2) NOT NULL,
+  start_date DATE,                  -- NULL for base rates
+  end_date DATE,                    -- NULL for base rates
+  description VARCHAR(255),
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+);</code></pre>
+
+    <hr>
+
+    <h2 id="special-offers">🌟 Special Offers Display</h2>
+    
+    <p>Eye-catching banner showcasing active promotional rates on the homepage.</p>
+
+    <h3>Features</h3>
+    <ul>
+      <li>Automatically fetches and displays active specials</li>
+      <li>Gold gradient design with glass-morphism cards</li>
+      <li>Shows savings amount and percentage</li>
+      <li>Auto-hides when no specials are active</li>
+      <li>Fully responsive for mobile and desktop</li>
+      <li>Positioned below hero for maximum visibility</li>
+    </ul>
+
+    <h3>Example Display</h3>
+    <blockquote>
+      <p><strong>⭐ Special Offers ⭐</strong></p>
+      <p><strong>R650</strong> per night for 1 guest<br>
+      Start of holidays special<br>
+      1 Dec 2025 - 8 Dec 2025<br>
+      <span style="color: var(--success)">Save R200 (24% off!)</span></p>
+    </blockquote>
+
+    <h3>Creating Special Offers</h3>
+    <ol>
+      <li>Login to admin dashboard</li>
+      <li>Navigate to Rates tab</li>
+      <li>Click "Add Rate" → Select "Special Rate"</li>
+      <li>Fill in details:
+        <ul>
+          <li>Guests: 1 or 2</li>
+          <li>Amount: e.g., R650</li>
+          <li>Date range: Start and end dates</li>
+          <li>Description: "Start of holidays special"</li>
+        </ul>
+      </li>
+      <li>Save - appears on homepage immediately!</li>
+    </ol>
+
+    <hr>
+
+    <h2 id="calendar-sync">📅 Calendar Synchronization (iCal)</h2>
+    
+    <p>Synchronize bookings across multiple platforms to prevent double-bookings.</p>
+
+    <h3>Supported Platforms</h3>
+    <ul>
+      <li>✅ Airbnb</li>
+      <li>✅ Booking.com</li>
+      <li>✅ VRBO / HomeAway</li>
+      <li>✅ LekkeSlaap</li>
+      <li>✅ Google Calendar</li>
+      <li>✅ Any iCal-compatible platform</li>
+    </ul>
+
+    <h3>Export Bookings</h3>
+    <p>Share your bookings with other platforms:</p>
+    <pre><code>GET /api/ical/bookings.ics</code></pre>
+    <p>Import this URL into Airbnb, Booking.com, etc. to block dates.</p>
+
+    <h3>Import External Bookings</h3>
+    <p>Import bookings from other platforms:</p>
+    <pre><code>POST /api/ical/import
+{
+  "url": "https://airbnb.com/calendar/ical/xyz123.ics",
+  "source": "airbnb"
+}</code></pre>
+
+    <h3>Quick Setup</h3>
+    <ol>
+      <li>Get your export URL: <code>https://yoursite.com/api/ical/bookings.ics</code></li>
+      <li>Add it to each platform's calendar import settings</li>
+      <li>Add each platform's export URL to your admin panel</li>
+      <li>Bookings sync automatically!</li>
+    </ol>
+
+    <p><strong>Full details:</strong> <a href="ICAL_SYNC.html">iCal Sync Documentation</a></p>
+
+    <hr>
+
+    <h2 id="admin-portal">👨‍💼 Admin Portal</h2>
+    
+    <p>Secure management dashboard with OAuth2 authentication via Keycloak.</p>
+
+    <h3>Capabilities</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Booking Management</strong></td>
+          <td>View, approve, reject bookings</td>
+        </tr>
+        <tr>
+          <td><strong>Payment Tracking</strong></td>
+          <td>Record payments, update status</td>
+        </tr>
+        <tr>
+          <td><strong>Rate Management</strong></td>
+          <td>Set base rates, create specials</td>
+        </tr>
+        <tr>
+          <td><strong>Calendar Sync</strong></td>
+          <td>Manage iCal imports/exports</td>
+        </tr>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td>Statistics and recent activity</td>
+        </tr>
+        <tr>
+          <td><strong>Email Notifications</strong></td>
+          <td>Automatic guest communications</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Access</h3>
+    <ul>
+      <li><strong>URL:</strong> <code>https://yoursite.com/admin</code></li>
+      <li><strong>Authentication:</strong> OAuth2 via Keycloak</li>
+      <li><strong>Roles:</strong> Property manager, owner</li>
+    </ul>
+
+    <p><strong>Setup guide:</strong> <a href="ADMIN_SETUP.html">Admin Setup Documentation</a></p>
+
+    <hr>
+
+    <h2 id="email-notifications">📧 Email Notifications</h2>
+    
+    <p>Automatic email communications for guests and property owners.</p>
+
+    <h3>Guest Notifications</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Sent To</th>
+          <th>Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Booking Request</td>
+          <td>Guest</td>
+          <td>Confirmation of request received</td>
+        </tr>
+        <tr>
+          <td>Booking Approved</td>
+          <td>Guest</td>
+          <td>Approval notice with payment details</td>
+        </tr>
+        <tr>
+          <td>Booking Rejected</td>
+          <td>Guest</td>
+          <td>Apology with reason (if provided)</td>
+        </tr>
+        <tr>
+          <td>Payment Received</td>
+          <td>Guest</td>
+          <td>Payment confirmation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Owner Notifications</h3>
+    <ul>
+      <li>New booking request received</li>
+      <li>Booking details and guest information</li>
+      <li>Payment status updates</li>
+    </ul>
+
+    <h3>Configuration</h3>
+    <p>Set in <code>.env</code> file:</p>
+    <pre><code>MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_DEFAULT_SENDER=your-email@gmail.com
+OWNER_EMAIL=owner@peppertree.com</code></pre>
+
+    <hr>
+
+    <h2>🎯 Summary</h2>
+    
+    <p>The 17 @ Peppertree booking system provides:</p>
+    
+    <ul>
+      <li>💰 <strong>Flexible pricing</strong> with base and special rates</li>
+      <li>🌟 <strong>Promotional visibility</strong> with special offers banner</li>
+      <li>📅 <strong>Multi-platform sync</strong> via iCal integration</li>
+      <li>👨‍💼 <strong>Secure admin portal</strong> with OAuth2 authentication</li>
+      <li>📧 <strong>Automated communications</strong> via email notifications</li>
+      <li>📱 <strong>Responsive design</strong> for all devices</li>
+      <li>🔒 <strong>Enterprise security</strong> with Keycloak</li>
+    </ul>
+
+    <hr>
+
+    <p><strong>Last Updated:</strong> 2025-12-01<br>
+    <strong>Version:</strong> 1.0</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
