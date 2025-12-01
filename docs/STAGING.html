@@ -625,15 +625,21 @@ curl -u admin:yourpassword http://staging.17peppertree.co.za:8080
 http://staging.17peppertree.co.za:8080
 </code></pre>
 <h3>Step 5: Generate SSL Certificate</h3>
-<pre><code class="language-bash"># Stop any services using port 80/443
+<pre><code class="language-bash"># Stop any services using port 80/443 (if running)
 docker stop peppertree_nginx_prod 2&gt;/dev/null || true
+docker stop peppertree_nginx_staging 2&gt;/dev/null || true
 
 # Generate certificate
 sudo certbot certonly --standalone -d staging.17peppertree.co.za
 
-# Restart production services
+# Restart services (if they were running)
 docker start peppertree_nginx_prod 2&gt;/dev/null || true
+docker start peppertree_nginx_staging 2&gt;/dev/null || true
 </code></pre>
+
+<blockquote>
+<p><strong>💡 Why stop nginx?</strong> Certbot needs port 80 free to verify domain ownership. If you have nginx running (production or staging), temporarily stop it. The <code>2&gt;/dev/null || true</code> ensures the command doesn't fail if the container doesn't exist.</p>
+</blockquote>
 <h3>Step 6: Deploy Staging</h3>
 <pre><code class="language-bash">cd /opt/peppertree-staging
 
