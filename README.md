@@ -103,8 +103,7 @@ Sync your bookings across multiple platforms (Airbnb, Booking.com, VRBO, LekkeSl
 docker compose -f docker-compose.keycloak.yml up -d
 
 # 2. Configure Keycloak
-chmod +x setup-keycloak.sh
-./setup-keycloak.sh
+./scripts/setup/setup-keycloak.sh
 
 # 3. Apply database migrations
 docker exec -it peppertree_db psql -U postgres -d peppertree -f /migrations/add_admin_fields.sql
@@ -263,10 +262,16 @@ Health checks are configured for:
 
 ## 🧪 Testing
 
+### Run All Tests
+Run the complete test suite (frontend + backend):
+```bash
+./scripts/test/test_all.sh
+```
+
 ### Calendar Sync Testing
 Run the automated iCal sync test:
 ```bash
-./test-ical-sync.sh
+./scripts/test/test-ical-sync.sh
 ```
 
 This tests:
@@ -276,6 +281,9 @@ This tests:
 - Database integration
 
 **See [ICAL_SYNC.md](docs/ICAL_SYNC.md) for manual testing with Google Calendar and other platforms.**
+
+### Available Scripts
+All automation scripts are organized in the `scripts/` directory. For complete documentation on all scripts, when to use them, and what they do, see **[SCRIPTS.md](docs/SCRIPTS.md)**.
 
 ## 🐛 Troubleshooting
 

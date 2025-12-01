@@ -51,7 +51,7 @@ Merged `setup-server.sh` into `vps-secure-setup.sh` to eliminate duplication.
 
 ### Recommended (Direct):
 ```bash
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
 chmod +x vps-secure-setup.sh
 sudo bash vps-secure-setup.sh
 ```
@@ -59,12 +59,12 @@ sudo bash vps-secure-setup.sh
 ### Backwards Compatible:
 ```bash
 # Still works - automatically calls vps-secure-setup.sh
-sudo bash scripts/setup-server.sh
+sudo bash scripts/setup/setup-server.sh
 ```
 
 ### Staging Setup (After VPS Setup):
 ```bash
-sudo bash scripts/setup-staging-auth.sh staging.yourdomain.com
+sudo bash scripts/setup/setup-staging-auth.sh staging.yourdomain.com
 ```
 
 ## Why Consolidate?
@@ -167,7 +167,7 @@ peppertree-security-audit  # Audit security
 ### VPS Initial Setup:
 ```bash
 # Download and run comprehensive setup
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
 chmod +x vps-secure-setup.sh
 sudo bash vps-secure-setup.sh
 ```
@@ -178,7 +178,7 @@ sudo bash vps-secure-setup.sh
 sudo reboot
 
 # Configure staging (optional)
-sudo bash scripts/setup-staging-auth.sh staging.17peppertree.co.za
+sudo bash scripts/setup/setup-staging-auth.sh staging.17peppertree.co.za
 
 # Check status
 peppertree-status
@@ -204,11 +204,15 @@ peppertree-security-audit
 
 ```
 scripts/
-├── vps-secure-setup.sh      (Main - Comprehensive VPS setup)
-├── setup-server.sh           (Wrapper - Calls vps-secure-setup.sh)
-├── setup-staging-auth.sh     (Separate - Staging authentication)
-├── backup.sh                 (Backup operations)
-└── deploy.sh                 (Deployment operations)
+├── setup/
+│   ├── vps-secure-setup.sh      (Main - Comprehensive VPS setup)
+│   ├── setup-server.sh           (Wrapper - Calls vps-secure-setup.sh)
+│   └── setup-staging-auth.sh     (Staging authentication)
+├── deployment/
+│   ├── backup.sh                 (Backup operations)
+│   └── deploy.sh                 (Deployment operations)
+├── config/                       (Configuration scripts)
+└── test/                         (Testing scripts)
 ```
 
 ## Related Memory Files

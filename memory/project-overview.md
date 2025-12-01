@@ -130,8 +130,8 @@ docker compose -f docker-compose.staging.yml up -d --build
 docker compose -f docker-compose.production.yml up -d --build
 
 # Or use deploy script (recommended)
-sudo bash scripts/deploy.sh staging
-sudo bash scripts/deploy.sh production
+sudo bash scripts/deployment/deploy.sh staging
+sudo bash scripts/deployment/deploy.sh production
 ```
 
 ## Environment Configuration
@@ -207,12 +207,13 @@ Required environment variables in `.env`:
 │   ├── App.js
 │   └── index.js
 ├── public/               # Static assets
-├── scripts/              # Deployment scripts
-│   ├── deploy.sh        # Unified deployment
-│   ├── vps-secure-setup.sh
-│   └── setup-staging-auth.sh
-├── docs/                 # Documentation (18 files)
-├── memory/               # Memory bank (10 files)
+├── scripts/              # Automation scripts
+│   ├── setup/           # One-time setup scripts
+│   ├── config/          # Configuration scripts
+│   ├── test/            # Testing scripts
+│   └── deployment/      # Deployment scripts
+├── docs/                 # Documentation (18+ files)
+├── memory/               # Memory bank (10+ files)
 ├── docker-compose.yml    # Development
 ├── docker-compose.staging.yml
 ├── docker-compose.production.yml
@@ -243,6 +244,7 @@ Required environment variables in `.env`:
 - `docs/DOCKER_SETUP.md` - Docker configuration
 - `docs/ADMIN_SETUP.md` - Admin portal setup
 - `docs/AUTHENTICATION.md` - Keycloak authentication
+- `docs/SCRIPTS.md` - Complete scripts documentation
 - `memory/deploy-script.md` - Deploy script details
 - `memory/vps-setup-script.md` - VPS setup details
 
@@ -263,9 +265,9 @@ Required environment variables in `.env`:
 6. Merge to `main` (triggers production deployment)
 
 ### Deployment Workflow
-1. Test on staging: `sudo bash scripts/deploy.sh staging`
+1. Test on staging: `sudo bash scripts/deployment/deploy.sh staging`
 2. Verify staging works
-3. Deploy to production: `sudo bash scripts/deploy.sh production`
+3. Deploy to production: `sudo bash scripts/deployment/deploy.sh production`
 4. Verify production works
 
 ## Key Features

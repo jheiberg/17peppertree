@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scripts Documentation - 17 @ Peppertree Documentation</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --border-color: #404040;
+  --link-color: #6b9bd1;
+  --link-hover: #8ab4f8;
+  --code-bg: #1e1e1e;
+  --table-header: #2a2a2a;
+  --success: #6ba76b;
+  --warning: #d4a574;
+  --error: #d47474;
+  --info: #74a0d4;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation */
+nav {
+  background: var(--bg-secondary);
+  padding: 15px 20px;
+  margin: -20px -20px 30px -20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav a {
+  color: var(--link-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+nav a.active {
+  background: var(--bg-tertiary);
+  color: var(--link-hover);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+blockquote {
+  border-left: 3px solid var(--link-color);
+  padding: 10px 20px;
+  margin: 20px 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+  color: var(--text-secondary);
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+ul ul, ol ul, ul ol, ol ol {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+/* Code */
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #d4d4d4;
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: var(--table-header);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+/* Checkboxes in lists */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Status badges (emoji fallback) */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0 4px;
+}
+
+.badge-success {
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.badge-warning {
+  background: var(--warning);
+  color: var(--bg-primary);
+}
+
+.badge-error {
+  background: var(--error);
+  color: var(--bg-primary);
+}
+
+.badge-info {
+  background: var(--info);
+  color: var(--bg-primary);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s;
+}
+
+#back-to-top:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  nav {
+    margin: -10px -10px 20px -10px;
+    padding: 10px;
+  }
+  
+  nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  
+  table {
+    font-size: 0.9em;
+  }
+  
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    max-width: 100%;
+  }
+  
+  nav, #back-to-top {
+    display: none;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+</style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" >🏠 Home</a>
+    <a href="DEVELOPMENT_GUIDE.html" >💻 Development</a>
+    <a href="DEPLOYMENT_GUIDE.html" >🚀 Deployment</a>
+    <a href="DOCKER_SETUP.html" >🐳 Docker</a>
+    <a href="AUTHENTICATION.html" >🔐 Auth</a>
+    <a href="ADMIN_SETUP.html" >👨‍💼 Admin</a>
+    <a href="ICAL_SYNC.html" >📅 Calendar</a>
+    <a href="RESPONSIVE_TESTING.html" >📱 Testing</a>
+  </nav>
+  
+  <main>
+    <h1>Scripts Documentation</h1>
+<p>This document provides comprehensive documentation for all automation scripts in the <code>scripts/</code> directory. Scripts are organized by purpose for easy navigation.</p>
+<h2>Directory Structure</h2>
+<pre><code>scripts/
+├── setup/           # Initial setup and configuration scripts
+├── config/          # Runtime configuration scripts
+├── test/            # Testing and validation scripts
+└── deployment/      # Deployment and maintenance scripts
+</code></pre>
+<h2>Setup Scripts</h2>
+<p>These scripts are run once during initial setup or when adding new features.</p>
+<h3>setup-keycloak.sh</h3>
+<p><strong>Purpose:</strong> Initial Keycloak configuration for admin portal authentication</p>
+<p><strong>When to run:</strong> </p>
+<ul>
+<li>After first deployment with Keycloak</li>
+<li>When setting up a new environment (dev/staging/production)</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Docker Compose with Keycloak running</li>
+<li>PostgreSQL database initialized</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-keycloak.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Creates the <code>peppertree</code> realm in Keycloak</li>
+<li>Configures OAuth2 client (<code>peppertree-admin</code>)</li>
+<li>Creates admin and peppertree-admin roles</li>
+<li>Sets up initial admin user</li>
+<li>Generates client secrets and saves to <code>.env.keycloak</code></li>
+</ul>
+<p><strong>Output:</strong></p>
+<ul>
+<li>Realm and client configuration</li>
+<li>Temporary admin password</li>
+<li>Configuration values for <code>.env</code> file</li>
+</ul>
+<p><strong>Next steps after running:</strong></p>
+<ol>
+<li>Copy values from <code>.env.keycloak</code> to your main <code>.env</code> file</li>
+<li>Change the admin password on first login</li>
+<li>Configure redirect URIs if needed</li>
+</ol>
+<hr>
+<h3>setup-backend-client.sh</h3>
+<p><strong>Purpose:</strong> Configure backend API as Keycloak client for service-to-service authentication</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>When setting up backend-to-Keycloak authentication</li>
+<li>For service account credentials grant type</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Keycloak running and configured</li>
+<li>Admin credentials available</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-backend-client.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Creates <code>peppertree-backend-api</code> client</li>
+<li>Enables service accounts and client credentials grant</li>
+<li>Generates and retrieves client secret</li>
+<li>Assigns admin role to service account</li>
+</ul>
+<p><strong>Output:</strong></p>
+<ul>
+<li>Backend client ID and secret</li>
+<li>Service account configuration</li>
+<li>Token endpoint information</li>
+</ul>
+<hr>
+<h3>setup-server.sh</h3>
+<p><strong>Purpose:</strong> Initial VPS server configuration</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>On a fresh VPS/server after OS installation</li>
+<li>Before deploying the application to production</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Root or sudo access to server</li>
+<li>Ubuntu/Debian-based system</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-server.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Installs required packages and dependencies</li>
+<li>Configures system settings</li>
+<li>Prepares server for application deployment</li>
+</ul>
+<hr>
+<h3>setup-staging-auth.sh</h3>
+<p><strong>Purpose:</strong> Configure authentication for staging environment</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>When setting up the staging environment</li>
+<li>After staging Keycloak deployment</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Staging environment running</li>
+<li>Staging Keycloak instance available</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-staging-auth.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Configures Keycloak for staging domain</li>
+<li>Sets up OAuth2 clients for staging</li>
+<li>Configures staging-specific authentication settings</li>
+</ul>
+<hr>
+<h3>vps-secure-setup.sh</h3>
+<p><strong>Purpose:</strong> Comprehensive VPS security hardening</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>Immediately after getting a new VPS</li>
+<li>Before exposing server to the internet</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Fresh VPS with root access</li>
+<li>SSH access</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/setup/vps-secure-setup.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Configures firewall (UFW)</li>
+<li>Sets up fail2ban</li>
+<li>Hardens SSH configuration</li>
+<li>Configures automatic security updates</li>
+<li>Sets up user permissions and sudo access</li>
+</ul>
+<p><strong>⚠️ Important:</strong> Review and customize security settings before running.</p>
+<hr>
+<h2>Configuration Scripts</h2>
+<p>These scripts modify runtime configuration in existing environments.</p>
+<h3>configure-production-pkce.sh</h3>
+<p><strong>Purpose:</strong> Configure PKCE S256 for production Keycloak client</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>After deploying production environment</li>
+<li>When switching from plain to S256 PKCE method</li>
+<li>Required for HTTPS environments</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Production Keycloak container running (<code>peppertree_keycloak_prod</code>)</li>
+<li><code>KEYCLOAK_ADMIN_PASSWORD_PROD</code> environment variable set</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/config/configure-production-pkce.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Validates production Keycloak is running</li>
+<li>Obtains admin token</li>
+<li>Updates client to use PKCE S256 (required for HTTPS)</li>
+<li>Verifies configuration</li>
+</ul>
+<p><strong>Environment:</strong> <a href="https://17peppertree.co.za">https://17peppertree.co.za</a></p>
+<hr>
+<h3>configure-staging-pkce.sh</h3>
+<p><strong>Purpose:</strong> Configure PKCE S256 for staging Keycloak client</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>After deploying staging environment</li>
+<li>When enabling HTTPS on staging</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Staging Keycloak container running (<code>peppertree_keycloak_staging</code>)</li>
+<li>Admin credentials configured</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/config/configure-staging-pkce.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Validates staging Keycloak is running</li>
+<li>Obtains admin token</li>
+<li>Updates client to use PKCE S256</li>
+<li>Verifies configuration</li>
+</ul>
+<p><strong>Environment:</strong> <a href="https://staging.17peppertree.co.za">https://staging.17peppertree.co.za</a></p>
+<hr>
+<h3>update-keycloak-redirect-dev.sh</h3>
+<p><strong>Purpose:</strong> Update redirect URIs for development environment</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>When IP address changes in development</li>
+<li>When testing from different devices on local network</li>
+<li>When adding new redirect URIs</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Development Keycloak running</li>
+<li>Network access to Keycloak instance</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/config/update-keycloak-redirect-dev.sh
+</code></pre>
+<p><strong>Configuration:</strong></p>
+<ul>
+<li>Edit script to update <code>KEYCLOAK_URL</code> with your current IP</li>
+<li>Default supports localhost and 192.168.1.222</li>
+</ul>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Updates client redirect URIs</li>
+<li>Configures web origins for CORS</li>
+<li>Adds multiple localhost variants</li>
+</ul>
+<hr>
+<h3>update-keycloak-redirect-staging.sh</h3>
+<p><strong>Purpose:</strong> Update redirect URIs for staging domain</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>After deploying to staging with new domain</li>
+<li>When changing staging domain configuration</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Staging environment accessible via HTTPS</li>
+<li>Staging Keycloak container running</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/config/update-keycloak-redirect-staging.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Updates redirect URIs to staging domain</li>
+<li>Configures HTTPS endpoints</li>
+<li>Updates web origins for CORS</li>
+</ul>
+<hr>
+<h2>Test Scripts</h2>
+<p>These scripts validate functionality and run test suites.</p>
+<h3>test-ical-sync.sh</h3>
+<p><strong>Purpose:</strong> Test iCal calendar synchronization functionality</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>After implementing iCal sync features</li>
+<li>When debugging calendar import/export issues</li>
+<li>As part of feature validation</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Backend service running</li>
+<li>PostgreSQL database accessible</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/test/test-ical-sync.sh
+</code></pre>
+<p><strong>What it tests:</strong></p>
+<ol>
+<li>Export bookings to iCal format</li>
+<li>Validate iCal format and structure</li>
+<li>Import external iCal feeds</li>
+<li>Verify database integration</li>
+<li>Check imported bookings in database</li>
+</ol>
+<p><strong>Output:</strong></p>
+<ul>
+<li>Test results for each step</li>
+<li>Sample export file: <code>/tmp/export-test.ics</code></li>
+<li>Sample import file: <code>/tmp/test-import.ics</code></li>
+</ul>
+<p><strong>Manual testing guidance:</strong></p>
+<ul>
+<li>Instructions for testing with Google Calendar</li>
+<li>Platform integration steps</li>
+</ul>
+<p><strong>See also:</strong> <a href="ICAL_SYNC.html">ICAL_SYNC.md</a> for detailed documentation</p>
+<hr>
+<h3>test-pkce-flow.sh</h3>
+<p><strong>Purpose:</strong> Generate PKCE parameters and test OAuth2 PKCE flow</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>When debugging authentication issues</li>
+<li>When validating PKCE implementation</li>
+<li>For understanding the OAuth2 flow</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Keycloak running on localhost:8080</li>
+<li><code>peppertree-admin</code> client configured</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/test/test-pkce-flow.sh
+</code></pre>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Generates PKCE code verifier and challenge</li>
+<li>Provides authorization URL</li>
+<li>Shows token exchange commands</li>
+<li>Demonstrates userinfo endpoint usage</li>
+</ul>
+<p><strong>Output:</strong></p>
+<ul>
+<li>PKCE parameters (code verifier, challenge, state)</li>
+<li>Step-by-step curl commands for manual testing</li>
+<li>Authorization URL to open in browser</li>
+</ul>
+<p><strong>Note:</strong> This is an interactive testing tool, not an automated test.</p>
+<hr>
+<h3>test_all.sh</h3>
+<p><strong>Purpose:</strong> Run complete test suite (frontend + backend)</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>Before committing changes</li>
+<li>Before deployment</li>
+<li>As part of CI/CD pipeline</li>
+<li>After major refactoring</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Node.js and npm installed</li>
+<li>Python 3 installed</li>
+<li>Frontend dependencies installed</li>
+<li>Backend virtual environment configured</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/test/test_all.sh
+</code></pre>
+<p><strong>What it tests:</strong></p>
+<ol>
+<li><p><strong>Frontend tests</strong></p>
+<ul>
+<li>React component tests</li>
+<li>Unit tests</li>
+<li>Integration tests</li>
+<li>Generates coverage report</li>
+</ul>
+</li>
+<li><p><strong>Backend tests</strong></p>
+<ul>
+<li>Python unit tests</li>
+<li>API endpoint tests</li>
+<li>Database integration tests</li>
+<li>Generates coverage report</li>
+</ul>
+</li>
+</ol>
+<p><strong>Output:</strong></p>
+<ul>
+<li>Terminal coverage summaries</li>
+<li>HTML coverage reports:<ul>
+<li>Frontend: <code>coverage/lcov-report/index.html</code></li>
+<li>Backend: <code>backend/htmlcov/index.html</code></li>
+</ul>
+</li>
+<li>XML coverage report: <code>backend/coverage.xml</code></li>
+</ul>
+<p><strong>Tips:</strong></p>
+<ul>
+<li>Use <code>npm test</code> for interactive frontend testing</li>
+<li>Use <code>npm run test:watch</code> for watch mode</li>
+<li>Check coverage reports in browser</li>
+</ul>
+<hr>
+<h2>Deployment Scripts</h2>
+<p>These scripts handle deployment and maintenance tasks.</p>
+<h3>deploy.sh</h3>
+<p><strong>Purpose:</strong> Deploy application to staging or production environment</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>When deploying new versions</li>
+<li>For updates and releases</li>
+<li>As part of deployment workflow</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>SSH access to deployment server</li>
+<li>Git repository access</li>
+<li>Docker and Docker Compose on target server</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/deployment/deploy.sh [environment]
+</code></pre>
+<p><strong>Environments:</strong></p>
+<ul>
+<li><code>staging</code> - Deploy to staging server</li>
+<li><code>production</code> - Deploy to production server</li>
+</ul>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Pulls latest code from repository</li>
+<li>Builds Docker images</li>
+<li>Runs database migrations</li>
+<li>Restarts services with zero downtime</li>
+<li>Validates deployment health</li>
+</ul>
+<p><strong>Safety features:</strong></p>
+<ul>
+<li>Backup before deployment</li>
+<li>Rollback capability on failure</li>
+<li>Health check validation</li>
+</ul>
+<hr>
+<h3>backup.sh</h3>
+<p><strong>Purpose:</strong> Create backups of database and application data</p>
+<p><strong>When to run:</strong></p>
+<ul>
+<li>Before major deployments</li>
+<li>As part of scheduled backup routine</li>
+<li>Before database migrations</li>
+<li>Before system updates</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Database access</li>
+<li>Write permissions to backup directory</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<pre><code class="language-bash">./scripts/deployment/backup.sh
+</code></pre>
+<p><strong>What it backs up:</strong></p>
+<ul>
+<li>PostgreSQL database dump</li>
+<li>Uploaded files and media</li>
+<li>Configuration files (excluding secrets)</li>
+<li>Application state</li>
+</ul>
+<p><strong>Output:</strong></p>
+<ul>
+<li>Timestamped backup files</li>
+<li>Backup location and details</li>
+<li>Backup size and verification</li>
+</ul>
+<p><strong>Recommended schedule:</strong></p>
+<ul>
+<li>Daily automated backups</li>
+<li>Pre-deployment backups</li>
+<li>Weekly off-site backups</li>
+</ul>
+<hr>
+<h2>Quick Reference</h2>
+<h3>First-Time Setup Workflow</h3>
+<ol>
+<li><p><strong>Secure the server:</strong></p>
+<pre><code class="language-bash">./scripts/setup/vps-secure-setup.sh
+</code></pre>
+</li>
+<li><p><strong>Configure server environment:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-server.sh
+</code></pre>
+</li>
+<li><p><strong>Set up Keycloak:</strong></p>
+<pre><code class="language-bash">./scripts/setup/setup-keycloak.sh
+</code></pre>
+</li>
+<li><p><strong>Configure PKCE for production:</strong></p>
+<pre><code class="language-bash">./scripts/config/configure-production-pkce.sh
+</code></pre>
+</li>
+</ol>
+<h3>Development Workflow</h3>
+<ol>
+<li><p><strong>Run tests before committing:</strong></p>
+<pre><code class="language-bash">./scripts/test/test_all.sh
+</code></pre>
+</li>
+<li><p><strong>Test specific features:</strong></p>
+<pre><code class="language-bash">./scripts/test/test-ical-sync.sh
+</code></pre>
+</li>
+</ol>
+<h3>Deployment Workflow</h3>
+<ol>
+<li><p><strong>Create backup:</strong></p>
+<pre><code class="language-bash">./scripts/deployment/backup.sh
+</code></pre>
+</li>
+<li><p><strong>Deploy to staging:</strong></p>
+<pre><code class="language-bash">./scripts/deployment/deploy.sh staging
+</code></pre>
+</li>
+<li><p><strong>Validate and deploy to production:</strong></p>
+<pre><code class="language-bash">./scripts/deployment/deploy.sh production
+</code></pre>
+</li>
+</ol>
+<h3>Configuration Updates</h3>
+<p>When IP changes in development:</p>
+<pre><code class="language-bash">./scripts/config/update-keycloak-redirect-dev.sh
+</code></pre>
+<p>When updating staging domain:</p>
+<pre><code class="language-bash">./scripts/config/update-keycloak-redirect-staging.sh
+</code></pre>
+<hr>
+<h2>Troubleshooting</h2>
+<h3>Common Issues</h3>
+<p><strong>Script permission denied:</strong></p>
+<pre><code class="language-bash">chmod +x scripts/**/*.sh
+</code></pre>
+<p><strong>Keycloak not accessible:</strong></p>
+<ul>
+<li>Check if containers are running: <code>docker ps</code></li>
+<li>Verify port mappings</li>
+<li>Check firewall rules</li>
+</ul>
+<p><strong>Admin token failures:</strong></p>
+<ul>
+<li>Verify admin credentials in <code>.env</code></li>
+<li>Check Keycloak logs: <code>docker logs [container_name]</code></li>
+<li>Ensure Keycloak is fully started</li>
+</ul>
+<p><strong>Database connection errors:</strong></p>
+<ul>
+<li>Check database container status</li>
+<li>Verify database credentials</li>
+<li>Check network connectivity</li>
+</ul>
+<h3>Getting Help</h3>
+<p>For detailed documentation on specific features:</p>
+<ul>
+<li>Admin Portal: <a href="ADMIN_SETUP.html">ADMIN_SETUP.md</a></li>
+<li>Authentication: <a href="AUTHENTICATION.html">AUTHENTICATION.md</a></li>
+<li>Calendar Sync: <a href="ICAL_SYNC.html">ICAL_SYNC.md</a></li>
+<li>Deployment: <a href="DEPLOYMENT_GUIDE.html">DEPLOYMENT_GUIDE.md</a></li>
+<li>Development: <a href="DEVELOPMENT_GUIDE.html">DEVELOPMENT_GUIDE.md</a></li>
+</ul>
+<hr>
+<h2>Script Maintenance</h2>
+<h3>Adding New Scripts</h3>
+<ol>
+<li><p>Place scripts in appropriate directory:</p>
+<ul>
+<li><code>setup/</code> - One-time setup scripts</li>
+<li><code>config/</code> - Configuration modification scripts</li>
+<li><code>test/</code> - Testing and validation scripts</li>
+<li><code>deployment/</code> - Deployment and maintenance scripts</li>
+</ul>
+</li>
+<li><p>Make scripts executable:</p>
+<pre><code class="language-bash">chmod +x scripts/[category]/script-name.sh
+</code></pre>
+</li>
+<li><p>Add documentation to this file following the template:</p>
+<ul>
+<li>Purpose</li>
+<li>When to run</li>
+<li>Prerequisites</li>
+<li>Usage</li>
+<li>What it does</li>
+<li>Output/Next steps</li>
+</ul>
+</li>
+<li><p>Include header comment in script:</p>
+<pre><code class="language-bash">#!/bin/bash
+#
+# Script Name - Brief description
+# Usage: ./script-name.sh [args]
+#
+# Description of what the script does and when to use it
+</code></pre>
+</li>
+</ol>
+<h3>Best Practices</h3>
+<ul>
+<li><strong>Include error handling:</strong> Use <code>set -e</code> to exit on errors</li>
+<li><strong>Validate prerequisites:</strong> Check for required tools/services</li>
+<li><strong>Provide feedback:</strong> Echo progress messages</li>
+<li><strong>Use colors:</strong> Green for success, red for errors, yellow for warnings</li>
+<li><strong>Document assumptions:</strong> Note expected environment state</li>
+<li><strong>Make idempotent:</strong> Scripts should be safe to run multiple times</li>
+<li><strong>Version control:</strong> Commit scripts with descriptive messages</li>
+</ul>
+<hr>
+<p><strong>Last Updated:</strong> 2024-12-01<br><strong>Maintained By:</strong> Development Team</p>
+
+  </main>
+  
+  <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ Top</button>
+  
+  <script>
+    // Show/hide back to top button
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 300) {
+        btn.style.display = 'block';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+    
+    // Fix relative links to work with .html extension
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
+      const href = link.getAttribute('href');
+      link.setAttribute('href', href.replace(/.md$/, '.html'));
+    });
+    
+    // Convert relative links
+    document.querySelectorAll('a[href^="../"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.includes('README.md')) {
+        link.setAttribute('href', '../README.html');
+      }
+    });
+  </script>
+</body>
+</html>

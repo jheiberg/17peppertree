@@ -15,10 +15,10 @@ Download scripts directly from GitHub:
 
 ```bash
 # Download VPS setup script
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
 
 # Download staging auth script
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup-staging-auth.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/setup-staging-auth.sh
 
 # Make executable and run
 chmod +x vps-secure-setup.sh
@@ -40,9 +40,11 @@ All deployment scripts are in the **`scripts/`** directory:
 
 ```
 scripts/
-  ├── vps-secure-setup.sh      # VPS initial setup & security
-  ├── setup-staging-auth.sh    # Staging environment auth
-  └── deploy.sh                # Deploy to staging/production
+  ├── setup/
+  │   ├── vps-secure-setup.sh      # VPS initial setup & security
+  │   └── setup-staging-auth.sh    # Staging environment auth
+  └── deployment/
+      └── deploy.sh                # Deploy to staging/production
 ```
 
 ### Application Deployment
@@ -52,7 +54,7 @@ For deploying the application itself (not server setup):
 ```bash
 # On VPS, in project directory
 cd /opt/peppertree-production  # or peppertree-staging
-sudo bash scripts/deploy.sh production  # or staging
+sudo bash scripts/deployment/deploy.sh production  # or staging
 ```
 
 The `deploy.sh` script:
@@ -89,7 +91,7 @@ Previously had:
 1. **Provision VPS** with Ubuntu 24.04 LTS
 2. **Download setup script:**
    ```bash
-   curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+   curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
    chmod +x vps-secure-setup.sh
    ```
 
@@ -117,7 +119,7 @@ Previously had:
 
 7. **Deploy:**
    ```bash
-   sudo bash scripts/deploy.sh production
+   sudo bash scripts/deployment/deploy.sh production
    ```
 
 ### Staging Setup
@@ -126,7 +128,7 @@ After initial VPS setup:
 
 ```bash
 # Download staging auth script
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup-staging-auth.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/setup-staging-auth.sh
 chmod +x setup-staging-auth.sh
 
 # Configure staging with basic auth
@@ -154,10 +156,10 @@ git pull origin main
 
 ### For Script Development
 
-1. **Edit in `scripts/` only** - Single source of truth
+1. **Edit in `scripts/` subdirectories** - Single source of truth
 2. **Test locally** - Use Docker Compose for testing
 3. **Commit and push** - Scripts go to GitHub
-4. **Document changes** - Update this memory bank
+4. **Document changes** - Update docs/SCRIPTS.md and this memory bank
 
 ### For VPS Deployment
 
@@ -209,5 +211,6 @@ git pull
 
 - `docs/VPS_DEPLOYMENT.md` - Full VPS setup guide
 - `docs/HA_DR_PLAN.md` - High availability & disaster recovery
-- `scripts/vps-secure-setup.sh` - Server setup script
-- `scripts/deploy.sh` - Application deployment script
+- `docs/SCRIPTS.md` - Complete scripts documentation
+- `scripts/setup/vps-secure-setup.sh` - Server setup script
+- `scripts/deployment/deploy.sh` - Application deployment script

@@ -337,11 +337,8 @@ docker compose -f docker-compose.keycloak.yml up -d
 docker compose -f docker-compose.keycloak.yml ps
 </code></pre>
 <h3>2. Configure Keycloak</h3>
-<pre><code class="language-bash"># Make the setup script executable
-chmod +x setup-keycloak.sh
-
-# Run the setup script
-./setup-keycloak.sh
+<pre><code class="language-bash"># Run the setup script
+./scripts/setup/setup-keycloak.sh
 </code></pre>
 <p>The script will:</p>
 <ul>

@@ -352,7 +352,7 @@ input[type="checkbox"] {
 ssh root@your-server-ip
 
 # Run the automated setup script
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
 chmod +x vps-secure-setup.sh
 sudo bash vps-secure-setup.sh
 </code></pre>
@@ -415,7 +415,7 @@ sudo chown -R deploy:deploy /opt/peppertree-production/ssl/
 </code></pre>
 <h4>3.3 Setup Certificate Renewal</h4>
 <pre><code class="language-bash"># Add to crontab
-echo &quot;0 3 * * 0 /usr/bin/certbot renew --quiet &amp;&amp; /opt/peppertree-production/scripts/deploy.sh production&quot; | sudo crontab -
+echo &quot;0 3 * * 0 /usr/bin/certbot renew --quiet &amp;&amp; /opt/peppertree-production/scripts/deployment/deploy.sh production&quot; | sudo crontab -
 </code></pre>
 <h3>Step 4: GitHub Secrets Configuration</h3>
 <p>Go to your GitHub repository → Settings → Secrets and Variables → Actions</p>
@@ -472,12 +472,12 @@ staging.your-domain.com → Your-Staging-IP
 <h4>6.1 Manual Staging Deployment</h4>
 <pre><code class="language-bash"># On staging server
 cd /opt/peppertree-staging
-sudo bash scripts/deploy.sh staging
+sudo bash scripts/deployment/deploy.sh staging
 </code></pre>
 <h4>6.2 Manual Production Deployment</h4>
 <pre><code class="language-bash"># On production server
 cd /opt/peppertree-production
-sudo bash scripts/deploy.sh production
+sudo bash scripts/deployment/deploy.sh production
 </code></pre>
 <p><strong>What the script does:</strong></p>
 <ul>
@@ -563,7 +563,7 @@ git push origin main
 <li><strong>Location</strong>: <code>/opt/peppertree-backups/</code></li>
 </ul>
 <p><strong>Manual Backup:</strong></p>
-<pre><code class="language-bash">/opt/peppertree-production/scripts/backup.sh production
+<pre><code class="language-bash">/opt/peppertree-production/scripts/deployment/backup.sh production
 </code></pre>
 <h3>Log Management</h3>
 <p><strong>Log Locations:</strong></p>
@@ -597,7 +597,7 @@ tail -f /var/log/peppertree-deploy.log
 
 # Manual deployment
 cd /opt/peppertree-production
-./scripts/deploy.sh production
+./scripts/deployment/deploy.sh production
 </code></pre>
 <h4>2. SSL Certificate Issues</h4>
 <pre><code class="language-bash"># Check certificate status
@@ -643,13 +643,13 @@ git push --force origin production
 <p>The <code>deploy.sh</code> script is your <strong>unified deployment tool</strong> for both staging and production.</p>
 <p><strong>Basic Usage:</strong></p>
 <pre><code class="language-bash"># Staging deployment
-sudo bash scripts/deploy.sh staging
+sudo bash scripts/deployment/deploy.sh staging
 
 # Production deployment
-sudo bash scripts/deploy.sh production
+sudo bash scripts/deployment/deploy.sh production
 
 # Default (staging) if no argument
-sudo bash scripts/deploy.sh
+sudo bash scripts/deployment/deploy.sh
 </code></pre>
 <p><strong>Environment Configuration:</strong></p>
 <table>
@@ -722,14 +722,14 @@ gunzip -c /opt/peppertree-backups/backup_production_20251121_140530.sql.gz | \
 </code></pre>
 <p><strong>Testing Before Production:</strong></p>
 <pre><code class="language-bash"># Always test on staging first!
-sudo bash scripts/deploy.sh staging
+sudo bash scripts/deployment/deploy.sh staging
 
 # Verify staging
 curl http://localhost:5000/api/health
 # Test the application manually
 
 # If good, deploy to production
-sudo bash scripts/deploy.sh production
+sudo bash scripts/deployment/deploy.sh production
 
 # Verify production
 curl http://localhost/api/health

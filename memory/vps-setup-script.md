@@ -70,7 +70,7 @@ Automated setup for Ubuntu 24.04 LTS VPS (10-15 minutes):
 
 ### Recommended (Direct):
 ```bash
-curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/vps-secure-setup.sh
+curl -O https://raw.githubusercontent.com/jheiberg/17peppertree/main/scripts/setup/vps-secure-setup.sh
 chmod +x vps-secure-setup.sh
 sudo bash vps-secure-setup.sh
 ```
@@ -78,7 +78,7 @@ sudo bash vps-secure-setup.sh
 ### Alternative (Backwards Compatible):
 ```bash
 # This still works - automatically calls vps-secure-setup.sh
-sudo bash scripts/setup-server.sh
+sudo bash scripts/setup/setup-server.sh
 ```
 
 ## Post-Setup Required
