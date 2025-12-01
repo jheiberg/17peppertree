@@ -326,25 +326,207 @@ input[type="checkbox"] {
   
   <main>
     <h1>Staging Environment Guide</h1>
-<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-11-21<br><strong>Script:</strong> <code>/scripts/setup-staging-auth.sh</code></p>
+<p><strong>Document Version:</strong> 1.0<br><strong>Last Updated:</strong> 2025-12-01<br><strong>Script:</strong> <code>/scripts/setup-staging-auth.sh</code></p>
+
+<blockquote style="background: var(--bg-tertiary); border-left: 4px solid var(--info);">
+<h3 style="margin-top: 0;">📖 Quick Answer: Manual vs Automatic</h3>
+<table style="background: transparent;">
+<thead>
+<tr>
+<th>Task</th>
+<th>Who Does It</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Server setup</strong></td>
+<td><strong>🔵 YOU</strong> (manual)</td>
+<td>Once, initially</td>
+</tr>
+<tr>
+<td><strong>SSL certificates</strong></td>
+<td><strong>🔵 YOU</strong> (manual)</td>
+<td>Once + every 90 days</td>
+</tr>
+<tr>
+<td><strong>Create passwords</strong></td>
+<td><strong>🔵 YOU</strong> (manual)</td>
+<td>Once, initially</td>
+</tr>
+<tr>
+<td><strong>Configure DNS</strong></td>
+<td><strong>🔵 YOU</strong> (manual)</td>
+<td>Once, initially</td>
+</tr>
+<tr>
+<td style="border-top: 2px solid var(--border-color);"><strong>Code deployments</strong></td>
+<td style="border-top: 2px solid var(--border-color);"><strong>🟢 GITHUB ACTIONS</strong> (auto)</td>
+<td style="border-top: 2px solid var(--border-color);">Every push to main</td>
+</tr>
+<tr>
+<td><strong>Run tests</strong></td>
+<td><strong>🟢 GITHUB ACTIONS</strong> (auto)</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>Build Docker images</strong></td>
+<td><strong>🟢 GITHUB ACTIONS</strong> (auto)</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>Restart services</strong></td>
+<td><strong>🟢 GITHUB ACTIONS</strong> (auto)</td>
+<td>Every push to main</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bottom line:</strong> Set up the server once, then just push code to <code>main</code> branch!</p>
+</blockquote>
 <hr>
 <h2>Overview</h2>
 <p>This comprehensive guide explains how to set up and access a <strong>secure staging environment</strong> that is hidden from public view. Test changes before deploying to production without exposing work-in-progress to website visitors.</p>
+
+<blockquote>
+<p><strong>⚠️ IMPORTANT DISTINCTION:</strong></p>
+<ul>
+<li><strong>ONE-TIME SETUP</strong> (Manual): Server preparation, authentication, SSL certificates</li>
+<li><strong>AUTOMATED DEPLOYMENT</strong> (GitHub Actions): Code updates happen automatically</li>
+</ul>
+</blockquote>
+
 <p><strong>Recommended Approach:</strong> HTTP Basic Auth + IP Whitelist (implemented by setup script)</p>
+
+<hr>
+
+<h2>🔵 What You Do ONCE (Manual Setup)</h2>
+<p>These steps prepare your staging server. You only do this ONE TIME:</p>
+
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Run setup script on VPS</td>
+<td>Initial setup only</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Create admin/user passwords</td>
+<td>Initial setup only</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Configure DNS (A record)</td>
+<td>Initial setup only</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Generate SSL certificate</td>
+<td>Initial + renewal every 90 days</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>First manual deployment</td>
+<td>Initial setup only</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>Configure GitHub Secrets</td>
+<td>Initial setup only</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>🟢 What GitHub Actions Does AUTOMATICALLY</h2>
+<p>After initial setup, these happen automatically on every push to <code>main</code>:</p>
+
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What</th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Run tests (frontend + backend)</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Build Docker images</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Push images to Docker Hub</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>SSH to staging server</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>Pull latest code</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>Pull Docker images</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td>Restart containers</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td>Run health check</td>
+<td>Every push to main</td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td>Clean up old images</td>
+<td>Every push to main</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>You don't touch the server!</strong> Just push code to <code>main</code> branch.</p>
 <hr>
 <h2>Table of Contents</h2>
 <ol>
-<li><a href="#quick-setup-5-minutes">Quick Setup (5 Minutes)</a></li>
+<li><a href="#one-time-manual-setup">🔵 One-Time Manual Setup</a></li>
+<li><a href="#github-actions-automated">🟢 GitHub Actions (Automated)</a></li>
+<li><a href="#daily-workflow">Daily Workflow</a></li>
 <li><a href="#what-the-script-does">What the Script Does</a></li>
-<li><a href="#post-setup-configuration">Post-Setup Configuration</a></li>
-<li><a href="#access-methods-overview">Access Methods Overview</a></li>
-<li><a href="#alternative-setup-methods">Alternative Setup Methods</a></li>
 <li><a href="#managing-staging-users">Managing Users</a></li>
 <li><a href="#security-features">Security Features</a></li>
 <li><a href="#troubleshooting">Troubleshooting</a></li>
 </ol>
 <hr>
-<h2 id="quick-setup-5-minutes">Quick Setup (5 Minutes)</h2>
+
+<h2 id="one-time-manual-setup">🔵 ONE-TIME MANUAL SETUP</h2>
+
+<blockquote>
+<p><strong>Do this ONCE when setting up staging for the first time.</strong><br>
+After this, GitHub Actions handles all deployments automatically.</p>
+</blockquote>
+
 <h3>Prerequisites</h3>
 <ul>
 <li>VPS setup completed (<code>vps-secure-setup.sh</code> already run)</li>
@@ -433,6 +615,206 @@ docker compose -f docker-compose.staging.yml logs -f
 <li>✅ Staging site loads</li>
 </ol>
 <hr>
+
+<h2 id="github-actions-automated">🟢 GITHUB ACTIONS (AUTOMATED)</h2>
+
+<blockquote>
+<p><strong>After initial setup, deployments are 100% automatic.</strong><br>
+No manual server access needed!</p>
+</blockquote>
+
+<h3>What Triggers Deployment</h3>
+<pre><code class="language-bash"># Any of these will trigger automatic staging deployment:
+
+git checkout main
+git merge develop
+git push origin main
+
+# OR
+
+gh pr merge 123  # Merge PR to main
+</code></pre>
+
+<h3>What GitHub Actions Does</h3>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Action</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Run frontend tests</td>
+<td>~2 min</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Run backend tests with PostgreSQL</td>
+<td>~1 min</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Build frontend Docker image</td>
+<td>~3 min</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Build backend Docker image</td>
+<td>~2 min</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>Push images to Docker Hub</td>
+<td>~1 min</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td>SSH into staging server</td>
+<td>~5 sec</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td>Pull latest code from main</td>
+<td>~5 sec</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td>Pull Docker images</td>
+<td>~30 sec</td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td>Restart containers</td>
+<td>~20 sec</td>
+</tr>
+<tr>
+<td><strong>10</strong></td>
+<td>Health check with auth</td>
+<td>~5 sec</td>
+</tr>
+<tr>
+<td><strong>11</strong></td>
+<td>Clean up old Docker images</td>
+<td>~10 sec</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Total time: ~10 minutes</strong></p>
+
+<h3>Deployment Command (Automatic)</h3>
+<p>GitHub Actions runs this on the server:</p>
+<pre><code class="language-bash">cd /opt/peppertree-staging
+git pull origin main
+docker compose -f docker-compose.staging.yml pull
+docker compose -f docker-compose.staging.yml down
+docker compose -f docker-compose.staging.yml up -d --build
+docker system prune -f
+</code></pre>
+
+<p><strong>You never run this manually!</strong> GitHub Actions does it.</p>
+
+<h3>Monitoring Deployment</h3>
+
+<p><strong>Option 1: GitHub Actions UI</strong></p>
+<ol>
+<li>Go to GitHub repository</li>
+<li>Click "Actions" tab</li>
+<li>See workflow run in progress</li>
+<li>Watch each step complete</li>
+</ol>
+
+<p><strong>Option 2: SSH to Server (optional)</strong></p>
+<pre><code class="language-bash"># Watch deployment logs
+ssh your-server
+cd /opt/peppertree-staging
+docker compose -f docker-compose.staging.yml logs -f
+</code></pre>
+
+<h3>Required GitHub Secrets</h3>
+<p>Set these ONCE in GitHub repository settings:</p>
+
+<pre><code>Repository → Settings → Secrets and variables → Actions
+
+STAGING_HOST=your-vps-ip-address
+STAGING_USERNAME=deploy
+STAGING_SSH_KEY=-----BEGIN OPENSSH PRIVATE KEY-----...
+STAGING_SSH_PORT=22
+STAGING_AUTH_USER=admin
+STAGING_AUTH_PASSWORD=your-staging-password
+</code></pre>
+
+<hr>
+
+<h2 id="daily-workflow">📅 DAILY WORKFLOW</h2>
+
+<h3>As a Developer</h3>
+
+<pre><code class="language-bash"># 1. Work on feature branch
+git checkout -b feature/new-thing
+# ... make changes ...
+git commit -m "Add new thing"
+git push origin feature/new-thing
+
+# 2. Create pull request to main
+gh pr create --base main --title "Add new thing"
+
+# 3. After review, merge to main
+gh pr merge 123
+
+# 4. ✨ STAGING DEPLOYS AUTOMATICALLY ✨
+# (Wait ~10 minutes)
+
+# 5. Test on staging
+open https://staging.17peppertree.co.za
+# (Enter username/password)
+
+# 6. If good, merge to production
+git checkout production
+git merge main
+git push origin production
+
+# 7. ✨ PRODUCTION DEPLOYS AUTOMATICALLY ✨
+</code></pre>
+
+<h3>Checking Deployment Status</h3>
+
+<pre><code class="language-bash"># Check GitHub Actions
+gh run list --branch main --limit 5
+
+# Check specific workflow
+gh run view 1234567890
+
+# Watch workflow in real-time
+gh run watch
+</code></pre>
+
+<h3>Manual Deployment (Emergency Only)</h3>
+
+<p>If GitHub Actions is down or you need immediate deployment:</p>
+
+<pre><code class="language-bash"># SSH to staging server
+ssh deploy@your-vps-ip
+
+# Navigate to staging directory
+cd /opt/peppertree-staging
+
+# Pull latest code
+git pull origin main
+
+# Restart services
+docker compose -f docker-compose.staging.yml up -d --build
+
+# Check logs
+docker compose -f docker-compose.staging.yml logs -f
+</code></pre>
+
+<hr>
+
 <h2 id="what-the-script-does">What the Script Does</h2>
 <h3>1. Installs Prerequisites</h3>
 <ul>
