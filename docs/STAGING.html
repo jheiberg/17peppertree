@@ -533,7 +533,43 @@ After this, GitHub Actions handles all deployments automatically.</p>
 <li>Root or sudo access</li>
 <li>Staging subdomain DNS record (or will create after setup)</li>
 </ul>
+
+<h3>Understanding IP Addresses</h3>
+<p>You'll work with two types of IPs:</p>
+<table>
+<thead>
+<tr>
+<th>IP Type</th>
+<th>What It Is</th>
+<th>How to Find</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Your Public IP</strong></td>
+<td>Your ISP's egress IP (home/office)</td>
+<td><code>curl ifconfig.me</code> or <a href="https://whatismyipaddress.com">whatismyipaddress.com</a></td>
+</tr>
+<tr>
+<td><strong>VPS Server IP</strong></td>
+<td>Your staging server's IP</td>
+<td>From your VPS provider dashboard</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Example:</strong></p>
+<ul>
+<li>Your public IP: <code>196.207.123.45</code> (what the server sees when you connect)</li>
+<li>VPS server IP: <code>154.12.34.56</code> (where staging is hosted)</li>
+<li>You whitelist YOUR public IP so you can access the VPS</li>
+</ul>
 <h3>Step 1: Run the Staging Setup Script</h3>
+
+<blockquote>
+<p><strong>💡 Find your public IP:</strong> Visit <a href="https://whatismyipaddress.com" target="_blank">whatismyipaddress.com</a> or run <code>curl ifconfig.me</code></p>
+</blockquote>
+
 <pre><code class="language-bash"># Basic usage (will prompt for all values)
 sudo bash scripts/setup-staging-auth.sh
 
@@ -541,8 +577,8 @@ sudo bash scripts/setup-staging-auth.sh
 sudo bash scripts/setup-staging-auth.sh staging.17peppertree.co.za YOUR-IP-ADDRESS
 
 # Parameters:
-# 1. Staging domain (subdomain you&#39;ll use)
-# 2. Office/home IP to whitelist (optional)
+# 1. Staging domain (subdomain you'll use)
+# 2. Your public/egress IP (from ISP) to whitelist (optional)
 </code></pre>
 <h3>Step 2: Follow the Interactive Prompts</h3>
 <p>The script will ask you:</p>
@@ -559,11 +595,12 @@ Enter username: developer
 </code></pre>
 </li>
 <li><p><strong>IP whitelist</strong></p>
+<p><em>Note: This is your <strong>public/egress IP</strong> (the IP your ISP assigns you). Find it at <a href="https://whatismyipaddress.com">whatismyipaddress.com</a></em></p>
 <pre><code>Your current IP address is: YOUR-IP-ADDRESS
 Add this IP to whitelist? (y/n) y
 
 Add another IP to whitelist? (y/n) y
-Enter IP address: ANOTHER-IP-ADDRESS
+Enter IP address: ANOTHER-IP-ADDRESS  # E.g., office IP
 </code></pre>
 </li>
 </ol>
