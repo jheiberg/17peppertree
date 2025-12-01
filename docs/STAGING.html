@@ -538,7 +538,7 @@ After this, GitHub Actions handles all deployments automatically.</p>
 sudo bash scripts/setup-staging-auth.sh
 
 # With parameters (faster)
-sudo bash scripts/setup-staging-auth.sh staging.17peppertree.co.za 102.165.34.56
+sudo bash scripts/setup-staging-auth.sh staging.17peppertree.co.za YOUR-IP-ADDRESS
 
 # Parameters:
 # 1. Staging domain (subdomain you&#39;ll use)
@@ -559,11 +559,11 @@ Enter username: developer
 </code></pre>
 </li>
 <li><p><strong>IP whitelist</strong></p>
-<pre><code>Your current IP address is: 102.165.34.56
+<pre><code>Your current IP address is: YOUR-IP-ADDRESS
 Add this IP to whitelist? (y/n) y
 
 Add another IP to whitelist? (y/n) y
-Enter IP address: 41.12.34.89
+Enter IP address: ANOTHER-IP-ADDRESS
 </code></pre>
 </li>
 </ol>
@@ -577,8 +577,8 @@ TTL: 300 (5 minutes)
 <p><strong>Example:</strong></p>
 <ul>
 <li>If your main domain is <code>17peppertree.co.za</code></li>
-<li>And VPS IP is <code>154.12.34.56</code></li>
-<li>Create: <code>staging.17peppertree.co.za</code> → <code>154.12.34.56</code></li>
+<li>And VPS IP is <code>YOUR-VPS-IP</code></li>
+<li>Create: <code>staging.17peppertree.co.za</code> → <code>YOUR-VPS-IP</code></li>
 </ul>
 <h3>Step 4: Test HTTP Access (No SSL Yet)</h3>
 <pre><code class="language-bash"># Test from your browser or command line
@@ -964,8 +964,8 @@ docker restart peppertree_nginx_staging
     server_name staging.17peppertree.co.za;
 
     # Allow specific IPs
-    allow 102.165.34.56;  # Office
-    allow 41.12.34.89;    # Home
+    allow YOUR-IP-ADDRESS;  # Office
+    allow ANOTHER-IP-ADDRESS;    # Home
     allow 127.0.0.1;      # Localhost
     deny all;             # Block everyone else
 
