@@ -330,6 +330,56 @@ input[type="checkbox"] {
 <hr>
 <h2>Overview</h2>
 <p>This guide explains how to use the automated VPS setup script to prepare a fresh Ubuntu 24.04 LTS VPS for hosting the 17 @ Peppertree application with comprehensive security hardening.</p>
+
+<blockquote style="background: var(--bg-tertiary); border-left: 4px solid var(--success);">
+<h3 style="margin-top: 0;">🎯 Setup Flow</h3>
+<table style="background: transparent;">
+<thead>
+<tr>
+<th>Step</th>
+<th>What</th>
+<th>Applies To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Run VPS setup script (this guide)</td>
+<td>✓ Staging<br>✓ Production</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Base configuration (SSH, firewall, Docker)</td>
+<td>✓ Staging<br>✓ Production</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Choose environment(s) to deploy:</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>→ <strong>Production:</strong> Continue with this guide</td>
+<td>Production only</td>
+</tr>
+<tr>
+<td></td>
+<td>→ <strong>Staging:</strong> Follow <a href="STAGING.html">Staging Guide</a></td>
+<td>Staging only</td>
+</tr>
+<tr>
+<td></td>
+<td>→ <strong>Both:</strong> Follow both guides</td>
+<td>Both environments</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> You can host staging and production on:</p>
+<ul>
+<li><strong>Separate VPS:</strong> One server for staging, one for production (recommended)</li>
+<li><strong>Same VPS:</strong> Both environments on one server (cost-effective for small sites)</li>
+</ul>
+</blockquote>
 <h2>Prerequisites</h2>
 <ul>
 <li>Fresh Ubuntu 24.04 LTS VPS</li>
@@ -710,6 +760,17 @@ Short:    https://bit.ly/peppertree-vps-setup
 </ul>
 <hr>
 <h2>Post-Setup Configuration</h2>
+
+<blockquote style="background: var(--bg-tertiary); border-left: 4px solid var(--info);">
+<p><strong>📌 Important:</strong> These steps apply to <strong>BOTH staging and production</strong> servers.</p>
+<p>The VPS setup script prepares the base server. You then configure <strong>either</strong>:</p>
+<ul>
+<li><strong>Staging:</strong> <code>/opt/peppertree-staging</code> + <a href="STAGING.html">Staging Setup Guide</a></li>
+<li><strong>Production:</strong> <code>/opt/peppertree-production</code> + this guide</li>
+<li><strong>Both:</strong> If using one VPS for both environments</li>
+</ul>
+</blockquote>
+
 <p>After the script completes, follow these steps:</p>
 <h3>1. Set Up SSH Key Authentication</h3>
 <p><strong>On your local machine:</strong></p>
@@ -742,8 +803,19 @@ rclone lsd peppertree:
 peppertree-backup
 </code></pre>
 <h3>3. Configure Environment Variables</h3>
+
+<p><strong>For Production:</strong></p>
 <pre><code class="language-bash"># Navigate to production directory
 cd /opt/peppertree-production
+
+# Copy and edit environment file
+cp .env.example .env
+nano .env
+</code></pre>
+
+<p><strong>For Staging:</strong></p>
+<pre><code class="language-bash"># Navigate to staging directory
+cd /opt/peppertree-staging
 
 # Copy and edit environment file
 cp .env.example .env
@@ -767,17 +839,32 @@ OWNER_EMAIL=owner@17peppertree.co.za
 DOMAIN=17peppertree.co.za
 </code></pre>
 <h3>4. Clone Application Repository</h3>
+
+<p><strong>For Production:</strong></p>
 <pre><code class="language-bash"># Navigate to production directory
 cd /opt/peppertree-production
 
-# Clone your repository
-git clone https://github.com/jheiberg/17peppertree.git .
+# Clone your repository (production branch)
+git clone -b production https://github.com/jheiberg/17peppertree.git .
+
+# Verify files
+ls -la
+</code></pre>
+
+<p><strong>For Staging:</strong></p>
+<pre><code class="language-bash"># Navigate to staging directory
+cd /opt/peppertree-staging
+
+# Clone your repository (main branch)
+git clone -b main https://github.com/jheiberg/17peppertree.git .
 
 # Verify files
 ls -la
 </code></pre>
 <h3>5. Generate SSL Certificates</h3>
-<pre><code class="language-bash"># Install certificates using Let&#39;s Encrypt
+
+<p><strong>For Production:</strong></p>
+<pre><code class="language-bash"># Install certificates using Let's Encrypt
 certbot --nginx -d 17peppertree.co.za -d www.17peppertree.co.za
 
 # Follow prompts:
@@ -788,7 +875,23 @@ certbot --nginx -d 17peppertree.co.za -d www.17peppertree.co.za
 # Verify auto-renewal
 certbot renew --dry-run
 </code></pre>
+
+<p><strong>For Staging:</strong></p>
+<pre><code class="language-bash"># Install certificate for staging subdomain
+certbot --standalone -d staging.17peppertree.co.za
+
+# Note: Use --standalone (not --nginx) if nginx not configured yet
+# See STAGING.html for full staging SSL setup
+</code></pre>
+
+<p><strong>For Both (One VPS):</strong></p>
+<pre><code class="language-bash"># Get both certificates
+certbot --nginx -d 17peppertree.co.za -d www.17peppertree.co.za
+certbot --standalone -d staging.17peppertree.co.za
+</code></pre>
 <h3>6. Deploy Application</h3>
+
+<p><strong>For Production:</strong></p>
 <pre><code class="language-bash"># Navigate to production directory
 cd /opt/peppertree-production
 
@@ -797,6 +900,20 @@ docker compose -f docker-compose.production.yml up -d --build
 
 # Monitor deployment
 docker compose -f docker-compose.production.yml logs -f
+
+# Verify all containers are running
+docker ps
+</code></pre>
+
+<p><strong>For Staging:</strong></p>
+<pre><code class="language-bash"># Navigate to staging directory
+cd /opt/peppertree-staging
+
+# Build and start containers
+docker compose -f docker-compose.staging.yml up -d --build
+
+# Monitor deployment
+docker compose -f docker-compose.staging.yml logs -f
 
 # Verify all containers are running
 docker ps
